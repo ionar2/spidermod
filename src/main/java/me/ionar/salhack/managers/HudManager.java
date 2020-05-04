@@ -55,6 +55,7 @@ public class HudManager
         Add(new ChestCountComponent());
         Add(new TrueDurabilityComponent());
         Add(new StopwatchComponent());
+        Add(new PvPInfoComponent());
 
         /// MUST be last in list
         Add(new SelecterMenuComponent());
