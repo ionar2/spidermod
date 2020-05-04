@@ -13,6 +13,8 @@ import net.minecraft.item.ItemStack;
 
 public class InventoryComponent extends HudComponentItem
 {
+	public final Value<Boolean> ShowHotbar = new Value<Boolean>("ShowHotbar", new String[] {""}, "Displays the hotbar", false);
+	
     public InventoryComponent()
     {
         super("Inventory", 2, 15);
@@ -35,17 +37,20 @@ public class InventoryComponent extends HudComponentItem
             ItemStack itemStack = mc.player.inventory.mainInventory.get(i + 9);
             int offsetX = (int) GetX() + (i % 9) * 16;
             int offsetY = (int) GetY() + (i / 9) * 16;
-            mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, offsetX, offsetY);
-            mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRenderer, itemStack, offsetX, offsetY, null);
-        }
+			mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, offsetX, offsetY);
+			mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRenderer, itemStack, offsetX, offsetY, null);
+		}
 
-        for (int i = 0; i < 9; i++)
+		if (ShowHotbar.getValue())
         {
-            ItemStack itemStack = mc.player.inventory.mainInventory.get(i);
-            int offsetX = (int) GetX() + (i % 9) * 16;
-            int offsetY = (int) GetY() + 48;
-            mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, offsetX, offsetY);
-            mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRenderer, itemStack, offsetX, offsetY, null);
+	        for (int i = 0; i < 9; i++)
+	        {
+	            ItemStack itemStack = mc.player.inventory.mainInventory.get(i);
+	            int offsetX = (int) GetX() + (i % 9) * 16;
+	            int offsetY = (int) GetY() + 48;
+	            mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, offsetX, offsetY);
+	            mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRenderer, itemStack, offsetX, offsetY, null);
+	        }
         }
 
         RenderUtil.drawRect(GetX() + GetWidth(), GetY(), GetX() + GetWidth() + 32, GetY() + 32, 0x75101010); // background
