@@ -39,7 +39,7 @@ public final class AutoMendArmorModule extends Module
     public AutoMendArmorModule()
     {
         super("AutoMendArmor", new String[]
-        { "AMA" }, "Allows you to interact with blocks at build height", "NONE", 0x24DBD4, ModuleType.MISC);
+        { "AMA" }, "Moves your armor to a free slot and mends them piece by piece. Recommended to use autoarmor incase you need to toggle this off while using it", "NONE", 0x24DBD4, ModuleType.MISC);
     }
     
     private LinkedList<MendState> SlotsToMoveTo = new LinkedList<MendState>();
