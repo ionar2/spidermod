@@ -54,6 +54,26 @@ public class ESPModule extends Module
     public final Value<Boolean> Mobs = new Value<Boolean>("Mobs", new String[]
     { "Mobs" }, "Highlights Mobs", false);
 
+    public final Value<Float> ObsidianRed = new Value<Float>("ObsidianRed", new String[] {"oRed"}, "Red for rendering", 0f, 0f, 1.0f, 0.1f);
+    public final Value<Float> ObsidianGreen = new Value<Float>("ObsidianGreen", new String[] {"oGreen"}, "Green for rendering", 1f, 0f, 1.0f, 0.1f);
+    public final Value<Float> ObsidianBlue = new Value<Float>("ObsidianBlue", new String[] {"oBlue"}, "Blue for rendering", 0f, 0f, 1.0f, 0.1f);
+    public final Value<Float> ObsidianAlpha = new Value<Float>("ObsidianAlpha", new String[] {"oAlpha"}, "Alpha for rendering", 0.5f, 0f, 1.0f, 0.1f);
+
+    public final Value<Float> BedrockRed = new Value<Float>("BedrockRed", new String[] {"bRed"}, "Red for rendering", 0f, 0f, 1.0f, 0.1f);
+    public final Value<Float> BedrockGreen = new Value<Float>("BedrockGreen", new String[] {"bGreen"}, "Green for rendering", 1f, 0f, 1.0f, 0.1f);
+    public final Value<Float> BedrockBlue = new Value<Float>("BedrockBlue", new String[] {"bBlue"}, "Blue for rendering", 0.8f, 0f, 1.0f, 0.1f);
+    public final Value<Float> BedrockAlpha = new Value<Float>("BedrockAlpha", new String[] {"bAlpha"}, "Alpha for rendering", 0.5f, 0f, 1.0f, 0.1f);
+    
+    public final Value<HoleModes> HoleMode = new Value<HoleModes>("HoleModed", new String[] {"HM"}, "Mode for rendering holes", HoleModes.FlatOutline);
+    
+    private enum HoleModes
+    {
+    	FlatOutline,
+    	Flat,
+    	Outline,
+    	Full,
+    }
+    
     public ESPModule()
     {
         super("ESP", new String[]
@@ -157,10 +177,10 @@ public class ESPModule extends Module
                     switch (hole.GetHoleType())
                     {
                         case Bedrock:
-                            RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ, 0, 1, 0, 0.50f);
+                        	Render(bb, BedrockRed.getValue(), BedrockGreen.getValue(), BedrockBlue.getValue(), BedrockAlpha.getValue());
                             break;
                         case Obsidian:
-                            RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ, 0, 1, 0.8f, 0.50f);
+                        	Render(bb, ObsidianRed.getValue(), ObsidianGreen.getValue(), ObsidianBlue.getValue(), ObsidianAlpha.getValue());
                             break;
                         default:
                             break;
@@ -439,5 +459,27 @@ public class ESPModule extends Module
             return HoleTypes.Obsidian;
 
         return HoleTypes.Normal;
+    }
+    
+    private void Render(final AxisAlignedBB bb, float p_Red, float p_Green, float p_Blue, float p_Alpha)
+    {
+    	switch (HoleMode.getValue())
+    	{
+			case Flat:
+                RenderGlobal.renderFilledBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ, p_Red, p_Green, p_Blue, p_Alpha);
+				break;
+			case FlatOutline:
+		    	RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ, p_Red, p_Green, p_Blue, p_Alpha);
+				break;
+			case Full:
+		    	RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, p_Red, p_Green, p_Blue, p_Alpha);
+                RenderGlobal.renderFilledBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, p_Red, p_Green, p_Blue, p_Alpha);
+				break;
+			case Outline:
+		    	RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, p_Red, p_Green, p_Blue, p_Alpha);
+				break;
+			default:
+				break;
+    	}
     }
 }
