@@ -1,0 +1,62 @@
+# gui - general
+schematica.gui.x=X:
+schematica.gui.y=Y:
+schematica.gui.z=Z:
+schematica.gui.done=Klaar
+
+# gui - general - load
+schematica.gui.title=Selecteer schematic bestand
+schematica.gui.folderInfo=(Plaats schematic bestanden hier)
+schematica.gui.openFolder=Open schematic map
+schematica.gui.noschematic=-- Geen schematic --
+
+# gui - general - save
+schematica.gui.point.red=Rood punt
+schematica.gui.point.blue=Blauw punt
+schematica.gui.save=Opslaan
+schematica.gui.saveselection=Sla de selectie op als schematic
+
+# gui - general - control
+schematica.gui.moveschematic=Verplaats schematic
+schematica.gui.materials=Materialen
+schematica.gui.operations=Handelingen
+schematica.gui.all=ALLE
+schematica.gui.layers=Lagen
+schematica.gui.hide=Verberg
+schematica.gui.show=Geef weer
+schematica.gui.movehere=Verplaats hiernaartoe
+schematica.gui.flip=Spiegelen
+schematica.gui.rotate=Roteer
+schematica.gui.materialname=Materiaal
+schematica.gui.materialamount=Hoeveelheid
+
+# gui - config - categories
+
+# gui - config - debug
+
+# gui - config - render
+
+# gui - config - printer
+
+# gui - config - printer - swap slots
+
+# gui - config - general
+
+# gui - config - server
+
+# keys
+schematica.key.load=Laad schematic
+schematica.key.save=Sla schematic op
+schematica.key.control=Bewerk schematic
+
+# commands - save
+
+# commands - list
+
+# commands - remove
+
+# commands - download
+
+# commands - replace
+
+# messages

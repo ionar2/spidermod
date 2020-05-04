@@ -1,0 +1,63 @@
+# gui - general
+schematica.gui.x=X:
+schematica.gui.y=Y:
+schematica.gui.z=Z:
+schematica.gui.done=Kész
+
+# gui - general - load
+schematica.gui.title=Klisé megnyitása
+schematica.gui.folderInfo=(Helyezd ide a klisé fájlokat)
+schematica.gui.openFolder=Klisé könyvtár megnyitása
+schematica.gui.noschematic=-- Nem található klisé --
+
+# gui - general - save
+schematica.gui.point.red=Piros pont
+schematica.gui.point.blue=Kék pont
+schematica.gui.save=Mentés
+schematica.gui.saveselection=Kijelölés mentése kliséként
+
+# gui - general - control
+schematica.gui.moveschematic=Klisé mozgatása
+schematica.gui.materials=Anyagfelhasználás
+schematica.gui.printer=Nyomtató
+schematica.gui.operations=Műveletek
+schematica.gui.all=MIND
+schematica.gui.layers=Szeletek
+schematica.gui.hide=Elrejt
+schematica.gui.show=Mutat
+schematica.gui.movehere=Mozgatás ide
+schematica.gui.flip=Tükröz
+schematica.gui.rotate=Forgat
+schematica.gui.materialname=Anyag
+schematica.gui.materialamount=Mennyiség
+
+# gui - config - categories
+
+# gui - config - debug
+
+# gui - config - render
+
+# gui - config - printer
+
+# gui - config - printer - swap slots
+
+# gui - config - general
+
+# gui - config - server
+
+# keys
+schematica.key.load=Klisé betöltése
+schematica.key.save=Klisé mentése
+schematica.key.control=Klisé módosítása
+
+# commands - save
+
+# commands - list
+
+# commands - remove
+
+# commands - download
+
+# commands - replace
+
+# messages

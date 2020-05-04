@@ -1,0 +1,16 @@
+[
+{
+  "modid": "salhack",
+  "name": "SalHack",
+  "description": "SalHack utility mod.",
+  "version": "1.3",
+  "mcversion": "1.12.2",
+  "url": "http://salhack.dev",
+  "updateUrl": "http://salhack.dev",
+  "authorList": ["ionar"],
+  "credits": "ionar",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

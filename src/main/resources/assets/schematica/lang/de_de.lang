@@ -1,0 +1,101 @@
+# gui - general
+schematica.gui.x=X:
+schematica.gui.y=Y:
+schematica.gui.z=Z:
+schematica.gui.done=Fertig
+
+# gui - general - load
+schematica.gui.title=Wähle Schematic-Datei
+schematica.gui.folderInfo=(Füge Schematic-Dateien hier ein)
+schematica.gui.openFolder=Öffne Schematic-Ordner
+schematica.gui.noschematic=-- Keine Schematic --
+
+# gui - general - save
+schematica.gui.point.red=Roter Punkt
+schematica.gui.point.blue=Blauer Punkt
+schematica.gui.save=Speichern
+schematica.gui.saveselection=Auswahl als Schematic speichern
+
+# gui - general - control
+schematica.gui.moveschematic=Schematic bewegen
+schematica.gui.materials=Materialien
+schematica.gui.printer=Drucker
+schematica.gui.operations=Aktionen
+schematica.gui.all=ALLE
+schematica.gui.layers=Ebenen
+schematica.gui.hide=Verstecken
+schematica.gui.show=Zeigen
+schematica.gui.movehere=Hierhin bewegen
+schematica.gui.flip=Spiegeln
+schematica.gui.rotate=Drehen
+schematica.gui.materialname=Material
+schematica.gui.materialamount=Menge
+
+# gui - config - categories
+schematica.config.category.render.tooltip=Render Einstellungen
+schematica.config.category.printer=Drucker
+schematica.config.category.printer.tooltip=Drucker Einstellungen
+schematica.config.category.general=Generell
+schematica.config.category.general.tooltip=Generelle Einstellungen
+schematica.config.category.server.tooltip=Einstellungen am Server
+
+# gui - config - debug
+
+# gui - config - render
+schematica.config.alphaEnabled=Alpha eingeschalten
+schematica.config.alphaEnabled.tooltip=Aktiviert transparente Blöcke.
+
+# gui - config - printer
+schematica.config.placeDelay=Abstand zwischen Blockplatzierung
+schematica.config.placeDelay.tooltip=Abstan (in ticks) in der ein Spieler Blöcke setzen kann.
+schematica.config.placeInstantly=Blöcke sofort setzen
+schematica.config.placeInstantly.tooltip=Platziere alle Blöcke innerhalb eines Ticks.
+schematica.config.destroyBlocks=Zerstöre Blöcke
+schematica.config.destroyBlocks.tooltip=Der Drucker wird Blöcke entfernen können (Nur im Kreativmodus verfügbar).
+schematica.config.destroyInstantly=Zerstöre Blöcke sofort
+schematica.config.destroyInstantly.tooltip=Zerstöre alle Blöcke innerhalb eines Ticks.
+schematica.config.placeAdjacent=Angrenzende Blöcke berücksichtigen
+schematica.config.placeAdjacent.tooltip=Platziere Blöcke nur, wenn es angrenzende Blöcke gibt.
+
+# gui - config - printer - swap slots
+
+# gui - config - general
+schematica.config.schematicDirectory=Schematic Verzeichnis
+schematica.config.schematicDirectory.tooltip=Schematic Verzeichnis
+
+# gui - config - server
+schematica.config.printerEnabled=Drucken erlauben
+schematica.config.printerEnabled.tooltip=Erlaubt es Spieler, den Drucker zu benutzen.
+schematica.config.saveEnabled=Speichern erlauben
+schematica.config.saveEnabled.tooltip=Erlaubt es Spielern, Schematics zu speichern.
+schematica.config.loadEnabled=Laden erlauben
+schematica.config.loadEnabled.tooltip=Erlaubt es Spielern, Schematics zu laden.
+
+# keys
+schematica.key.load=Schematic laden
+schematica.key.save=Schematic speichern
+schematica.key.control=Schematic verändern
+
+# commands - save
+schematica.command.save.playersOnly=Nur Spieler können dieses Kommando ausführen.
+schematica.command.save.started=%d Chunks werden in %s gespeichert.
+schematica.command.save.saveSucceeded=%s wurde erfolgreich gespeichert.
+schematica.command.save.saveFailed=Es gab ein Problem, die Schematic %s zu speichern.
+schematica.command.save.quotaExceeded=Du kannst keine Schematics mehr speichern, da das Limit erreicht wurde. Bitte nutze /schematicaList und /schematicaRemove um alte Schematics zu löschen.
+schematica.command.save.playerSchematicDirUnavailable=Es gab ein Problem, deine Schematic zu speichern. Bitte kontaktiere umgehend einen Server Administrator.
+
+# commands - list
+schematica.command.list.notAvailable=Dir kann keine Liste deiner Schematics angezeigt werden.
+schematica.command.list.remove=Entfernen
+schematica.command.list.download=Herunterladen
+schematica.command.list.header=--- Schematics: Seite %d von %d ---
+schematica.command.list.noSuchPage=Keine Seite
+schematica.command.list.noSchematics=Es sind keine Schematics verfügbar.
+
+# commands - remove
+
+# commands - download
+
+# commands - replace
+
+# messages

@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "compatibilityLevel": "JAVA_8",
+  "package": "me.ionar.salhack.mixin.client",
+  "refmap": "mixins.salhack.refmap.json",
+  "client": [
+    "MixinEntityPlayerSP",
+    "MixinEntityLivingBase",
+    "MixinEntityPlayer",
+    "MixinRenderLivingBase",
+    "MixinBlockLiquid",
+    "MixinPlayerControllerMP",
+    "MixinEntityRenderer",
+    "MixinGuiScreen",
+    "MixinNetworkManager",
+    "MixinMinecraft",
+    "MixinAbstractClientPlayer",
+    "MixinRenderPlayer",
+    "MixinParticleManager",
+    "MixinTileEntitySignRenderer",
+    "MixinEntity",
+    "MixinMovementInputFromOptions",
+    "MixinWorld"
+  ]
+}

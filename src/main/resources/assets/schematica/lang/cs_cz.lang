@@ -1,0 +1,63 @@
+# gui - general
+schematica.gui.x=X:
+schematica.gui.y=Y:
+schematica.gui.z=Z:
+schematica.gui.done=Hotovo
+
+# gui - general - load
+schematica.gui.title=Vyberte soubor schématu
+schematica.gui.folderInfo=(Sem dávejte soubory schémat)
+schematica.gui.openFolder=Otevřít složku se schématy
+schematica.gui.noschematic=-- Žádné schéma --
+
+# gui - general - save
+schematica.gui.point.red=Rudý bod
+schematica.gui.point.blue=Modrý bod
+schematica.gui.save=Uložit
+schematica.gui.saveselection=Uložit výběr jako schéma
+
+# gui - general - control
+schematica.gui.moveschematic=Přesunout schéma
+schematica.gui.materials=Materiály
+schematica.gui.printer=Tiskárna
+schematica.gui.operations=Operace
+schematica.gui.all=VŠECHNY
+schematica.gui.layers=Vrstvy
+schematica.gui.hide=Schovat
+schematica.gui.show=Zobrazit
+schematica.gui.movehere=Přesunout sem
+schematica.gui.flip=Převrátit
+schematica.gui.rotate=Otočit
+schematica.gui.materialname=Materiál
+schematica.gui.materialamount=Množství
+
+# gui - config - categories
+
+# gui - config - debug
+
+# gui - config - render
+
+# gui - config - printer
+
+# gui - config - printer - swap slots
+
+# gui - config - general
+
+# gui - config - server
+
+# keys
+schematica.key.load=Načíst schéma
+schematica.key.save=Uložit schéma
+schematica.key.control=Manipulovat se schématem
+
+# commands - save
+
+# commands - list
+
+# commands - remove
+
+# commands - download
+
+# commands - replace
+
+# messages

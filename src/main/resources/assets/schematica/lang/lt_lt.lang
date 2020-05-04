@@ -1,0 +1,62 @@
+# gui - general
+schematica.gui.x=X:
+schematica.gui.y=Y:
+schematica.gui.z=Z:
+schematica.gui.done=Baigta
+
+# gui - general - load
+schematica.gui.title=Pasirinkite schemos failà
+schematica.gui.folderInfo=(Dëkite schemø failus èia\!)
+schematica.gui.openFolder=Atidaryti schemø aplankà
+schematica.gui.noschematic=-- Nëra schemos --
+
+# gui - general - save
+schematica.gui.point.red=Raudonasis taðkas
+schematica.gui.point.blue=Mëlynasis taðkas
+schematica.gui.save=Iðsaugoti
+schematica.gui.saveselection=Iðsaugoti paþymëta plotà kaip schemà?
+
+# gui - general - control
+schematica.gui.moveschematic=Patraukti schemà
+schematica.gui.materials=Medþiagos
+schematica.gui.operations=Veiksmas
+schematica.gui.all=VISI
+schematica.gui.layers=Sluoksnis
+schematica.gui.hide=Slëpti
+schematica.gui.show=Rodyti
+schematica.gui.movehere=Perkelti èia
+schematica.gui.flip=Veidrodinis vaizdas
+schematica.gui.rotate=Pasukti
+schematica.gui.materialname=Medþiaga
+schematica.gui.materialamount=Kiekis
+
+# gui - config - categories
+
+# gui - config - debug
+
+# gui - config - render
+
+# gui - config - printer
+
+# gui - config - printer - swap slots
+
+# gui - config - general
+
+# gui - config - server
+
+# keys
+schematica.key.load=Atidaryti schemà
+schematica.key.save=Iðsaugoti schemà
+schematica.key.control=Manipuliuoti schemà
+
+# commands - save
+
+# commands - list
+
+# commands - remove
+
+# commands - download
+
+# commands - replace
+
+# messages

@@ -1,0 +1,6 @@
+# gui - categories
+lunatriuscore.versioncheck=Vérification de version
+
+# gui - config - update checker
+lunatriuscore.versioncheck.checkforupdates=Vérifier les mises à jour
+lunatriuscore.versioncheck.checkforupdates.tooltip=Le mod doit-il verifier si des mises à jour sont disponibles ?
