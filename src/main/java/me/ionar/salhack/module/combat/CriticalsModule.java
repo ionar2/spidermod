@@ -18,6 +18,7 @@ public class CriticalsModule extends Module
         Packet,
         Jump,
     }
+    // fix bugs
     
     public CriticalsModule()
     {
