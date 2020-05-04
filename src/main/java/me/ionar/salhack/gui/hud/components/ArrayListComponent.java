@@ -21,6 +21,8 @@ public class ArrayListComponent extends HudComponentItem
 {
     public final Value<Boolean> RainbowVal = new Value<Boolean>("Rainbow", new String[]
     { "" }, "Makes a dynamic rainbow", true);
+    public final Value<Boolean> NoBackground = new Value<Boolean>("NoBackground", new String[]
+    { "" }, "NoBackground on arraylist", false);
 
     public ArrayListComponent()
     {
@@ -128,11 +130,14 @@ public class ArrayListComponent extends HudComponentItem
                 {
                     case 0:
                     case 3:
-                        RenderUtil.drawRect(GetX() + xOffset - 2 + mod.GetRemainingXArraylistOffset(),
-                                GetY() + yOffset,
-                                GetX() + xOffset + RenderUtil.getStringWidth(name) + 4 + mod.GetRemainingXArraylistOffset(),
-                                GetY() + yOffset + (l_StringYHeight + 1.5f),
-                                0x75101010);
+                    	if (!NoBackground.getValue())
+                    	{
+	                        RenderUtil.drawRect(GetX() + xOffset - 2 + mod.GetRemainingXArraylistOffset(),
+	                                GetY() + yOffset,
+	                                GetX() + xOffset + RenderUtil.getStringWidth(name) + 4 + mod.GetRemainingXArraylistOffset(),
+	                                GetY() + yOffset + (l_StringYHeight + 1.5f),
+	                                0x75101010);
+                    	}
                         RenderUtil.drawStringWithShadow(name,
                                 (GetX() + xOffset) + mod.GetRemainingXArraylistOffset(),
                                 GetY() + yOffset,
@@ -141,11 +146,14 @@ public class ArrayListComponent extends HudComponentItem
                         break;
                     case 1:
                     case 2:
-                        RenderUtil.drawRect(GetX() + xOffset - 2 + mod.GetRemainingXArraylistOffset(),
-                                GetY() + (GetHeight() - l_StringYHeight) + yOffset,
-                                GetX() + xOffset + RenderUtil.getStringWidth(name) + 4 + mod.GetRemainingXArraylistOffset(),
-                                GetY() + (GetHeight() - l_StringYHeight) + yOffset+ (l_StringYHeight + 1.5f),
-                                0x75101010);
+                    	if (!NoBackground.getValue())
+                    	{
+	                        RenderUtil.drawRect(GetX() + xOffset - 2 + mod.GetRemainingXArraylistOffset(),
+	                                GetY() + (GetHeight() - l_StringYHeight) + yOffset,
+	                                GetX() + xOffset + RenderUtil.getStringWidth(name) + 4 + mod.GetRemainingXArraylistOffset(),
+	                                GetY() + (GetHeight() - l_StringYHeight) + yOffset+ (l_StringYHeight + 1.5f),
+	                                0x75101010);
+                    	}
                         RenderUtil.drawStringWithShadow(name,
                                 (GetX() + xOffset) + mod.GetRemainingXArraylistOffset(),
                                 GetY() + (GetHeight() - l_StringYHeight) + yOffset,
