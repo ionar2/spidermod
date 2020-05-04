@@ -22,7 +22,7 @@ public class CriticalsModule extends Module
     public CriticalsModule()
     {
         super("Criticals", new String[]
-        { "BS" }, "Releases the bow as fast as possible", "NONE", 0xF2190E, ModuleType.COMBAT);
+        { "BS" }, "Tries to crit your oponent on attack by spoofing positions", "NONE", 0xF2190E, ModuleType.COMBAT);
     }
 
     @EventHandler
