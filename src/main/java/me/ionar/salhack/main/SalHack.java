@@ -37,11 +37,11 @@ public class SalHack
 
         m_ModuleManager.Init();
         m_HudManager.Init();
-        m_DiscordManager.Start();
         m_CommandManager.InitalizeCommands();
         
         m_FontManager.Load();
         m_ImageManager.Load();
+        m_DiscordManager.Start();
     }
 
     public static ModuleManager GetModuleManager()
