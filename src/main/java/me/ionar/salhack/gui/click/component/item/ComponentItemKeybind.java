@@ -1,5 +1,7 @@
 package me.ionar.salhack.gui.click.component.item;
 
+import org.lwjgl.input.Keyboard;
+
 import me.ionar.salhack.gui.click.component.listeners.ComponentItemListener;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.module.Module;
@@ -37,7 +39,16 @@ public class ComponentItemKeybind extends ComponentItem
     {
         super.OnMouseClick(p_MouseX, p_MouseY, p_MouseButton);
         
-        Listening = !Listening;
+        if (p_MouseButton == 0)
+        	Listening = !Listening;
+        else if (p_MouseButton == 1)
+        	Listening = false;
+        else if (p_MouseButton == 2)
+        {
+        	Mod.setKey("NONE");
+        	SalHack.SendMessage("Unbinded the module: " + Mod.getDisplayName());
+        	Listening = false;
+        }
     }
 
     @Override
@@ -45,12 +56,17 @@ public class ComponentItemKeybind extends ComponentItem
     {
         if (Listening)
         {
-            String l_Key = String.valueOf(typedChar).toUpperCase();
+            String l_Key = String.valueOf(Keyboard.getKeyName(keyCode)).toUpperCase();
 
-            if (l_Key.length() != 1)
+            if (l_Key.length() < 1)
             {
                 Listening = false;
                 return;
+            }
+            
+            if (l_Key.equals("END"))
+            {
+            	l_Key = "NONE";
             }
 
             Mod.setKey(l_Key);
