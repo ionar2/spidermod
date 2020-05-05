@@ -10,6 +10,7 @@ import me.ionar.salhack.gui.hud.HudComponentItem;
 import me.ionar.salhack.managers.FontManager;
 import me.ionar.salhack.managers.ImageManager;
 import me.ionar.salhack.managers.TickRateManager;
+import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.util.imgs.SalDynamicTexture;
 import me.ionar.salhack.util.render.AbstractGui;
@@ -20,6 +21,11 @@ import net.minecraft.client.renderer.RenderHelper;
 
 public class KeyStrokesComponent extends HudComponentItem
 {
+    public final Value<Float> Red = new Value<Float>("Red", new String[] {"bRed"}, "Red for rendering", 1.0f, 0f, 1.0f, 0.1f);
+    public final Value<Float> Green = new Value<Float>("Green", new String[] {"bGreen"}, "Green for rendering", 1.0f, 0f, 1.0f, 0.1f);
+    public final Value<Float> Blue = new Value<Float>("Blue", new String[] {"bBlue"}, "Blue for rendering", 1.0f, 0f, 1.0f, 0.1f);
+    public final Value<Float> Alpha = new Value<Float>("Alpha", new String[] {"bAlpha"}, "Alpha for rendering", 1.0f, 0f, 1.0f, 0.1f);
+    
     private ArrayList<Button> Buttons = new ArrayList<Button>();
 
     public KeyStrokesComponent()
@@ -83,7 +89,7 @@ public class KeyStrokesComponent extends HudComponentItem
                 GlStateManager.pushMatrix();
                 RenderHelper.enableGUIStandardItemLighting();
                 
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0f);
+                GL11.glColor4f(Red.getValue(), Green.getValue(), Blue.getValue(), Alpha.getValue());
                 GlStateManager.enableBlend();
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
 
