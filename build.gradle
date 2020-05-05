@@ -67,6 +67,7 @@ repositories {
         url = "https://jitpack.io"
     }
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -82,7 +83,7 @@ dependencies {
     compile(group: 'org.reflections', name: 'reflections', version: '0.9.11') {
         exclude group: 'com.google.guava', module: 'guava'
     }
-    compile 'club.minnced:java-discord-rpc:v2.0.1'
+    compile 'club.minnced:java-discord-rpc:2.0.2'
     
     //deobfCompile group: group, name: 'LunatriusCore', version: "${project.version_minecraft}-${project.version_lunatriuscore}", classifier: 'universal'
 }
@@ -114,6 +115,7 @@ shadowJar {
     dependencies {
         include(dependency('org.spongepowered:mixin'))
         include(dependency('com.github.ZeroMemes:Alpine'))
+        include(dependency('club.minnced:java-discord-rpc'))
         include(dependency('net.jodah:typetools'))
         include(dependency('org.yaml:snakeyaml'))
         include(dependency('org.reflections:reflections'))
