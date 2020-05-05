@@ -203,8 +203,10 @@ public class ModuleManager
 
     public void OnBind(String string)
     {
-        if (string == null || string == "")
+        if (string == null || string.isEmpty() || string.equalsIgnoreCase("NONE"))
             return;
+        
+        SalHack.SendMessage(string);
         
         Mods.forEach(p_Mod ->
         {
