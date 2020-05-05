@@ -206,8 +206,6 @@ public class ModuleManager
         if (string == null || string.isEmpty() || string.equalsIgnoreCase("NONE"))
             return;
         
-        SalHack.SendMessage(string);
-        
         Mods.forEach(p_Mod ->
         {
             if (p_Mod.getKey().equals(string))
