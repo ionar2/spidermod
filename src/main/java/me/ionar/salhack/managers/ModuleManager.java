@@ -135,6 +135,7 @@ public class ModuleManager
         /// World
         Add(new AutoToolModule());
         Add(new AutoBuilderModule());
+        Add(new AutoWitherModule());
         Add(new FastPlaceModule());
         Add(new LawnmowerModule());
         Add(new NoWeatherModule());
