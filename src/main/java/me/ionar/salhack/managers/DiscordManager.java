@@ -30,8 +30,8 @@ public class DiscordManager
             while (!Thread.currentThread().isInterrupted())
             {
                 lib.Discord_RunCallbacks();
-                presence.details = String.format("%s | %s | %s", Wrapper.GetMC().getSession().getUsername(), Wrapper.GetMC().getCurrentServerData() != null ? Wrapper.GetMC().getCurrentServerData().serverIP : "none", "SalHack on bottom!");
-                presence.state = "RIP IHackedXVIDEOS!";
+                presence.details = String.format("%s | %s | %s", Wrapper.GetMC().getSession().getUsername(), Wrapper.GetMC().getCurrentServerData() != null ? Wrapper.GetMC().getCurrentServerData().serverIP : "none", "SPW on Top!");
+                presence.state = "Is this a Brix Reference?";
                 lib.Discord_UpdatePresence(presence);
                 try
                 {
