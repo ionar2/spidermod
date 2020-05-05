@@ -13,7 +13,7 @@ public class WatermarkComponent extends HudComponentItem
     public final Value<Boolean> Reliant = new Value<Boolean>("Reliant", new String[]
     { "" }, "Shows reliant text instead of salhack", false);
     
-    private static String WatermarkString = SalHackMod.NAME + ChatFormatting.WHITE + " " + SalHackMod.VERSION + ChatFormatting.RED + " PRE-RELEASE DO NOT SHARE OR UPLOAD VIDEOS USING THIS.";
+    private static String WatermarkString = SalHackMod.NAME + ChatFormatting.WHITE + " " + SalHackMod.VERSION + ChatFormatting.WHITE;
 
     public WatermarkComponent()
     {
