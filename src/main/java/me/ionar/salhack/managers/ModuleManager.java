@@ -128,6 +128,7 @@ public class ModuleManager
         Add(new TrajectoriesModule());
 
         /// UI
+        Add(new ColorsModule());
         Add(new ConsoleModule());
         Add(new ClickGuiModule());
         Add(new HudEditorModule());
@@ -202,7 +203,7 @@ public class ModuleManager
 
     public void OnBind(String string)
     {
-        if (string == null || string == "")
+        if (string == null || string.isEmpty() || string.equalsIgnoreCase("NONE"))
             return;
         
         Mods.forEach(p_Mod ->

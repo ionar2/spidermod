@@ -10,7 +10,7 @@ import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.gui.click.component.item.ComponentItem;
 import me.ionar.salhack.main.SalHack;
-import me.zero.alpine.listener.Listenable;
+import me.zero.alpine.fork.listener.Listenable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;

@@ -8,6 +8,7 @@ import me.ionar.salhack.gui.click.component.item.ComponentItem;
 import me.ionar.salhack.main.Wrapper;
 import me.ionar.salhack.managers.FontManager;
 import me.ionar.salhack.managers.ImageManager;
+import me.ionar.salhack.module.ui.ColorsModule;
 import me.ionar.salhack.util.imgs.SalDynamicTexture;
 import me.ionar.salhack.util.render.AbstractGui;
 import me.ionar.salhack.util.render.RenderUtil;
@@ -36,8 +37,9 @@ public class MenuComponent
     private float RemainingMaximizingY;
     private int MousePlayAnim;
     private SalDynamicTexture BarTexture = null;
+    private ColorsModule Colors;
     
-    public MenuComponent(String p_DisplayName, float p_X, float p_Y, float p_Height, float p_Width, String p_Image)
+    public MenuComponent(String p_DisplayName, float p_X, float p_Y, float p_Height, float p_Width, String p_Image, ColorsModule p_Colors)
     {
         DisplayName = p_DisplayName;
         X = p_X;
@@ -52,6 +54,8 @@ public class MenuComponent
         {
             BarTexture = ImageManager.Get().GetDynamicTexture(p_Image);
         }
+        
+        Colors = p_Colors;
     }
     
     public void AddItem(ComponentItem p_Item)
@@ -124,7 +128,7 @@ public class MenuComponent
         RenderUtil.drawGradientRect(GetX(), GetY()+17, GetX()+GetWidth(), GetY()+GetHeight(), 0x992A2A2A, 0x992A2A2A);
 
         RenderUtil.drawRect(GetX(), GetY(), GetX() + GetWidth(), GetY() + 17, 0x99000000); /// top
-        FontManager.Get().TwCenMtStd28.drawStringWithShadow(GetDisplayName(), GetX() + 2, GetY() + 1, 0x37b8cb);
+        FontManager.Get().TwCenMtStd28.drawStringWithShadow(GetDisplayName(), GetX() + 2, GetY() + 1, GetTextColor());
 
         
         if (BarTexture != null)
@@ -217,7 +221,7 @@ public class MenuComponent
         
         return p_CanHover && p_MouseX > GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY > GetY() && p_MouseY < GetY()+GetHeight();
     }
-
+    
     public float DisplayComponentItem(ComponentItem p_Item, float p_Y, int p_MouseX, int p_MouseY, boolean p_CanHover, boolean p_DisplayExtendedLine, final float p_MaxY)
     {
         p_Y += p_Item.GetHeight();
@@ -240,7 +244,7 @@ public class MenuComponent
         {
             if (!l_DropDown)
                 RenderUtil.drawGradientRect(GetX(), p_Y, GetX()+p_Item.GetWidth(), p_Y+11, 0x99040404, 0x99000000);
-            l_Color = 0x37b8cb;
+            l_Color = GetTextColor();
             HoveredItem = p_Item;
             
             p_Item.AddState(ComponentItem.Hovered);
@@ -248,7 +252,7 @@ public class MenuComponent
         else
         {
             if (p_Item.HasState(ComponentItem.Clicked) && !p_Item.HasFlag(ComponentItem.DontDisplayClickableHighlight))
-                l_Color = 0x37b8cb;
+                l_Color = GetTextColor();
             
             p_Item.RemoveState(ComponentItem.Hovered);
         }
@@ -257,7 +261,7 @@ public class MenuComponent
             RenderUtil.drawGradientRect(GetX(), p_Y, GetX()+p_Item.GetWidth(), p_Y+11, 0x99040404, 0x99000000);
         
         if (p_Item.HasFlag(ComponentItem.RectDisplayAlways) || (p_Item.HasFlag(ComponentItem.RectDisplayOnClicked) && p_Item.HasState(ComponentItem.Clicked)))
-            RenderUtil.drawRect(GetX(), p_Y, GetX()+p_Item.GetCurrentWidth(), p_Y+11, p_Item.HasState(ComponentItem.Clicked) || p_Item.HasFlag(ComponentItem.DontDisplayClickableHighlight) ? 0x992CAED8 : 0x992CAED8);
+            RenderUtil.drawRect(GetX(), p_Y, GetX()+p_Item.GetCurrentWidth(), p_Y+11, p_Item.HasState(ComponentItem.Clicked) || p_Item.HasFlag(ComponentItem.DontDisplayClickableHighlight) ? GetColor() : GetColor());
         
         RenderUtil.drawStringWithShadow(p_Item.GetDisplayText(), X + Padding, p_Y, l_Color);
 
@@ -268,7 +272,7 @@ public class MenuComponent
 
         if (p_Item.HasState(ComponentItem.Extended) || p_DisplayExtendedLine)
         {
-            RenderUtil.drawLine(X + p_Item.GetWidth() - 1, p_Y, X + p_Item.GetWidth() - 1, p_Y + 11, 3, 0x9933b6d7);
+            RenderUtil.drawLine(X + p_Item.GetWidth() - 1, p_Y, X + p_Item.GetWidth() - 1, p_Y + 11, 3, GetColor());
         }
         
         if (p_Item.HasState(ComponentItem.Extended))
@@ -414,4 +418,15 @@ public class MenuComponent
         for (ComponentItem l_Item : p_Item.DropdownItems)
             HandleKeyTypedForItem(l_Item, typedChar, keyCode);
     }
+    
+    private int GetColor()
+    {
+    	return (Colors.Alpha.getValue() << 24) & 0xFF000000 | (Colors.Red.getValue() << 16) & 0x00FF0000 | (Colors.Green.getValue() << 8) & 0x0000FF00 | Colors.Blue.getValue() & 0x000000FF;
+    }
+
+    public int GetTextColor()
+    {
+    	return (Colors.Red.getValue() << 16) & 0x00FF0000 | (Colors.Green.getValue() << 8) & 0x0000FF00 | Colors.Blue.getValue() & 0x000000FF;
+    }
+
 }

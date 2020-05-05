@@ -22,8 +22,8 @@ import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.BlockInteractionHelper;
 import me.ionar.salhack.util.BlockInteractionHelper.PlaceResult;
 import me.ionar.salhack.util.BlockInteractionHelper.ValidResult;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 import me.ionar.salhack.util.MathUtil;
 import me.ionar.salhack.util.Pair;
 import me.ionar.salhack.util.Timer;
@@ -72,7 +72,7 @@ public class AutoBuilderModule extends Module
     public AutoBuilderModule()
     {
         super("AutoBuilder", new String[]
-        { "AutoSwastika" }, "Builds cool things at your facing block", "H", 0x96DB24, ModuleType.WORLD);
+        { "AutoSwastika" }, "Builds cool things at your facing block", "NONE", 0x96DB24, ModuleType.WORLD);
     }
     
     private Vec3d Center = Vec3d.ZERO;

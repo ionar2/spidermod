@@ -21,7 +21,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
         classpath 'com.google.code.gson:gson:2.8.6'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.0.9'
@@ -72,12 +72,12 @@ repositories {
 
 dependencies {
     //mixin needs to be distributed with the mod, very important
-    compile("org.spongepowered:mixin:0.7.4-SNAPSHOT") {
+    compile("org.spongepowered:mixin:0.7.8-SNAPSHOT") { // do NOT update this to 8.0 or above, it breaks compatibility with future client
         exclude module: 'launchwrapper'
         exclude module: 'guava'
         exclude module: 'commons-io'
     }
-    compile "com.github.ZeroMemes:Alpine:1.9"
+    compile "com.github.ionar2:Alpine:1.9f"
     compile group: 'net.jodah', name: 'typetools', version: '0.5.0'
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.19'
     compile(group: 'org.reflections', name: 'reflections', version: '0.9.11') {
@@ -114,7 +114,7 @@ processResources {
 shadowJar {
     dependencies {
         include(dependency('org.spongepowered:mixin'))
-        include(dependency('com.github.ZeroMemes:Alpine'))
+        include(dependency('com.github.ionar2:Alpine'))
         include(dependency('club.minnced:java-discord-rpc'))
         include(dependency('net.jodah:typetools'))
         include(dependency('org.yaml:snakeyaml'))

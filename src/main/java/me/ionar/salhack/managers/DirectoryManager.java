@@ -28,8 +28,10 @@ public class DirectoryManager
             CreateDirectory("SalHack/Config");
             CreateDirectory("SalHack/Capes");
             CreateDirectory("SalHack/Music");
-            CreateDirectory("SalHack/Modules");
             CreateDirectory("SalHack/CoordExploit");
+            CreateDirectory("SalHack/LogoutSpots");
+            CreateDirectory("SalHack/DeathSpots");
+            CreateDirectory("SalHack/Waypoints");
         }
         catch (IOException e)
         {

@@ -11,10 +11,11 @@ import me.ionar.salhack.events.player.EventPlayerIsKeyPressed;
 import me.ionar.salhack.events.player.EventPlayerUpdateMoveState;
 import me.ionar.salhack.main.Wrapper;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.MovementInput;
 import net.minecraft.util.MovementInputFromOptions;
 
-@Mixin(value = MovementInputFromOptions.class)
-public class MixinMovementInputFromOptions
+@Mixin(value = MovementInputFromOptions.class, priority = 10000) ///< wwe has 9999, we should be atleast 1 above
+public abstract class MixinMovementInputFromOptions extends MovementInput
 {
     @Inject(method = "updatePlayerMoveState", at = @At("RETURN"), cancellable = true)
     public void updatePlayerMoveStateReturn(CallbackInfo callback)

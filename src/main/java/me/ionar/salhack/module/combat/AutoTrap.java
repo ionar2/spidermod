@@ -11,8 +11,8 @@ import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.BlockInteractionHelper;
 import me.ionar.salhack.util.SalUtil;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEnderChest;
 import net.minecraft.block.BlockObsidian;
@@ -93,7 +93,7 @@ public final class AutoTrap extends Module
     public AutoTrap()
     {
         super("AutoTrap", new String[]
-        { "AutoTrap" }, "AutoTrap", "O", 0x24DB43, ModuleType.COMBAT);
+        { "AutoTrap" }, "AutoTrap", "NONE", 0x24DB43, ModuleType.COMBAT);
     }
     
     private String lastTickTargetName = "";

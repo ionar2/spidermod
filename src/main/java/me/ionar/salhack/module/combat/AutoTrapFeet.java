@@ -17,8 +17,8 @@ import me.ionar.salhack.util.BlockInteractionHelper;
 import me.ionar.salhack.util.BlockInteractionHelper.PlaceResult;
 import me.ionar.salhack.util.BlockInteractionHelper.ValidResult;
 import me.ionar.salhack.util.MathUtil;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -49,7 +49,7 @@ public class AutoTrapFeet extends Module
     public AutoTrapFeet()
     {
         super("AutoTrapFeet", new String[]
-        { "AutoTrapFeet" }, "AutoTrapFeet", "I", 0x24DB78, ModuleType.COMBAT);
+        { "AutoTrapFeet" }, "AutoTrapFeet", "NONE", 0x24DB78, ModuleType.COMBAT);
     }
     
     EntityPlayer Target = null;

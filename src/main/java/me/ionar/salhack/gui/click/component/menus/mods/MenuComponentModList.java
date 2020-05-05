@@ -12,13 +12,14 @@ import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Module.ModuleType;
 import me.ionar.salhack.module.Value;
+import me.ionar.salhack.module.ui.ColorsModule;
 
 public class MenuComponentModList extends MenuComponent
 {
 
-    public MenuComponentModList(String p_DisplayName, ModuleType p_Type, float p_X, float p_Y, String p_Image)
+    public MenuComponentModList(String p_DisplayName, ModuleType p_Type, float p_X, float p_Y, String p_Image, ColorsModule p_Colors)
     {
-        super(p_DisplayName, p_X, p_Y, 100f, 105f, p_Image);
+        super(p_DisplayName, p_X, p_Y, 100f, 105f, p_Image, p_Colors);
         
         final float Width = 105f;
         final float Height = 11f;

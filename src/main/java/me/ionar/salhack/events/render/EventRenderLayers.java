@@ -1,6 +1,6 @@
 package me.ionar.salhack.events.render;
 
-import me.zero.alpine.event.type.Cancellable;
+import me.zero.alpine.fork.event.type.Cancellable;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
 

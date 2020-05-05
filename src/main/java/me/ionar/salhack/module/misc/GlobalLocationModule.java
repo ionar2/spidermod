@@ -12,8 +12,8 @@ import me.ionar.salhack.events.network.EventNetworkPacketEvent;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 
 public final class GlobalLocationModule extends Module
 {

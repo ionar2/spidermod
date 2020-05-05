@@ -3,8 +3,8 @@ package me.ionar.salhack.module.movement;
 import me.ionar.salhack.events.player.EventPlayerMove;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 
 public final class SafeWalkModule extends Module
 {
