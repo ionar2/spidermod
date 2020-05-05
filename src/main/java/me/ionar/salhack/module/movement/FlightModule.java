@@ -7,8 +7,8 @@ import me.ionar.salhack.events.player.EventPlayerTravel;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.MathUtil;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.network.play.client.CPacketPlayer;
 
 public final class FlightModule extends Module

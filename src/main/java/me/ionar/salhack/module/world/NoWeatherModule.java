@@ -2,8 +2,8 @@ package me.ionar.salhack.module.world;
 
 import me.ionar.salhack.events.render.EventRenderRainStrength;
 import me.ionar.salhack.module.Module;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 
 public final class NoWeatherModule extends Module
 {

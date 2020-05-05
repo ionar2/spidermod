@@ -4,8 +4,8 @@ import me.ionar.salhack.events.player.EventPlayerSendChatMessage;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.network.play.client.CPacketChatMessage;
 
 public final class RetardChatModule extends Module

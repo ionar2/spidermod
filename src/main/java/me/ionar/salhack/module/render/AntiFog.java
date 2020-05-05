@@ -4,8 +4,8 @@ import me.ionar.salhack.events.blocks.EventCanCollideCheck;
 import me.ionar.salhack.events.render.EventRenderSetupFog;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Module.ModuleType;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 
 public class AntiFog extends Module
 {

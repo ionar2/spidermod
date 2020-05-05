@@ -2,8 +2,8 @@ package me.ionar.salhack.module.misc;
 
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
 import me.ionar.salhack.module.Module;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 

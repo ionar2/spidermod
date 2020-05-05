@@ -2,8 +2,8 @@ package me.ionar.salhack.module.movement;
 
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
 import me.ionar.salhack.module.Module;
-import me.zero.alpine.listener.EventHandler;
-import me.zero.alpine.listener.Listener;
+import me.zero.alpine.fork.listener.EventHandler;
+import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
 
 public final class NoRotateModule extends Module
