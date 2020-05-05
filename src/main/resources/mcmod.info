@@ -1,14 +1,14 @@
 [
 {
-  "modid": "salhack",
-  "name": "SalHack",
-  "description": "SalHack utility mod.",
-  "version": "1.3",
+  "modid": "brixhack",
+  "name": "BrixHack",
+  "description": "BrixHack Utility Mod.",
+  "version": "1.0",
   "mcversion": "1.12.2",
-  "url": "http://salhack.dev",
-  "updateUrl": "http://salhack.dev",
-  "authorList": ["ionar"],
-  "credits": "ionar",
+  "url": "http://www.youtube.com/Brixalis",
+  "updateUrl": "http://www.youtube.com/Brixalis",
+  "authorList": ["Brixalis"],
+  "credits": "ionar, Brixalis",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
