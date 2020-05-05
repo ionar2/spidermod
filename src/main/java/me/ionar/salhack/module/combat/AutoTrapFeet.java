@@ -49,7 +49,7 @@ public class AutoTrapFeet extends Module
     public AutoTrapFeet()
     {
         super("AutoTrapFeet", new String[]
-        { "AutoTrapFeet" }, "AutoTrapFeet", "I", 0x24DB78, ModuleType.COMBAT);
+        { "AutoTrapFeet" }, "AutoTrapFeet", "NONE", 0x24DB78, ModuleType.COMBAT);
     }
     
     EntityPlayer Target = null;

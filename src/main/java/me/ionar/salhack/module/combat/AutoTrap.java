@@ -93,7 +93,7 @@ public final class AutoTrap extends Module
     public AutoTrap()
     {
         super("AutoTrap", new String[]
-        { "AutoTrap" }, "AutoTrap", "O", 0x24DB43, ModuleType.COMBAT);
+        { "AutoTrap" }, "AutoTrap", "NONE", 0x24DB43, ModuleType.COMBAT);
     }
     
     private String lastTickTargetName = "";
