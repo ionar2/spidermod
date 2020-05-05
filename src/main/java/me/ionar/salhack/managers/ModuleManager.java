@@ -128,6 +128,7 @@ public class ModuleManager
         Add(new TrajectoriesModule());
 
         /// UI
+        Add(new ColorsModule());
         Add(new ConsoleModule());
         Add(new ClickGuiModule());
         Add(new HudEditorModule());

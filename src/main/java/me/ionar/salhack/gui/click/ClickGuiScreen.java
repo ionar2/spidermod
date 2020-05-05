@@ -12,6 +12,7 @@ import me.ionar.salhack.gui.click.component.menus.mods.MenuComponentModList;
 import me.ionar.salhack.managers.ImageManager;
 import me.ionar.salhack.module.Module.ModuleType;
 import me.ionar.salhack.module.ui.ClickGuiModule;
+import me.ionar.salhack.module.ui.ColorsModule;
 import me.ionar.salhack.util.imgs.SalDynamicTexture;
 import me.ionar.salhack.util.render.AbstractGui;
 import me.ionar.salhack.util.render.RenderUtil;
@@ -33,24 +34,26 @@ public class ClickGuiScreen extends SalGuiScreen
     private SalDynamicTexture Watermark = ImageManager.Get().GetDynamicTexture("SalHackWatermark");
     private SalDynamicTexture BlueBlur = ImageManager.Get().GetDynamicTexture("BlueBlur");
 
-    public ClickGuiScreen(ClickGuiModule p_Mod)
+    public ClickGuiScreen(ClickGuiModule p_Mod, ColorsModule p_Colors)
     {
         // COMBAT, EXPLOIT, MOVEMENT, RENDER, WORLD, MISC, HIDDEN, UI
-        MenuComponents.add(new MenuComponentModList("Combat", ModuleType.COMBAT, 10, 3, "Shield"));
-        MenuComponents.add(new MenuComponentModList("Exploit", ModuleType.EXPLOIT, 120, 3, "skull"));
+        MenuComponents.add(new MenuComponentModList("Combat", ModuleType.COMBAT, 10, 3, "Shield", p_Colors));
+        MenuComponents.add(new MenuComponentModList("Exploit", ModuleType.EXPLOIT, 120, 3, "skull", p_Colors));
         // MenuComponents.add(new MenuComponentModList("Hidden", ModuleType.HIDDEN, 320, 3));
-        MenuComponents.add(new MenuComponentModList("Misc", ModuleType.MISC, 230, 3, "questionmark"));
-        MenuComponents.add(new MenuComponentModList("Movement", ModuleType.MOVEMENT, 340, 3, "Arrow"));
-        MenuComponents.add(new MenuComponentModList("Render", ModuleType.RENDER, 450, 3, "Eye"));
-        MenuComponents.add(new MenuComponentModList("UI", ModuleType.UI, 560, 3, "mouse"));
-        MenuComponents.add(new MenuComponentModList("World", ModuleType.WORLD, 670, 3, "blockimg"));
-        MenuComponents.add(new MenuComponentModList("Bot", ModuleType.BOT, 780, 3, "robotimg"));
-        MenuComponents.add(new MenuComponentModList("Schematica", ModuleType.SCHEMATICA, 10, 203, "robotimg"));
+        MenuComponents.add(new MenuComponentModList("Misc", ModuleType.MISC, 230, 3, "questionmark", p_Colors));
+        MenuComponents.add(new MenuComponentModList("Movement", ModuleType.MOVEMENT, 340, 3, "Arrow", p_Colors));
+        MenuComponents.add(new MenuComponentModList("Render", ModuleType.RENDER, 450, 3, "Eye", p_Colors));
+        MenuComponents.add(new MenuComponentModList("UI", ModuleType.UI, 560, 3, "mouse", p_Colors));
+        MenuComponents.add(new MenuComponentModList("World", ModuleType.WORLD, 670, 3, "blockimg", p_Colors));
+        MenuComponents.add(new MenuComponentModList("Bot", ModuleType.BOT, 780, 3, "robotimg", p_Colors));
+        MenuComponents.add(new MenuComponentModList("Schematica", ModuleType.SCHEMATICA, 10, 203, "robotimg", p_Colors));
 
         ClickGuiMod = p_Mod;
+        ColorsModule = p_Colors;
     }
 
     private ClickGuiModule ClickGuiMod;
+    private ColorsModule ColorsModule;
 
     @Override
     public boolean doesGuiPauseGame()

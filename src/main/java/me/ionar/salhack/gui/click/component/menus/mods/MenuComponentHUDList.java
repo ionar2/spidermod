@@ -13,6 +13,7 @@ import me.ionar.salhack.managers.HudManager;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Module.ModuleType;
+import me.ionar.salhack.module.ui.ColorsModule;
 import me.ionar.salhack.module.Value;
 
 public class MenuComponentHUDList extends MenuComponent
@@ -20,7 +21,7 @@ public class MenuComponentHUDList extends MenuComponent
 
     public MenuComponentHUDList(String p_DisplayName, float p_X, float p_Y)
     {
-        super(p_DisplayName, p_X, p_Y, 100f, 105f, "");
+        super(p_DisplayName, p_X, p_Y, 100f, 105f, "", (ColorsModule)ModuleManager.Get().GetMod(ColorsModule.class));
         
         final float Width = 105f;
         final float Height = 11f;

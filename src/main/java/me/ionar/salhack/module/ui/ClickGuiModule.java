@@ -1,6 +1,7 @@
 package me.ionar.salhack.module.ui;
 
 import me.ionar.salhack.gui.click.ClickGuiScreen;
+import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 
@@ -32,7 +33,7 @@ public final class ClickGuiModule extends Module
         super.onEnable();
         
         if (m_ClickGui == null)
-            m_ClickGui = new ClickGuiScreen(this);
+            m_ClickGui = new ClickGuiScreen(this, (ColorsModule)ModuleManager.Get().GetMod(ColorsModule.class));
 
         if (mc.world != null)
         {
