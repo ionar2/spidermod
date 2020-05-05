@@ -1,7 +1,7 @@
-Just some notes, some of the code is pasted and not proper credits are given, but atleast it's open source now? :)
+ATTENTION: I didn't make this client, I only skidded, all the credits go to ionar2.
 
-No git history because it contains personal info.
+I'll leave the discord server in case you want to support SalHack Development.
 
-Discord: https://discord.gg/UEyGRGu , rules still apply in the discord
+Discord: https://discord.gg/UEyGRGu
 
-dominika#0076
+Brixalis#4205
