@@ -70,6 +70,7 @@ public class ModuleManager
         Add(new EntityDesyncModule());
         Add(new LiquidInteractModule());
         Add(new ModifiedFreecam());
+        Add(new MountBypassModule());
         Add(new NoMiningTrace());
         Add(new NewChunksModule());
         Add(new PacketCancellerModule());
