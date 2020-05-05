@@ -8,6 +8,8 @@ public final class ClickGuiModule extends Module
 {
     public final Value<Boolean> AllowOverflow = new Value<Boolean>("AllowOverflow", new String[]
     { "AllowOverflow" }, "Allows the GUI to overflow", true);
+    public final Value<Boolean> Watermark = new Value<Boolean>("Watermark", new String[]
+    { "Watermark" }, "Displays the watermark on the GUI", true);
 
     public ClickGuiScreen m_ClickGui;
 

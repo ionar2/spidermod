@@ -97,7 +97,7 @@ public class ClickGuiScreen extends SalGuiScreen
     {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        if (Watermark != null)
+        if (Watermark != null && ClickGuiMod.Watermark.getValue())
         {
             GlStateManager.pushMatrix();
             RenderHelper.enableGUIStandardItemLighting();
