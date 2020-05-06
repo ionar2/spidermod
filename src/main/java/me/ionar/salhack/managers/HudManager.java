@@ -58,7 +58,7 @@ public class HudManager
         Add(new PvPInfoComponent());
 
         /// MUST be last in list
-        Add(new SelecterMenuComponent());
+        Add(new SelectorMenuComponent());
         
         CanSave = false;
         
