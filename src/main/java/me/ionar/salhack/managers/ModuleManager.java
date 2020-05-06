@@ -103,6 +103,7 @@ public class ModuleManager
         Add(new FriendsModule());
         Add(new GlobalLocationModule());
         Add(new HotbarCacheModule());
+        Add(new MiddleClickFriendsModule());
         Add(new RetardChatModule());
         Add(new StopWatchModule());
         Add(new TotemPopNotifierModule());
