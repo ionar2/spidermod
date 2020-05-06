@@ -234,8 +234,8 @@ public class AutoBuilderModule extends Module
                 break;
             case Flat:
                 
-                for (int l_X = -3; l_X < 3; ++l_X)
-                    for (int l_Y = -3; l_Y < 3; ++l_Y)
+                for (int l_X = -3; l_X <= 3; ++l_X)
+                    for (int l_Y = -3; l_Y <= 3; ++l_Y)
                     {
                         l_Array.add(orignPos.down().add(l_X, 0, l_Y));
                     }
