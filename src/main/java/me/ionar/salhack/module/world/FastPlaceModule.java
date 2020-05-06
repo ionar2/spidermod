@@ -65,6 +65,9 @@ public final class FastPlaceModule extends Module
 
     private int getItemCount(Item input)
     {
+        if (mc.player == null)
+            return 0;
+        
         int items = 0;
 
         for (int i = 0; i < 45; i++)
