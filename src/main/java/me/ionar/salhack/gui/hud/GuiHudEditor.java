@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.lwjgl.opengl.GL11;
 
 import me.ionar.salhack.gui.SalGuiScreen;
+import me.ionar.salhack.gui.click.component.MenuComponent;
 import me.ionar.salhack.managers.HudManager;
 import me.ionar.salhack.module.ui.HudEditorModule;
 import me.ionar.salhack.util.render.RenderUtil;
@@ -31,21 +32,21 @@ public class GuiHudEditor extends SalGuiScreen
         this.drawDefaultBackground();
 
         GL11.glPushMatrix();
-        
-        HudManager.Get().Items.forEach(p_Item ->
-        {
-            if (!p_Item.IsHidden())
-            {
-                p_Item.render(mouseX, mouseY, partialTicks);
 
-                if (p_Item.IsSelected())
-                {
-                    RenderUtil.drawRect(p_Item.GetX(), p_Item.GetY(),
-                            p_Item.GetX() + p_Item.GetWidth(), p_Item.GetY() + p_Item.GetHeight(),
-                            0x35DDDDDD);
-                }
-            }
-        });
+        HudComponentItem l_LastHovered = null;
+
+        for (HudComponentItem l_Item : HudManager.Get().Items)
+        {
+            if (!l_Item.IsHidden() && l_Item.Render(mouseX, mouseY, partialTicks))
+                l_LastHovered = l_Item;
+        }
+
+        if (l_LastHovered != null)
+        {
+            /// Add to the back of the list for rendering
+            HudManager.Get().Items.remove(l_LastHovered);
+            HudManager.Get().Items.add(l_LastHovered);
+        }
         
         if (Clicked)
         {

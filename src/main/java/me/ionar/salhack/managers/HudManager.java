@@ -70,7 +70,7 @@ public class HudManager
         CanSave = true;
     }
     
-    public List<HudComponentItem> Items = new ArrayList<HudComponentItem>();
+    public ArrayList<HudComponentItem> Items = new ArrayList<HudComponentItem>();
     private boolean CanSave = false;
 
     public void Add(HudComponentItem p_Item)

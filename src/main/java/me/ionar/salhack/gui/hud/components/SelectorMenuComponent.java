@@ -22,6 +22,11 @@ public class SelectorMenuComponent extends HudComponentItem
         super.render(p_MouseX, p_MouseY, p_PartialTicks);
         
         l_Component.Render(p_MouseX, p_MouseY, true, true);
+        
+        SetWidth(l_Component.GetWidth());
+        SetHeight(l_Component.GetHeight());
+        SetX(l_Component.GetX());
+        SetY(l_Component.GetY());
     }
 
     @Override

@@ -142,9 +142,12 @@ public class HudComponentItem
         Clamped = p_Clamped;
     }
 
-    public void render(int p_MouseX, int p_MouseY, float p_PartialTicks)
+    /// don't override unless you return this
+    public boolean Render(int p_MouseX, int p_MouseY, float p_PartialTicks)
     {
-        if (p_MouseX >= GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY >= GetY() && p_MouseY < GetY() + GetHeight())
+        boolean l_Inside = p_MouseX >= GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY >= GetY() && p_MouseY < GetY() + GetHeight();
+
+        if (l_Inside)
         {
             RenderUtil.drawRect(GetX(), GetY(), GetX()+GetWidth(), GetY()+GetHeight(), 0x50384244);
         }
@@ -164,6 +167,23 @@ public class HudComponentItem
             SetX(ClampX);
             SetY(ClampY);
         }*/
+
+        render(p_MouseX, p_MouseY, p_PartialTicks);
+        
+        if (IsSelected())
+        {
+            RenderUtil.drawRect(GetX(), GetY(),
+                    GetX() + GetWidth(), GetY() + GetHeight(),
+                    0x35DDDDDD);
+        }
+
+        return l_Inside;
+    }
+    
+    /// override for childs
+    public void render(int p_MouseX, int p_MouseY, float p_PartialTicks)
+    {
+        
     }
 
     public boolean OnMouseClick(int p_MouseX, int p_MouseY, int p_MouseButton)
