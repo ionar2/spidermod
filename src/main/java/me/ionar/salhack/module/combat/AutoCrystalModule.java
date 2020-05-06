@@ -395,11 +395,10 @@ public class AutoCrystalModule extends Module
             case Always:
                 return true;
             case OnlyOwn:
-                Iterator<BlockPos> l_Itr = PlacedCrystals.iterator(); 
-                while (l_Itr.hasNext()) 
-                { 
-                    BlockPos l_Pos = (BlockPos)l_Itr.next(); 
-                    if (l_Pos.getDistance((int)p_Entity.posX, (int)p_Entity.posY, (int)p_Entity.posZ) <= 3.0)
+                /// create copy
+                for (BlockPos l_Pos : new ArrayList<BlockPos>(PlacedCrystals))
+                {
+                    if (l_Pos != null && l_Pos.getDistance((int)p_Entity.posX, (int)p_Entity.posY, (int)p_Entity.posZ) <= 3.0)
                         return true;
                 }
                 break;
