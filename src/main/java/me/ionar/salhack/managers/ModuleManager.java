@@ -280,7 +280,7 @@ public class ModuleManager
         
         Module l_Mod = ArrayListAnimations.get(0);
         
-        if ((l_Mod.RemainingXAnimation -= (RenderUtil.getStringWidth(l_Mod.GetFullArrayListDisplayName()) / 3)) <= 0)
+        if ((l_Mod.RemainingXAnimation -= (RenderUtil.getStringWidth(l_Mod.GetFullArrayListDisplayName()) / 10)) <= 0)
         {
             ArrayListAnimations.remove(l_Mod);
             l_Mod.RemainingXAnimation = 0;
