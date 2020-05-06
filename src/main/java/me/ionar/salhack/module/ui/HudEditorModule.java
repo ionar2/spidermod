@@ -26,7 +26,7 @@ public final class HudEditorModule extends Module
         if (mc.world != null)
         {
             if (m_HudEditor == null)
-                m_HudEditor = new GuiHudEditor();
+                m_HudEditor = new GuiHudEditor(this);
             
             mc.displayGuiScreen(m_HudEditor);
         }

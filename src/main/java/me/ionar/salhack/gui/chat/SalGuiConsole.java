@@ -12,6 +12,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.ionar.salhack.command.Command;
 import me.ionar.salhack.managers.CommandManager;
+import me.ionar.salhack.module.ui.ConsoleModule;
 import me.ionar.salhack.util.render.RenderUtil;
 
 import java.io.IOException;
@@ -20,18 +21,13 @@ import java.util.List;
 
 public final class SalGuiConsole extends GuiChat
 {
-    public SalGuiConsole(GuiChat oldChat)
+    public SalGuiConsole(ConsoleModule p_Console)
     {
-       // defaultInputFieldText = oldChat.inputField.getText();
-     //   setWorldAndResolution(oldChat.mc, oldChat.width, oldChat.height);
-    }
-
-    public SalGuiConsole(String defaultText)
-    {
-      //  defaultInputFieldText = defaultText;
+        Console = p_Console;
     }
     
     private Command CurrentCommand = null;
+    private ConsoleModule Console;
     
     @Override
     public void initGui()
@@ -221,5 +217,14 @@ public final class SalGuiConsole extends GuiChat
         drawRect(2, this.height, this.width, this.height, Integer.MIN_VALUE);
 
         //super.drawScreen(mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    public void onGuiClosed()
+    {
+        super.onGuiClosed();
+
+        if (Console.isEnabled())
+            Console.toggle();
     }
 }

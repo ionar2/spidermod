@@ -6,9 +6,19 @@ import org.lwjgl.opengl.GL11;
 
 import me.ionar.salhack.gui.SalGuiScreen;
 import me.ionar.salhack.managers.HudManager;
+import me.ionar.salhack.module.ui.HudEditorModule;
 
 public class GuiHudEditor extends SalGuiScreen
 {
+    public GuiHudEditor(HudEditorModule p_HudEditor)
+    {
+        super();
+        
+        HudEditor = p_HudEditor;
+    }
+    
+    private HudEditorModule HudEditor;
+    
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
@@ -61,5 +71,14 @@ public class GuiHudEditor extends SalGuiScreen
     public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick)
     {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+    }
+
+    @Override
+    public void onGuiClosed()
+    {
+        super.onGuiClosed();
+
+        if (HudEditor.isEnabled())
+            HudEditor.toggle();
     }
 }
