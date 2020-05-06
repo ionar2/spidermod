@@ -44,6 +44,7 @@ public class SalHack
         m_FontManager.Load();
         m_ImageManager.Load();
         m_DiscordManager.Start();
+        m_FriendManager.Load();
     }
 
     public static ModuleManager GetModuleManager()

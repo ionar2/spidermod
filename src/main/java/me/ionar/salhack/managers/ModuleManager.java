@@ -92,6 +92,7 @@ public class ModuleManager
         Add(new BuildHeightModule());
         Add(new ChatModificationsModule());
         Add(new ChestStealerModule());
+        Add(new FriendsModule());
         Add(new GlobalLocationModule());
         Add(new HotbarCacheModule());
         Add(new RetardChatModule());

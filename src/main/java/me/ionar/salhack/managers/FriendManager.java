@@ -18,6 +18,7 @@ import com.google.gson.reflect.TypeToken;
 import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.module.Value;
+import me.ionar.salhack.module.misc.FriendsModule;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -28,9 +29,10 @@ public class FriendManager
         return SalHack.GetFriendManager();
     }
     
+    private FriendsModule m_FriendsModule;
+    
     public FriendManager()
     {
-        LoadFriends();
     }
     
     /// Loads the friends from the JSON
@@ -126,14 +128,27 @@ public class FriendManager
 
     public boolean IsFriend(String p_Name)
     {
+        if (!m_FriendsModule.isEnabled())
+            return false;
+        
         return FriendList.containsKey(p_Name.toLowerCase());
     }
 
     public Friend GetFriend(Entity e)
     {
+        if (!m_FriendsModule.isEnabled())
+            return null;
+        
         if (FriendList.containsKey(e.getName().toLowerCase()))
             return null;
         
         return FriendList.get(e.getName().toLowerCase());
+    }
+
+    public void Load()
+    {
+        LoadFriends();
+        
+        m_FriendsModule = (FriendsModule)ModuleManager.Get().GetMod(FriendsModule.class);
     }
 }
