@@ -30,6 +30,6 @@ public class PvPInfoComponent extends HudComponentItem
         RenderUtil.drawStringWithShadow(l_AutoTotem, GetX(), GetY()+24, -1);
 
         SetWidth(RenderUtil.getStringWidth(l_AutoCrystal));
-        SetHeight(RenderUtil.getStringHeight(l_AutoCrystal));
+        SetHeight(RenderUtil.getStringHeight(l_AutoCrystal)+RenderUtil.getStringHeight(l_KillAura)+RenderUtil.getStringHeight(l_AutoTotem));
     }
 }
