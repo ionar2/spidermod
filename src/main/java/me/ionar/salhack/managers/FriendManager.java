@@ -12,6 +12,8 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 
 import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.main.SalHack;
@@ -47,7 +49,7 @@ public class FriendManager
             Reader reader = Files.newBufferedReader(Paths.get("SalHack/" + "FriendList" + ".json"));
 
             // convert JSON file to map
-            FriendList = gson.fromJson(reader, HashMap.class);
+            FriendList = gson.fromJson(reader, new TypeToken<LinkedTreeMap<String, Friend>>(){}.getType());
 
             // close reader
             reader.close();
@@ -70,7 +72,7 @@ public class FriendManager
         {
             writer = Files.newBufferedWriter(Paths.get("SalHack/" + "FriendList" + ".json"));
         
-            gson.toJson(FriendList, writer);
+            gson.toJson(FriendList, new TypeToken<LinkedTreeMap<String, Friend>>(){}.getType(), writer);
             writer.close();
         }
         catch (IOException e)
@@ -80,7 +82,7 @@ public class FriendManager
         }
     }
     
-    private HashMap<String, Friend> FriendList = new HashMap<>();
+    private LinkedTreeMap<String, Friend> FriendList = new LinkedTreeMap<>();
     
     public String GetFriendName(Entity p_Entity)
     {
@@ -117,7 +119,7 @@ public class FriendManager
         return true;
     }
 
-    public final HashMap<String, Friend> GetFriends()
+    public final LinkedTreeMap<String, Friend> GetFriends()
     {
         return FriendList;
     }
