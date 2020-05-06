@@ -2,6 +2,8 @@ package me.ionar.salhack.command.impl;
 
 import java.util.HashMap;
 
+import com.google.gson.internal.LinkedTreeMap;
+
 import me.ionar.salhack.command.Command;
 import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.managers.FriendManager;
@@ -62,7 +64,7 @@ public class FriendCommand extends Command
         }
         else if (l_Split[1].toLowerCase().startsWith("l"))
         {
-            final HashMap<String, Friend> l_Map = FriendManager.Get().GetFriends();
+            final LinkedTreeMap<String, Friend> l_Map = FriendManager.Get().GetFriends();
             
             l_Map.forEach((k,v)->
             {

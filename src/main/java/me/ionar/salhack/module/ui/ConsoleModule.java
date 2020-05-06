@@ -26,7 +26,7 @@ public final class ConsoleModule extends Module
         if (mc.world != null)
         {
             if (m_Console == null)
-                m_Console = new SalGuiConsole("Enter a command....");
+                m_Console = new SalGuiConsole(this);
             
             mc.displayGuiScreen(m_Console);
         }

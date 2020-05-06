@@ -32,6 +32,9 @@ import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.module.misc.AutoMendArmorModule;
+import me.ionar.salhack.util.BlockInteractionHelper;
+import me.ionar.salhack.util.BlockInteractionHelper.PlaceResult;
+import me.ionar.salhack.util.BlockInteractionHelper.ValidResult;
 import me.ionar.salhack.util.CrystalUtils;
 import me.ionar.salhack.util.MathUtil;
 import me.ionar.salhack.util.RotationSpoof;
@@ -40,6 +43,7 @@ import me.ionar.salhack.util.entity.PlayerUtil;
 import me.ionar.salhack.util.render.RenderUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
+import net.minecraft.block.BlockObsidian;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -110,6 +114,8 @@ public class AutoCrystalModule extends Module
     public static final Value<Boolean> Tamed = new Value<Boolean>("Tamed", new String[] {"Tamed"}, "Place on Tamed", false);
     public static final Value<Boolean> ResetRotationNoTarget = new Value<Boolean>("ResetRotationNoTarget", new String[] {"ResetRotationNoTarget"}, "ResetRotationNoTarget", false);
     public static final Value<Boolean> Multiplace = new Value<Boolean>("Multiplace", new String[] {"Multiplace"}, "Multiplace", true);
+    public static final Value<Boolean> OnlyPlaceWithCrystal = new Value<Boolean>("OnlyPlaceWithCrystal ", new String[] {"OPWC"}, "Only places when you're manually using a crystal in your main or offhand", false);
+    public static final Value<Boolean> PlaceObsidianIfNoValidSpots = new Value<Boolean>("PlaceObsidianIfNoValidSpots ", new String[] {"POINVS"}, "Automatically places obsidian if there are no available crystal spots, so you can crystal your opponent", false);
     
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
     public static final Value<Integer> Green = new Value<Integer>("Green", new String[] {"Green"}, "Green for rendering", 0xFF, 0, 255, 5);
@@ -389,11 +395,10 @@ public class AutoCrystalModule extends Module
             case Always:
                 return true;
             case OnlyOwn:
-                Iterator<BlockPos> l_Itr = PlacedCrystals.iterator(); 
-                while (l_Itr.hasNext()) 
-                { 
-                    BlockPos l_Pos = (BlockPos)l_Itr.next(); 
-                    if (l_Pos.getDistance((int)p_Entity.posX, (int)p_Entity.posY, (int)p_Entity.posZ) <= 3.0)
+                /// create copy
+                for (BlockPos l_Pos : new ArrayList<BlockPos>(PlacedCrystals))
+                {
+                    if (l_Pos != null && l_Pos.getDistance((int)p_Entity.posX, (int)p_Entity.posY, (int)p_Entity.posZ) <= 3.0)
                         return true;
                 }
                 break;
@@ -497,25 +502,25 @@ public class AutoCrystalModule extends Module
         if (p_Entity.isDead || ((EntityLivingBase)p_Entity).getHealth() <= 0.0f)
             return false;
         
-        boolean l_Valid = false;
+        if (p_Entity.getDistance(mc.player) > 20.0f)
+            return false;
         
         if (p_Entity instanceof EntityPlayer && Players.getValue())
         {
             if (p_Entity == mc.player)
                 return false;
             
-            /// prioritize players
             return true;
         }
         
-        if (Hostile.getValue())
-            l_Valid = EntityUtil.isHostileMob(p_Entity);
-        if (Animals.getValue())
-            l_Valid = EntityUtil.isPassive(p_Entity);
-        if (Tamed.getValue())
-            l_Valid = p_Entity instanceof AbstractChestHorse && ((AbstractChestHorse)p_Entity).isTame();
+        if (Hostile.getValue() && EntityUtil.isHostileMob(p_Entity))
+            return true;
+        if (Animals.getValue() && EntityUtil.isPassive(p_Entity))
+            return true;
+        if (Tamed.getValue() && p_Entity instanceof AbstractChestHorse && ((AbstractChestHorse)p_Entity).isTame())
+            return true;
         
-        return l_Valid && mc.player.getDistance(p_Entity) < 20.0f;
+        return false;
     }
     
     private EntityLivingBase GetNearTarget(Entity p_DistanceTarget)
@@ -534,10 +539,15 @@ public class AutoCrystalModule extends Module
     
     private BlockPos HandlePlaceCrystal(@Nullable EventPlayerMotionUpdate p_Event)
     {
-        List<BlockPos> l_AvailableBlockPositions = CrystalUtils.findCrystalBlocks(mc.player, PlaceDistance.getValue());
+        if (OnlyPlaceWithCrystal.getValue())
+        {
+            /// if we don't have crystal in main or offhand, don't place, this was a request from issue #25
+            if (mc.player.getHeldItemMainhand().getItem() != Items.END_CRYSTAL && mc.player.getHeldItemOffhand().getItem() != Items.END_CRYSTAL)
+                return BlockPos.ORIGIN;
+        }
         
-        if (l_AvailableBlockPositions.isEmpty())
-            return BlockPos.ORIGIN;
+        List<BlockPos> l_AvailableBlockPositions = CrystalUtils.findCrystalBlocks(mc.player, PlaceDistance.getValue());
+
         
         switch (PlaceMode.getValue())
         {
@@ -550,63 +560,128 @@ public class AutoCrystalModule extends Module
                 break;
             case MostDamage:
             {
-                EntityLivingBase l_Target = null;
-                
-                float l_MinDmg = MinDMG.getValue();
-                float l_MaxSelfDmg = MaxSelfDMG.getValue();
-                float l_DMG = 0.0f;
-                
-                /// Iterate through all players
-                for (EntityPlayer l_Player : mc.world.playerEntities)
+                if (l_AvailableBlockPositions.isEmpty())
                 {
-                    if (!IsValidTarget(l_Player))
-                        continue;
+                    FindNewTarget();
+                }
+                else
+                {
+                    EntityLivingBase l_Target = null;
                     
-                    /// Iterate block positions for this entity
-                    for (BlockPos l_Pos : l_AvailableBlockPositions)
+                    float l_MinDmg = MinDMG.getValue();
+                    float l_MaxSelfDmg = MaxSelfDMG.getValue();
+                    float l_DMG = 0.0f;
+                    
+                    /// Iterate through all players
+                    for (EntityPlayer l_Player : mc.world.playerEntities)
                     {
-                        if (l_Player.getDistanceSq(l_Pos) >= 169.0D)
-                            continue; 
-                        
-                        float l_TempDMG = CrystalUtils.calculateDamage(mc.world, l_Pos.getX() + 0.5, l_Pos.getY() + 1.0, l_Pos.getZ() + 0.5, l_Player, 0);
-                        
-                        if (l_TempDMG < l_MinDmg)
+                        if (!IsValidTarget(l_Player))
                             continue;
                         
-                        float l_SelfTempDMG = CrystalUtils.calculateDamage(mc.world, l_Pos.getX() + 0.5, l_Pos.getY() + 1.0, l_Pos.getZ() + 0.5, mc.player, 0);
-                        
-                        if (l_SelfTempDMG > l_MaxSelfDmg)
-                            continue;
-                        
-                        if (WallsRange.getValue() > 0)
+                        /// Iterate block positions for this entity
+                        for (BlockPos l_Pos : l_AvailableBlockPositions)
                         {
-                            if (!PlayerUtil.CanSeeBlock(l_Pos))
-                                if (l_Pos.getDistance((int)mc.player.posX, (int)mc.player.posY, (int)mc.player.posZ) > WallsRange.getValue())
-                                    continue;
-                        }
-                        
-                        if (l_TempDMG > l_DMG)
-                        {
-                            l_DMG = l_TempDMG;
-                            l_Target = l_Player;
+                            if (l_Player.getDistanceSq(l_Pos) >= 169.0D)
+                                continue; 
+                            
+                            float l_TempDMG = CrystalUtils.calculateDamage(mc.world, l_Pos.getX() + 0.5, l_Pos.getY() + 1.0, l_Pos.getZ() + 0.5, l_Player, 0);
+                            
+                            if (l_TempDMG < l_MinDmg)
+                                continue;
+                            
+                            float l_SelfTempDMG = CrystalUtils.calculateDamage(mc.world, l_Pos.getX() + 0.5, l_Pos.getY() + 1.0, l_Pos.getZ() + 0.5, mc.player, 0);
+                            
+                            if (l_SelfTempDMG > l_MaxSelfDmg)
+                                continue;
+                            
+                            if (WallsRange.getValue() > 0)
+                            {
+                                if (!PlayerUtil.CanSeeBlock(l_Pos))
+                                    if (l_Pos.getDistance((int)mc.player.posX, (int)mc.player.posY, (int)mc.player.posZ) > WallsRange.getValue())
+                                        continue;
+                            }
+                            
+                            if (l_TempDMG > l_DMG)
+                            {
+                                l_DMG = l_TempDMG;
+                                l_Target = l_Player;
+                            }
                         }
                     }
+                    
+                    if (l_Target == null)
+                        l_Target = GetNearTarget(mc.player);
+                    
+                    if (m_Target != null && l_Target != m_Target && l_Target != null)
+                    {
+                        SendMessage(String.format("Found new target %s", l_Target.getName()));
+                    }
+                    
+                    m_Target = l_Target;
                 }
-                
-                if (l_Target == null)
-                    l_Target = GetNearTarget(mc.player);
-                
-                if (m_Target != null && l_Target != m_Target && l_Target != null)
-                {
-                    SendMessage(String.format("Found new target %s", l_Target.getName()));
-                }
-                
-                m_Target = l_Target;
-                
                 break;
             }
             default:
                 break;
+        }
+        
+        if (l_AvailableBlockPositions.isEmpty())
+        {
+            if (PlaceObsidianIfNoValidSpots.getValue() && m_Target != null)
+            {
+                int l_Slot = AutoTrapFeet.findStackHotbar(Blocks.OBSIDIAN);
+                
+                if (l_Slot != -1)
+                {
+                    if (mc.player.inventory.currentItem != l_Slot)
+                    {
+                        mc.player.inventory.currentItem = l_Slot;
+                        mc.playerController.updateController();
+                        return BlockPos.ORIGIN;
+                    }
+                    
+                    float l_Range = PlaceDistance.getValue();
+                    
+                    float l_TargetDMG = 0.0f;
+                    float l_MinDmg = MinDMG.getValue();
+                    
+                    /// FacePlace
+                    if (m_Target.getHealth() <= FacePlace.getValue())
+                        l_MinDmg = 1f;
+                    
+                    BlockPos l_TargetPos = null;
+
+                    for (BlockPos l_Pos : BlockInteractionHelper.getSphere(PlayerUtil.GetLocalPlayerPosFloored(), PlaceDistance.getValue(), (int)l_Range, false, true, 0))
+                    {
+                        ValidResult l_Result = BlockInteractionHelper.valid(l_Pos);
+                        
+                        if (l_Result != ValidResult.Ok)
+                            continue;
+                        
+                        if (!CrystalUtils.CanPlaceCrystalIfObbyWasAtPos(l_Pos))
+                            continue;
+                        
+                        float l_TempDMG = CrystalUtils.calculateDamage(mc.world, l_Pos.getX() + 0.5, l_Pos.getY() + 1.0, l_Pos.getZ() + 0.5, m_Target, 0);
+                        
+                        if (l_TempDMG < l_MinDmg)
+                            continue;
+                        
+                        if (l_TempDMG >= l_TargetDMG)
+                        {
+                            l_TargetPos = l_Pos;
+                            l_TargetDMG = l_TempDMG;
+                        }
+                    }
+                    
+                    if (l_TargetPos != null)
+                    {
+                        BlockInteractionHelper.place(l_TargetPos, PlaceDistance.getValue(), true, false); ///< sends a new packet, might be bad for ncp flagging tomany packets..
+                        SendMessage(String.format("Tried to place obsidian at %s would deal %s dmg", l_TargetPos.toString(), l_TargetDMG));
+                    }
+                }
+            }
+            
+            return BlockPos.ORIGIN;
         }
 
         

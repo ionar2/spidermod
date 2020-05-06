@@ -24,12 +24,12 @@ import net.minecraft.util.math.BlockPos;
 public class AutoBonemealModule extends Module
 {
     public static Value<Integer> Radius = new Value<Integer>("Radius", new String[] {"R"}, "Radius to search for not fully grown seeds", 4, 0, 10, 1);
-    
+
     public AutoBonemealModule()
     {
-        super("AutoBonemeal", new String[] {""}, "", "NONE", -1, ModuleType.MISC);
+        super("AutoBonemeal", new String[] {""}, "Bonemeals anything nearby", "NONE", -1, ModuleType.MISC);
     }
-    
+
     private boolean IsRunning = false;
 
     @EventHandler
@@ -39,7 +39,7 @@ public class AutoBonemealModule extends Module
                                 .filter(p_Pos -> IsValidBlockPos(p_Pos))
                                 .min(Comparator.comparing(p_Pos -> EntityUtil.GetDistanceOfEntityToBlock(mc.player, p_Pos)))
                                 .orElse(null);
-        
+
         if (l_ClosestPos != null && UpdateBonemealIfNeed())
         {
             p_Event.cancel();
@@ -49,13 +49,13 @@ public class AutoBonemealModule extends Module
                     l_ClosestPos.getY() + 0.5,
                     l_ClosestPos.getZ() + 0.5,
                     mc.player);
-            
+
             mc.player.rotationYawHead = (float) l_Pos[0];
-            
+
             PlayerUtil.PacketFacePitchAndYaw((float)l_Pos[1], (float)l_Pos[0]);
 
             mc.player.swingArm(EnumHand.MAIN_HAND);
-            
+
             mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(l_ClosestPos, EnumFacing.UP,
                 mc.player.getHeldItemOffhand().getItem() == Items.DYE ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0, 0, 0));
             IsRunning = true;
@@ -63,32 +63,32 @@ public class AutoBonemealModule extends Module
         else
             IsRunning = false;
     });
-    
+
     private boolean IsValidBlockPos(final BlockPos p_Pos)
     {
         IBlockState l_State = mc.world.getBlockState(p_Pos);
-        
+
         if (l_State.getBlock() instanceof BlockCrops)
         {
             BlockCrops l_Crop = (BlockCrops)l_State.getBlock();
-            
+
             if (!l_Crop.isMaxAge(l_State))
                 return true;
         }
-        
+
         return false;
     }
-    
+
     public boolean IsRunning()
     {
         return IsRunning;
     }
-    
+
     private boolean UpdateBonemealIfNeed()
     {
         ItemStack l_Main = mc.player.getHeldItemMainhand();
         ItemStack l_Off = mc.player.getHeldItemOffhand();
-        
+
         if (!l_Main.isEmpty() && l_Main.getItem() instanceof ItemDye)
         {
             if (IsBoneMealItem(l_Main))
@@ -99,14 +99,14 @@ public class AutoBonemealModule extends Module
             if (IsBoneMealItem(l_Off))
                 return true;
         }
-        
+
         for (int l_I = 0; l_I < 9; ++l_I)
         {
             ItemStack l_Stack = mc.player.inventory.getStackInSlot(l_I);
-            
+
             if (l_Stack.isEmpty() || !(l_Stack.getItem() instanceof ItemDye))
                 continue;
-            
+
             if (IsBoneMealItem(l_Stack))
             {
                 mc.player.inventory.currentItem = l_I;
@@ -114,10 +114,10 @@ public class AutoBonemealModule extends Module
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     private boolean IsBoneMealItem(ItemStack p_Stack)
     {
         return EnumDyeColor.byDyeDamage(p_Stack.getMetadata()) == EnumDyeColor.WHITE;

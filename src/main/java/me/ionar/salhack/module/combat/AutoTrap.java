@@ -80,10 +80,10 @@ public final class AutoTrap extends Module
     { "announceUsage" }, "Announce Usage", true);
     public final Value<Boolean> EChests = new Value<Boolean>("EChests", new String[]
     { "EChests" }, "EChests", true);
-    
+
     public final Value<Modes> Mode = new Value<Modes>("Mode", new String[] {"Mode"}, "The mode to use for autotrap", Modes.Full);
-    
-    
+
+
     public enum Modes
     {
         Full,
@@ -93,9 +93,9 @@ public final class AutoTrap extends Module
     public AutoTrap()
     {
         super("AutoTrap", new String[]
-        { "AutoTrap" }, "AutoTrap", "NONE", 0x24DB43, ModuleType.COMBAT);
+        { "AutoTrap" }, "Traps enemies in obsidian", "NONE", 0x24DB43, ModuleType.COMBAT);
     }
-    
+
     private String lastTickTargetName = "";
     private int playerHotbarSlot = -1;
     private int lastHotbarSlot = -1;
@@ -106,20 +106,20 @@ public final class AutoTrap extends Module
     @Override
     public void toggleNoSave()
     {
-        
+
     }
-    
+
     @Override
     public void onEnable()
     {
         super.onEnable();
-        
+
         if (mc.player == null)
         {
             toggle();
             return;
         }
-        
+
         firstRun = true;
         playerHotbarSlot = mc.player.inventory.currentItem;
         lastHotbarSlot = -1;
@@ -155,7 +155,7 @@ public final class AutoTrap extends Module
     {
         if (p_Event.getEra() != Era.PRE)
             return;
-        
+
         EntityPlayer closestTarget = SalUtil.findClosestTarget();
         if (closestTarget == null)
         {
@@ -189,7 +189,7 @@ public final class AutoTrap extends Module
         }
 
         final List<Vec3d> placeTargets = new ArrayList<Vec3d>();
-        
+
         switch (Mode.getValue())
         {
             case Full:
@@ -201,7 +201,7 @@ public final class AutoTrap extends Module
             default:
                 break;
         }
-        
+
         int blocksPlaced = 0;
         while (blocksPlaced < blockPerTick.getValue())
         {
@@ -300,7 +300,7 @@ public final class AutoTrap extends Module
             if (stack != ItemStack.EMPTY && stack.getItem() instanceof ItemBlock)
             {
                 final Block block = ((ItemBlock) stack.getItem()).getBlock();
-                
+
                 if (EChests.getValue())
                 {
                     if (block instanceof BlockEnderChest)

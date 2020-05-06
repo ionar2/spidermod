@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.main.Wrapper;
+import me.ionar.salhack.managers.CommandManager;
 import me.ionar.salhack.managers.HudManager;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.render.RenderUtil;
@@ -38,6 +39,8 @@ public class HudComponentItem
     private boolean Dragging = false;
     protected boolean Clamped = false;
     protected int Side = 0;
+    private boolean Selected = false;
+    private boolean MultiSelectedDragging = false;
 
     protected Minecraft mc = Wrapper.GetMC();
     
@@ -140,9 +143,12 @@ public class HudComponentItem
         Clamped = p_Clamped;
     }
 
-    public void render(int p_MouseX, int p_MouseY, float p_PartialTicks)
+    /// don't override unless you return this
+    public boolean Render(int p_MouseX, int p_MouseY, float p_PartialTicks)
     {
-        if (p_MouseX >= GetX() && p_MouseX < p_MouseX + GetWidth() && p_MouseY >= GetY() && p_MouseY < GetY() + GetHeight())
+        boolean l_Inside = p_MouseX >= GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY >= GetY() && p_MouseY < GetY() + GetHeight();
+
+        if (l_Inside)
         {
             RenderUtil.drawRect(GetX(), GetY(), GetX()+GetWidth(), GetY()+GetHeight(), 0x50384244);
         }
@@ -162,6 +168,23 @@ public class HudComponentItem
             SetX(ClampX);
             SetY(ClampY);
         }*/
+
+        render(p_MouseX, p_MouseY, p_PartialTicks);
+        
+        if (IsSelected())
+        {
+            RenderUtil.drawRect(GetX(), GetY(),
+                    GetX() + GetWidth(), GetY() + GetHeight(),
+                    0x35DDDDDD);
+        }
+
+        return l_Inside;
+    }
+    
+    /// override for childs
+    public void render(int p_MouseX, int p_MouseY, float p_PartialTicks)
+    {
+        
     }
 
     public boolean OnMouseClick(int p_MouseX, int p_MouseY, int p_MouseButton)
@@ -173,6 +196,16 @@ public class HudComponentItem
                 SetDragging(true);
                 DeltaX = p_MouseX - GetX();
                 DeltaY = p_MouseY - GetY();
+
+                HudManager.Get().Items.forEach(p_Item ->
+                {
+                    if (p_Item.IsMultiSelectedDragging())
+                    {
+                        p_Item.SetDragging(true);
+                        p_Item.SetDeltaX(p_MouseX - p_Item.GetX());
+                        p_Item.SetDeltaY(p_MouseY - p_Item.GetY());
+                    }
+                });
             }
             else if (p_MouseButton == 1)
             {
@@ -194,6 +227,16 @@ public class HudComponentItem
         }
         
         return false;
+    }
+
+    public void SetDeltaX(float p_X)
+    {
+        DeltaX = p_X;
+    }
+
+    public void SetDeltaY(float p_Y)
+    {
+        DeltaY = p_Y;
     }
 
     public void OnMouseRelease(int p_MouseX, int p_MouseY, int p_State)
@@ -223,7 +266,13 @@ public class HudComponentItem
             {
                 String l_Key = (String)entry.getKey();
                 String l_Value = (String)entry.getValue();
-             
+
+                if (l_Key.equalsIgnoreCase("displayname"))
+                {
+                    SetDisplayName(l_Value, false);
+                    continue;
+                }
+                
                 if (l_Key.equalsIgnoreCase("visible"))
                 {
                     SetHidden(l_Value.equalsIgnoreCase("false"));
@@ -331,5 +380,41 @@ public class HudComponentItem
     {
         SetX(DefaultX);
         SetY(DefaultY);
+    }
+
+    public void SetSelected(boolean p_Selected)
+    {
+        Selected = p_Selected;
+    }
+
+    public boolean IsInArea(float p_MouseX1, float p_MouseX2, float p_MouseY1, float p_MouseY2)
+    {
+        return GetX() >= p_MouseX1 && GetX()+GetWidth() <= p_MouseX2 && GetY() >= p_MouseY1 && GetY()+GetHeight() <= p_MouseY2;
+    }
+
+    public boolean IsSelected()
+    {
+        return Selected;
+    }
+
+    public void SetMultiSelectedDragging(boolean b)
+    {
+        MultiSelectedDragging = b;
+    }
+    
+    public boolean IsMultiSelectedDragging()
+    {
+        return MultiSelectedDragging;
+    }
+
+    public void SetDisplayName(String p_NewName, boolean p_Save)
+    {
+        DisplayName = p_NewName;
+        
+        if (p_Save)
+        {
+            HudManager.Get().ScheduleSave(this);
+            CommandManager.Get().Reload();
+        }
     }
 }

@@ -16,6 +16,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 
 import me.ionar.salhack.main.SalHack;
+import me.ionar.salhack.main.Wrapper;
+import me.ionar.salhack.managers.ModuleManager;
+import me.ionar.salhack.module.ui.HudModule;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
@@ -519,19 +522,37 @@ public final class RenderUtil
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
     }
+    
+    /// @TODO: store hudmodule somewhere rather than accessing from the list every call, this is a performance loss.
 
     public static float drawStringWithShadow(String p_Name, float p_X, float p_Y, int p_Color)
     {
+        HudModule l_Hud = (HudModule)ModuleManager.Get().GetMod(HudModule.class);
+        
+        if (l_Hud != null && !l_Hud.CustomFont.getValue())
+            return (float)Wrapper.GetMC().fontRenderer.drawStringWithShadow(p_Name, p_X, p_Y, p_Color);
+        
         return SalHack.GetFontManager().DrawStringWithShadow(p_Name, p_X, p_Y, p_Color);
     }
 
     public static float getStringWidth(String p_Name)
     {
+        HudModule l_Hud = (HudModule)ModuleManager.Get().GetMod(HudModule.class);
+        
+        if (l_Hud != null && !l_Hud.CustomFont.getValue())
+            return Wrapper.GetMC().fontRenderer.getStringWidth(p_Name);
+        
         return SalHack.GetFontManager().GetStringWidth(p_Name);
     }
 
     public static float getStringHeight(String name)
     {
+        HudModule l_Hud = (HudModule)ModuleManager.Get().GetMod(HudModule.class);
+        
+        if (l_Hud != null && !l_Hud.CustomFont.getValue())
+            return Wrapper.GetMC().fontRenderer.FONT_HEIGHT;
+        
+        
         return SalHack.GetFontManager().GetStringHeight(name);
     }
 

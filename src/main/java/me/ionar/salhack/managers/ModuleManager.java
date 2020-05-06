@@ -2,10 +2,15 @@ package me.ionar.salhack.managers;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.lwjgl.opengl.GL11;
+
+import com.google.gson.internal.LinkedTreeMap;
 
 import me.ionar.salhack.SalHackMod;
 import me.ionar.salhack.events.render.RenderEvent;
@@ -23,8 +28,10 @@ import me.ionar.salhack.module.render.*;
 import me.ionar.salhack.module.schematica.*;
 import me.ionar.salhack.module.ui.*;
 import me.ionar.salhack.module.world.*;
+import me.ionar.salhack.util.Pair;
 import me.ionar.salhack.util.entity.EntityUtil;
 import me.ionar.salhack.util.render.CustomTessellator;
+import me.ionar.salhack.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
@@ -43,6 +50,7 @@ public class ModuleManager
     }
 
     public ArrayList<Module> Mods = new ArrayList<Module>();
+    private ArrayList<Module> ArrayListAnimations = new ArrayList<Module>();
     
     public void Init()
     {
@@ -92,6 +100,7 @@ public class ModuleManager
         Add(new BuildHeightModule());
         Add(new ChatModificationsModule());
         Add(new ChestStealerModule());
+        Add(new FriendsModule());
         Add(new GlobalLocationModule());
         Add(new HotbarCacheModule());
         Add(new RetardChatModule());
@@ -148,10 +157,12 @@ public class ModuleManager
         
         /// Schematica
         Add(new PrinterBypassModule());
-        
+
+        Mods.sort((p_Mod1, p_Mod2) -> p_Mod1.getDisplayName().compareTo(p_Mod2.getDisplayName()));
+
         Mods.forEach(p_Mod ->
         {
-            p_Mod.LoadSettings(); 
+            p_Mod.LoadSettings();
         });
     }
 
@@ -242,5 +253,37 @@ public class ModuleManager
         }
         
         return null;
+    }
+    
+    public void OnModEnable(Module p_Mod)
+    {
+        ArrayListAnimations.remove(p_Mod);
+        ArrayListAnimations.add(p_Mod);
+
+        final Comparator<Module> comparator = (first, second) ->
+        {
+            final String firstName = first.GetFullArrayListDisplayName();
+            final String secondName = second.GetFullArrayListDisplayName();
+            final float dif = RenderUtil.getStringWidth(secondName) - RenderUtil.getStringWidth(firstName);
+            return dif != 0 ? (int) dif : secondName.compareTo(firstName);
+        };
+        
+        ArrayListAnimations = (ArrayList<Module>) ArrayListAnimations.stream()
+        .sorted(comparator)
+        .collect(Collectors.toList());
+    }
+
+    public void Update()
+    {
+        if (ArrayListAnimations.isEmpty())
+            return;
+        
+        Module l_Mod = ArrayListAnimations.get(0);
+        
+        if ((l_Mod.RemainingXAnimation -= (RenderUtil.getStringWidth(l_Mod.GetFullArrayListDisplayName()) / 10)) <= 0)
+        {
+            ArrayListAnimations.remove(l_Mod);
+            l_Mod.RemainingXAnimation = 0;
+        }
     }
 }

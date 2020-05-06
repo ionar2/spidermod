@@ -141,8 +141,8 @@ public class MenuComponent
             Wrapper.GetMC().renderEngine.bindTexture(BarTexture.GetResourceLocation());
             GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
             GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            GlStateManager.color(Colors.ImageRed.getValue(), Colors.ImageGreen.getValue(), Colors.ImageBlue.getValue(), Colors.ImageAlpha.getValue());
             GlStateManager.enableTexture2D();
-            GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
             //   public static void drawTexture(float x, float y, float width, float height, float u, float v, float t, float s)
             RenderUtil.drawTexture(l_X, GetY()+3, BarTexture.GetWidth()/3, BarTexture.GetHeight()/3, 0, 0, 1, 1);
             
@@ -244,7 +244,7 @@ public class MenuComponent
         {
             if (!l_DropDown)
                 RenderUtil.drawGradientRect(GetX(), p_Y, GetX()+p_Item.GetWidth(), p_Y+11, 0x99040404, 0x99000000);
-            l_Color = GetTextColor();
+            l_Color = (p_Item.HasState(ComponentItem.Clicked) && !p_Item.HasFlag(ComponentItem.DontDisplayClickableHighlight)) ? GetTextColor() : l_Color;// - commented for issue #27
             HoveredItem = p_Item;
             
             p_Item.AddState(ComponentItem.Hovered);
@@ -428,5 +428,4 @@ public class MenuComponent
     {
     	return (Colors.Red.getValue() << 16) & 0x00FF0000 | (Colors.Green.getValue() << 8) & 0x0000FF00 | Colors.Blue.getValue() & 0x000000FF;
     }
-
 }

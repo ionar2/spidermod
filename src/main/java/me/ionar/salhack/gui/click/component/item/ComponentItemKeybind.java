@@ -64,7 +64,7 @@ public class ComponentItemKeybind extends ComponentItem
                 return;
             }
             
-            if (l_Key.equals("END"))
+            if (l_Key.equals("END") || l_Key.equals("BACK") || l_Key.equals("DELETE"))
             {
             	l_Key = "NONE";
             }

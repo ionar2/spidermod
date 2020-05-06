@@ -85,7 +85,47 @@ public class ComponentItemValue extends ComponentItem
     public String GetDisplayText()
     {
         if (Val.getValue() instanceof Boolean)
-            return Val.getName();
+        {
+            String l_DisplayText = Val.getName();
+            
+            if (HasState(ComponentItem.Hovered) && RenderUtil.getStringWidth(l_DisplayText) > GetWidth() - 3)
+            {
+                if (DisplayString == null)
+                    DisplayString = Val.getName();
+
+                l_DisplayText = DisplayString;
+                float l_Width = RenderUtil.getStringWidth(l_DisplayText);
+
+                while (l_Width > GetWidth() - 3)
+                {
+                    l_Width = RenderUtil.getStringWidth(l_DisplayText);
+                    l_DisplayText = l_DisplayText.substring(0, l_DisplayText.length() - 1);
+                }
+
+                if (timer.passed(75) && DisplayString.length() > 0)
+                {
+                    String l_FirstChar = String.valueOf(DisplayString.charAt(0));
+
+                    DisplayString = DisplayString.substring(1) + l_FirstChar;
+
+                    timer.reset();
+                }
+
+                return l_DisplayText;
+            }
+            else
+                DisplayString = null;
+
+            float l_Width = RenderUtil.getStringWidth(l_DisplayText);
+
+            while (l_Width > GetWidth() - 3)
+            {
+                l_Width = RenderUtil.getStringWidth(l_DisplayText);
+                l_DisplayText = l_DisplayText.substring(0, l_DisplayText.length() - 1);
+            }
+
+            return l_DisplayText;
+        }
 
         String l_DisplayText = Val.getName() + " " + Val.getValue().toString() + " ";
         

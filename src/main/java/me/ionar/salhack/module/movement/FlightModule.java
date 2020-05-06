@@ -32,9 +32,9 @@ public final class FlightModule extends Module
     public FlightModule()
     {
         super("Flight", new String[]
-        { "Flight" }, "Flight", "NONE", 0x24DB3E, ModuleType.MOVEMENT);
+        { "Flight" }, "Allows you to fly", "NONE", 0x24DB3E, ModuleType.MOVEMENT);
     }
-    
+
     @Override
     public String getMetaData()
     {
@@ -46,10 +46,10 @@ public final class FlightModule extends Module
     {
         if (mc.player == null)
             return;
-        
+
         if (ElytraOnly.getValue() && !mc.player.isElytraFlying())
             return;
-        
+
         if (Mode.getValue() == Modes.Creative)
         {
             mc.player.setVelocity(0, 0, 0);
@@ -67,12 +67,12 @@ public final class FlightModule extends Module
 
             if (mc.gameSettings.keyBindSneak.isKeyDown())
                 mc.player.motionY = -Speed.getValue();
-            
+
             if (Glide.getValue())
             {
                 mc.player.motionY += -GlideSpeed.getValue();
             }
-            
+
             p_Event.cancel();
 
             mc.player.prevLimbSwingAmount = 0;
@@ -86,7 +86,7 @@ public final class FlightModule extends Module
     {
         if (p_Event.getEra() != Era.PRE)
             return;
-        
+
         if (ElytraOnly.getValue() && !mc.player.isElytraFlying())
             return;
 
@@ -112,7 +112,7 @@ public final class FlightModule extends Module
         if (AntiKick.getValue() && (mc.player.ticksExisted % 4) == 0)
             mc.player.motionY += -0.04;
     });
-    
+
     @EventHandler
     private Listener<EventNetworkPacketEvent> PacketEvent = new Listener<>(p_Event ->
     {
@@ -120,7 +120,7 @@ public final class FlightModule extends Module
         {
             if (!AntiFallDmg.getValue())
                 return;
-            
+
             if (mc.player.isElytraFlying())
                 return;
 

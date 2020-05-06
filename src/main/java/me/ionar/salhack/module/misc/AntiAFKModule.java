@@ -10,22 +10,22 @@ public final class AntiAFKModule extends Module
     public AntiAFKModule()
     {
         super("AntiAFK", new String[]
-        { "BuildH", "BHeight" }, "AntiAFK", "NONE", 0xDB24C4, ModuleType.MISC);
+        { "BuildH", "BHeight" }, "Makes sure you dont get kicked for afking", "NONE", 0xDB24C4, ModuleType.MISC);
     }
-    
+
     private Timer timer = new Timer();
 
     @Override
     public void onEnable()
     {
         super.onEnable();
-        
+
         if (mc.player == null)
         {
             toggle();
             return;
         }
-        
+
         timer = new Timer();
 
         timer.scheduleAtFixedRate(new TimerTask()
@@ -37,12 +37,12 @@ public final class AntiAFKModule extends Module
             }
         }, 0, 120000);
     }
-    
+
     @Override
     public void onDisable()
     {
         super.onDisable();
-        
+
         if (timer != null)
             timer.cancel();
     }

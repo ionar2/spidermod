@@ -2,24 +2,17 @@ package me.ionar.salhack.module.misc;
 
 import java.util.ArrayList;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import me.ionar.salhack.events.player.EventPlayerUpdate;
-import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
-import me.ionar.salhack.module.combat.AutoTotemModule.AutoTotemMode;
 import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.util.entity.PlayerUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
-import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.init.Items;
-import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 
 public class HotbarCacheModule extends Module
 {
@@ -84,19 +77,23 @@ public class HotbarCacheModule extends Module
         {
             case Cache:
                 for (int l_I = 0; l_I < 9; ++l_I)
+                {
                     if (SwitchSlotIfNeed(l_I))
                     {
                         timer.reset();
                         return;
                     }
+                }
                 break;
             case Refill:
                 for (int l_I = 0; l_I < 9; ++l_I)
+                {
                     if (RefillSlotIfNeed(l_I))
                     {
                         timer.reset();
                         return;
                     }
+                }
                 break;
             default:
                 break;
@@ -138,28 +135,36 @@ public class HotbarCacheModule extends Module
         if (l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR)
             return false;
         
+        if (!l_Stack.isStackable())
+            return false;
+        
         if (l_Stack.getCount() >= l_Stack.getMaxStackSize())
             return false;
         
-        /// TODO: Make this a value?
-        if (l_Stack.getCount() >= l_Stack.getMaxStackSize()/2)
-            return false;
-        
-        int l_Slot = PlayerUtil.GetItemSlotNotHotbar(l_Stack.getItem());
-        
-        if (l_Slot != -1 && l_Slot != 45)
+        /// We're going to search the entire inventory for the same stack, WITH THE SAME NAME, and use quick move.
+        for (int l_I = 9; l_I < 36; ++l_I)
         {
-            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, l_Slot, 0,
-                    ClickType.PICKUP, mc.player);
-            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, p_Slot+36, 0, ClickType.PICKUP,
-                    mc.player);
-            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, l_Slot, 0,
-                    ClickType.PICKUP, mc.player);
-            mc.playerController.updateController();
+            final ItemStack l_Item = mc.player.inventory.getStackInSlot(l_I);
             
-            return true;
+            if (l_Item.isEmpty())
+                continue;
+            
+            if (CanItemBeMergedWith(l_Stack, l_Item))
+            {
+                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, l_I, 0,
+                        ClickType.QUICK_MOVE, mc.player);
+                mc.playerController.updateController();
+                
+                /// Check again for more next available tick
+                return true;
+            }
         }
         
         return false;
+    }
+    
+    private boolean CanItemBeMergedWith(ItemStack p_Source, ItemStack p_Target)
+    {
+        return p_Source.getItem() == p_Target.getItem() && p_Source.getDisplayName().equals(p_Target.getDisplayName());
     }
 }

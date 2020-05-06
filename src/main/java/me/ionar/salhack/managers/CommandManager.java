@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import me.ionar.salhack.command.Command;
 import me.ionar.salhack.command.impl.*;
+import me.ionar.salhack.command.util.ModuleCommandListener;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.module.Module;
 
@@ -27,8 +28,57 @@ public class CommandManager
         Commands.add(new BindCommand());
         Commands.add(new UnbindCommand());
         
-        for (final Module l_Mod : ModuleManager.Get().GetModuleList())
-            Commands.add(new ModuleCommand(l_Mod));
+        ModuleManager.Get().GetModuleList().forEach(p_Mod ->
+        {
+            ModuleCommandListener l_Listener = new ModuleCommandListener()
+            {
+                @Override
+                public void OnHide()
+                {
+                    p_Mod.setHidden(!p_Mod.isHidden());
+                }
+
+                @Override
+                public void OnToggle()
+                {
+                    p_Mod.toggle();
+                }
+
+                @Override
+                public void OnRename(String p_NewName)
+                {
+                    p_Mod.setDisplayName(p_NewName);
+                }
+            };
+            
+            Commands.add(new ModuleCommand(p_Mod.getDisplayName(), p_Mod.getDesc(), l_Listener, p_Mod.getValueList()));
+        });
+
+        HudManager.Get().Items.forEach(p_Item ->
+        {
+            ModuleCommandListener l_Listener = new ModuleCommandListener()
+            {
+                @Override
+                public void OnHide()
+                {
+                    p_Item.SetHidden(!p_Item.IsHidden());
+                }
+
+                @Override
+                public void OnToggle()
+                {
+                    p_Item.SetHidden(!p_Item.IsHidden());
+                }
+
+                @Override
+                public void OnRename(String p_NewName)
+                {
+                    p_Item.SetDisplayName(p_NewName, true);
+                }
+            };
+            
+            Commands.add(new ModuleCommand(p_Item.GetDisplayName(), "NYI", l_Listener, p_Item.ValueList));
+        });
         
         /// Sort by alphabet
         Commands.sort(Comparator.comparing(Command::GetName));
@@ -62,5 +112,11 @@ public class CommandManager
         }
         
         return null;
+    }
+
+    public void Reload()
+    {
+        Commands.clear();
+        InitalizeCommands();
     }
 }

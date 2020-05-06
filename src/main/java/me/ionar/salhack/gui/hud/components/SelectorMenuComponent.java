@@ -5,13 +5,13 @@ import me.ionar.salhack.gui.hud.HudComponentItem;
 import me.ionar.salhack.managers.HudManager;
 import me.ionar.salhack.util.render.RenderUtil;
 
-public class SelecterMenuComponent extends HudComponentItem
+public class SelectorMenuComponent extends HudComponentItem
 {
-    MenuComponentHUDList l_Component = new MenuComponentHUDList("Selecter", 300, 300);
+    MenuComponentHUDList l_Component = new MenuComponentHUDList("Selector", 300, 300);
     
-    public SelecterMenuComponent()
+    public SelectorMenuComponent()
     {
-        super("Selecter", 300, 300);
+        super("Selector", 300, 300);
         SetHidden(false);
         AddFlag(HudComponentItem.OnlyVisibleInHudEditor);
     }
@@ -22,6 +22,11 @@ public class SelecterMenuComponent extends HudComponentItem
         super.render(p_MouseX, p_MouseY, p_PartialTicks);
         
         l_Component.Render(p_MouseX, p_MouseY, true, true);
+        
+        SetWidth(l_Component.GetWidth());
+        SetHeight(l_Component.GetHeight());
+        SetX(l_Component.GetX());
+        SetY(l_Component.GetY());
     }
 
     @Override

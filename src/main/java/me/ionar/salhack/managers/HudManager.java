@@ -58,7 +58,7 @@ public class HudManager
         Add(new PvPInfoComponent());
 
         /// MUST be last in list
-        Add(new SelecterMenuComponent());
+        Add(new SelectorMenuComponent());
         
         CanSave = false;
         
@@ -70,7 +70,7 @@ public class HudManager
         CanSave = true;
     }
     
-    public List<HudComponentItem> Items = new ArrayList<HudComponentItem>();
+    public ArrayList<HudComponentItem> Items = new ArrayList<HudComponentItem>();
     private boolean CanSave = false;
 
     public void Add(HudComponentItem p_Item)
@@ -147,7 +147,8 @@ public class HudManager
 
             Writer writer = Files.newBufferedWriter(Paths.get("SalHack/HUD/" + p_Item.GetDisplayName() + ".json"));
             Map<String, String> map = new HashMap<>();
-            
+
+            map.put("displayname", p_Item.GetDisplayName());
             map.put("visible", !p_Item.IsHidden() ? "true" : "false");
             map.put("PositionX", String.valueOf(p_Item.GetX()));
             map.put("PositionY", String.valueOf(p_Item.GetY()));

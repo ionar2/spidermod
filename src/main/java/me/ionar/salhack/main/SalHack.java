@@ -14,6 +14,7 @@ import me.ionar.salhack.managers.ImageManager;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.managers.NotificationManager;
 import me.ionar.salhack.managers.TickRateManager;
+import me.ionar.salhack.waypoints.WaypointManager;
 import net.minecraft.util.Session;
 import net.minecraft.util.text.TextComponentString;
 
@@ -29,19 +30,22 @@ public class SalHack
     private static CommandManager m_CommandManager = new CommandManager();
     private static TickRateManager m_TickRateManager = new TickRateManager();
     private static NotificationManager m_NotificationManager = new NotificationManager();
+    private static WaypointManager m_WaypointManager = new WaypointManager();
 
     public static void Init()
     {
         SalHackMod.log.info("initalizing salhack object (all static fields)");
         m_DirectoryManager.Init();
 
+        /// load before mods
+        m_FontManager.Load();
         m_ModuleManager.Init();
         m_HudManager.Init();
         m_CommandManager.InitalizeCommands();
         
-        m_FontManager.Load();
         m_ImageManager.Load();
         m_DiscordManager.Start();
+        m_FriendManager.Load();
     }
 
     public static ModuleManager GetModuleManager()
@@ -99,5 +103,10 @@ public class SalHack
     public static NotificationManager GetNotificationManager()
     {
         return m_NotificationManager;
+    }
+
+    public static WaypointManager GetWaypointManager()
+    {
+        return m_WaypointManager;
     }
 }

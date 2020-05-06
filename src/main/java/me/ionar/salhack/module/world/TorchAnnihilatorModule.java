@@ -27,7 +27,7 @@ public class TorchAnnihilatorModule extends Module
     
     public TorchAnnihilatorModule()
     {
-        super("TorchAnnihilator", new String[] {""}, "", "NONE", -1, ModuleType.WORLD);
+        super("TorchAnnihilator", new String[] {""}, "Automatically breaks torches in a distance, AVO style", "NONE", -1, ModuleType.WORLD);
     }
 
     @EventHandler

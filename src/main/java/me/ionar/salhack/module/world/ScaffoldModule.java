@@ -72,7 +72,7 @@ public class ScaffoldModule extends Module
     public ScaffoldModule()
     {
         super("Scaffold", new String[]
-        { "Scaffold" }, "Scaffolds", "H", 0x36DB24, ModuleType.WORLD);
+        { "Scaffold" }, "Places blocks under you", "H", 0x36DB24, ModuleType.WORLD);
     }
 
     private Vec3d Center = Vec3d.ZERO;
@@ -182,7 +182,7 @@ public class ScaffoldModule extends Module
 
                     /*
                      * if (l_Result == ValidResult.AlreadyBlockThere && !mc.world.getBlockState(l_Pos).getMaterial().isReplaceable()) continue;
-                     * 
+                     *
                      * if (l_Result == ValidResult.NoNeighbors) continue;
                      */
 
