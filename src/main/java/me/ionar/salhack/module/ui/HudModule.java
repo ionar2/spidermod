@@ -32,6 +32,7 @@ public final class HudModule extends Module
     { "NoHurtCam" }, "Disables hurt camera effect", true);
     public final Value<Boolean> NoBob = new Value<Boolean>("NoBob", new String[]
     { "NoBob" }, "Disables bobbing effect", true);
+    public final Value<Boolean> CustomFont = new Value<Boolean>("CustomFont", new String[] {"CF"}, "Displays the custom font", true);
 
     public HudModule()
     {
