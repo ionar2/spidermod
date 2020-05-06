@@ -10,6 +10,7 @@ import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.gui.click.component.item.ComponentItem;
 import me.ionar.salhack.main.SalHack;
+import me.ionar.salhack.managers.CommandManager;
 import me.zero.alpine.fork.listener.Listenable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.Style;
@@ -240,6 +241,8 @@ public class Module implements Listenable
     public void setDisplayName(String displayName)
     {
         this.displayName = displayName;
+        CommandManager.Get().Reload();
+        SaveSettings();
     }
 
     public String[] getAlias()

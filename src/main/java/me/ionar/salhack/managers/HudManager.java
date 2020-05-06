@@ -147,7 +147,8 @@ public class HudManager
 
             Writer writer = Files.newBufferedWriter(Paths.get("SalHack/HUD/" + p_Item.GetDisplayName() + ".json"));
             Map<String, String> map = new HashMap<>();
-            
+
+            map.put("displayname", p_Item.GetDisplayName());
             map.put("visible", !p_Item.IsHidden() ? "true" : "false");
             map.put("PositionX", String.valueOf(p_Item.GetX()));
             map.put("PositionY", String.valueOf(p_Item.GetY()));

@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.main.Wrapper;
+import me.ionar.salhack.managers.CommandManager;
 import me.ionar.salhack.managers.HudManager;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.render.RenderUtil;
@@ -265,7 +266,13 @@ public class HudComponentItem
             {
                 String l_Key = (String)entry.getKey();
                 String l_Value = (String)entry.getValue();
-             
+
+                if (l_Key.equalsIgnoreCase("displayname"))
+                {
+                    SetDisplayName(l_Value, false);
+                    continue;
+                }
+                
                 if (l_Key.equalsIgnoreCase("visible"))
                 {
                     SetHidden(l_Value.equalsIgnoreCase("false"));
@@ -398,5 +405,16 @@ public class HudComponentItem
     public boolean IsMultiSelectedDragging()
     {
         return MultiSelectedDragging;
+    }
+
+    public void SetDisplayName(String p_NewName, boolean p_Save)
+    {
+        DisplayName = p_NewName;
+        
+        if (p_Save)
+        {
+            HudManager.Get().ScheduleSave(this);
+            CommandManager.Get().Reload();
+        }
     }
 }

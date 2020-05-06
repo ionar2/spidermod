@@ -1,28 +1,33 @@
 package me.ionar.salhack.command.impl;
 
 import java.util.HashMap;
+import java.util.List;
 
 import me.ionar.salhack.command.Command;
+import me.ionar.salhack.command.util.ModuleCommandListener;
 import me.ionar.salhack.friend.Friend;
+import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.managers.FriendManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 
 public class ModuleCommand extends Command
 {
-    private Module Mod;
+    private ModuleCommandListener Listener;
+    private final List<Value> Values;
     
-    public ModuleCommand(Module p_Mod)
+    public ModuleCommand(String p_Name, String p_Description, ModuleCommandListener p_Listener, final List<Value> p_Values)
     {
-        super(p_Mod.getDisplayName(), p_Mod.getDesc());
-        Mod = p_Mod;
+        super(p_Name, p_Description);
+        Listener = p_Listener;
+        Values = p_Values;
         
         CommandChunks.add("hide");
         CommandChunks.add("toggle");
         CommandChunks.add("rename <newname>");
         
         /// TODO: Add enum names, etc
-        for (Value l_Val : Mod.getValueList())
+        for (Value l_Val : Values)
             CommandChunks.add(String.format("%s <%s>", l_Val.getName(), "value"));
     }
 
@@ -34,15 +39,34 @@ public class ModuleCommand extends Command
         if (l_Split == null || l_Split.length <= 1)
         {
             /// Print values
-
-            for (Value l_Val : Mod.getValueList())
+            for (Value l_Val : Values)
             {
                 SendToChat(String.format("%s : %s",l_Val.getName(), l_Val.getValue()));
             }
             return;
         }
         
-        for (Value l_Val : Mod.getValueList())
+        if (l_Split[1].equalsIgnoreCase("hide"))
+        {
+            Listener.OnHide();
+            return;
+        }
+
+        if (l_Split[1].equalsIgnoreCase("toggle"))
+        {
+            Listener.OnHide();
+            return;
+        }
+
+        if (l_Split[1].equalsIgnoreCase("rename"))
+        {
+            if (l_Split.length <= 3)
+                Listener.OnRename(l_Split[2]);
+            
+            return;
+        }
+        
+        for (Value l_Val : Values)
         {
             if (l_Val.getName().toLowerCase().startsWith(l_Split[1].toLowerCase()))
             {
@@ -81,6 +105,6 @@ public class ModuleCommand extends Command
     @Override
     public String GetHelp()
     {
-        return Mod.getDesc();
+        return GetDescription();
     }
 }
