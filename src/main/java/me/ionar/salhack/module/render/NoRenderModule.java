@@ -4,6 +4,7 @@ import me.ionar.salhack.events.network.EventNetworkPacketEvent;
 import me.ionar.salhack.events.particles.EventParticleEmitParticleAtEntity;
 import me.ionar.salhack.events.player.EventPlayerIsPotionActive;
 import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
+import me.ionar.salhack.events.render.EventRenderArmorLayer;
 import me.ionar.salhack.events.render.EventRenderHurtCameraEffect;
 import me.ionar.salhack.events.render.EventRenderSign;
 import me.ionar.salhack.events.render.EventRenderUpdateLightmap;
@@ -11,6 +12,7 @@ import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.play.server.SPacketEntityStatus;
 import net.minecraft.util.EnumParticleTypes;
@@ -27,6 +29,8 @@ public class NoRenderModule extends Module
     public final Value<Boolean> TotemAnimation = new Value<Boolean>("TotemAnimation", new String[] {"TotemAnimation"}, "Doesn't render the totem animation", false);
     public final Value<Boolean> Skylight = new Value<Boolean>("Skylight", new String[] {"Skylight"}, "Doesn't render skylight updates", false);
     public final Value<Boolean> SignText = new Value<Boolean>("SignText", new String[] {"SignText"}, "Doesn't render SignText", false);
+    public final Value<Boolean> NoArmor = new Value<Boolean>("NoArmor", new String[] {"NoArmor"}, "Doesn't render armor", false);
+    public final Value<Boolean> NoArmorPlayers = new Value<Boolean>("NoArmorPlayers", new String[] {"NoArmorPlayers"}, "Use in conjunction with the above mod", false);
     
     public enum NoItemsMode
     {
@@ -97,5 +101,17 @@ public class NoRenderModule extends Module
     {
         if (SignText.getValue())
             p_Event.cancel();
+    });
+
+    @EventHandler
+    private Listener<EventRenderArmorLayer> OnRenderArmorLayer = new Listener<>(p_Event ->
+    {
+        if (NoArmor.getValue())
+        {
+            if (!(p_Event.Entity instanceof EntityPlayer) && NoArmorPlayers.getValue())
+                return;
+            
+            p_Event.cancel();
+        }
     });
 }

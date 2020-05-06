@@ -20,6 +20,7 @@
     "MixinTileEntitySignRenderer",
     "MixinEntity",
     "MixinMovementInputFromOptions",
-    "MixinWorld"
+    "MixinWorld",
+    "MixinLayerArmorBase"
   ]
 }
