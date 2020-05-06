@@ -18,7 +18,6 @@ public final class ClickGuiModule extends Module
     {
         super("ClickGui", new String[]
         { "ClickGui", "ClickGui" }, "Displays the click gui", "LEFT", 0xDB9324, ModuleType.UI);
-        setHidden(true);
     }
     
     @Override

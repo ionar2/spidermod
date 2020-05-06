@@ -38,7 +38,6 @@ public final class BrightnessModule extends Module
     {
         super("Brightness", new String[]
         { "FullBright", "Bright" }, "Makes the world brighter", "NONE", 0xD5DB24, ModuleType.RENDER);
-        setHidden(true);
     }
     
     @Override
