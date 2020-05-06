@@ -24,12 +24,12 @@ import net.minecraft.util.math.BlockPos;
 public class AutoShovelPathModule extends Module
 {
     public final Value<Integer> Radius = new Value<Integer>("Radius", new String[] {"R"}, "Radius to search for grass", 4, 0, 10, 1);
-    
+
     public AutoShovelPathModule()
     {
-        super("AutoShovelPath", new String[] {""}, "", "NONE", -1, ModuleType.MISC);
+        super("AutoShovelPath", new String[] {""}, "Automatically shovels path in range", "NONE", -1, ModuleType.MISC);
     }
-    
+
     @EventHandler
     private Listener<EventPlayerMotionUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
@@ -37,7 +37,7 @@ public class AutoShovelPathModule extends Module
                                 .filter(p_Pos -> IsValidBlockPos(p_Pos))
                                 .min(Comparator.comparing(p_Pos -> EntityUtil.GetDistanceOfEntityToBlock(mc.player, p_Pos)))
                                 .orElse(null);
-        
+
         if (l_ClosestPos != null && mc.player.getHeldItemMainhand().getItem() instanceof ItemSpade)
         {
             p_Event.cancel();
@@ -47,24 +47,24 @@ public class AutoShovelPathModule extends Module
                     l_ClosestPos.getY() + 0.5,
                     l_ClosestPos.getZ() + 0.5,
                     mc.player);
-            
+
             mc.player.rotationYawHead = (float) l_Pos[0];
-            
+
             PlayerUtil.PacketFacePitchAndYaw((float)l_Pos[1], (float)l_Pos[0]);
 
             mc.player.swingArm(EnumHand.MAIN_HAND);
-            
+
             mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(l_ClosestPos, EnumFacing.UP, EnumHand.MAIN_HAND, 0, 0, 0));
         }
     });
-    
+
     private boolean IsValidBlockPos(final BlockPos p_Pos)
     {
         IBlockState l_State = mc.world.getBlockState(p_Pos);
-        
+
         if (l_State.getBlock() instanceof BlockGrass)
             return mc.world.getBlockState(p_Pos.up()).getBlock() == Blocks.AIR;
-        
+
         return false;
     }
 }

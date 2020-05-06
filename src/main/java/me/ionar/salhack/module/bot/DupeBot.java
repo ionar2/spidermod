@@ -53,11 +53,11 @@ public final class DupeBot extends Module
     public final Value<Boolean> LockOriginalToStart = new Value<Boolean>("LockOriginalToStart", new String[] {"Lock"}, "Lock", false);
     public final Value<Boolean> IgnorePosUpdate = new Value<Boolean>("IgnorePosUpdate", new String[] {"IgnorePosUpdate"}, "IgnorePosUpdate", false);
     public final Value<Integer> BypassRemount = new Value<Integer>("BypassRemount", new String[] {""}, "BypassRemount", 18000, 0, 18000, 1000);
-    
+
     public DupeBot()
     {
         super("Dupe", new String[]
-        { "DupeMod" }, "2b dupe mod", "NONE", -1, ModuleType.BOT);
+        { "DupeMod" }, "2b dupe mod (OUTDATED ON SOME SERVERS)", "NONE", -1, ModuleType.BOT);
     }
 
     private Vec3d StartPos = Vec3d.ZERO;
@@ -68,7 +68,7 @@ public final class DupeBot extends Module
     private ModifiedFreecam Freecam;
     private PacketCancellerModule PacketCanceller;
     private EntityDesyncModule EntityDesync;
-    
+
     private Timer timer;
     private Entity riding;
     private BlockPos button;
@@ -77,15 +77,15 @@ public final class DupeBot extends Module
     private boolean RestartDupeNoInv = false;
     private boolean SetIgnoreStartClip = false;
     private int StreakCounter = 0;
-    
+
     private me.ionar.salhack.util.Timer packetTimer = new me.ionar.salhack.util.Timer();
-    
+
     @Override
     public String getMetaData()
     {
         return "" + ShulkersDuped + ChatFormatting.GOLD + " Streak: " + StreakCounter;
     }
-    
+
     public void ToggleOffMods()
     {
         if (Freecam != null && Freecam.isEnabled())
@@ -106,7 +106,7 @@ public final class DupeBot extends Module
             toggle();
             return;
         }
-        
+
         if (mc.player.getRidingEntity() == null)
         {
             SalHack.SendMessage(ChatFormatting.RED + "You are not riding an entity!");
@@ -124,19 +124,19 @@ public final class DupeBot extends Module
         Freecam = (ModifiedFreecam) ModuleManager.Get().GetMod(ModifiedFreecam.class);
         PacketCanceller = (PacketCancellerModule) ModuleManager.Get().GetMod(PacketCancellerModule.class);
         EntityDesync = (EntityDesyncModule) ModuleManager.Get().GetMod(EntityDesyncModule.class);
-        
+
         /// Toggle the mods off
         ToggleOffMods();
-        
+
         button = null;
         SetIgnoreStartClip = false;
 
         SalHack.SendMessage("Last Streak counter was " + StreakCounter);
-        
+
         StreakCounter = 0;
         HandleDupe();
     }
-    
+
     public int CalculateNewTime(int p_BaseTime, float p_Tps)
     {
         if (TPSScaling.getValue())
@@ -147,12 +147,12 @@ public final class DupeBot extends Module
     public void HandleDupe()
     {
         SalHack.SendMessage(ChatFormatting.LIGHT_PURPLE + "Starting dupe!");
-        
+
         if (timer != null)
             timer.cancel();
-        
+
         timer = new Timer();
-        
+
         if (LockOriginalToStart.getValue())
         {
             mc.player.getRidingEntity().setPosition(StartingPosition.x, StartingPosition.y, StartingPosition.z);
@@ -172,24 +172,24 @@ public final class DupeBot extends Module
                 }
             }
         }
-        
+
         if (button == null)
         {
             SalHack.SendMessage("Button is null!");
             return;
         }
-        
+
         if (StartPos != Vec3d.ZERO)
             mc.player.setPosition(StartPos.x, StartPos.y, StartPos.z);
-        
+
         mc.playerController.processRightClickBlock(mc.player, mc.world, button, EnumFacing.UP, new Vec3d(0, 0, 0), EnumHand.MAIN_HAND);
         SalHack.SendMessage("Rightclicked!");
-        
+
         float l_Tps = TickRateManager.Get().getTickRate();
         SalHack.SendMessage("Tps: " + l_Tps);
 
         riding = mc.player.getRidingEntity();
-        
+
         timer.schedule(new TimerTask()
         {
             @Override
@@ -220,14 +220,14 @@ public final class DupeBot extends Module
                 }, CalculateNewTime(1000, l_Tps));
             }
         }, CalculateNewTime(PacketToggleDelay.getValue(), l_Tps));
-        
+
         timer.schedule(new TimerTask()
         {
             @Override
             public void run()
             {
                 Freecam.toggle();
-                
+
                 if (BypassMode.getValue())
                 {
                     timer.schedule(new TimerTask()
@@ -238,7 +238,7 @@ public final class DupeBot extends Module
                             if (!BypassMode.getValue() && UseEntityDesync.getValue())
                             {
                                 PacketCanceller.toggle();
-    
+
                                 timer.schedule(new TimerTask()
                                 {
                                     @Override
@@ -246,7 +246,7 @@ public final class DupeBot extends Module
                                     {
                                         EntityDesync.toggle();
                                         SalHack.SendMessage("EntityDesync - ON");
-    
+
                                         timer.schedule(new TimerTask()
                                         {
                                             @Override
@@ -258,7 +258,7 @@ public final class DupeBot extends Module
                                         }, CalculateNewTime(100, l_Tps));
                                     }
                                 }, CalculateNewTime(EntityDesyncDelay.getValue(), l_Tps));
-                                
+
                                 timer.schedule(new TimerTask()
                                 {
                                     @Override
@@ -268,7 +268,7 @@ public final class DupeBot extends Module
                                             Freecam.toggle();
                                         if (PacketCanceller.isEnabled())
                                             PacketCanceller.toggle();
-                                        
+
                                         timer.schedule(new TimerTask()
                                         {
                                             @Override
@@ -276,7 +276,7 @@ public final class DupeBot extends Module
                                             {
                                                 RestartDupeNoInv = true;
                                                 mc.player.sendHorseInventory();
-                                                
+
                                                 timer.schedule(new TimerTask()
                                                 {
                                                     @Override
@@ -299,13 +299,13 @@ public final class DupeBot extends Module
                             else if (BypassMode.getValue())
                             {
                                 /*Packet l_Packet = new CPacketVehicleMove(riding);
-                                
+
                                 PacketCanceller.AddIgnorePacket(l_Packet);
-                                
+
                                 mc.getConnection().sendPacket(l_Packet);
-                                
+
                                 SalHack.SendMessage("Forced a veheicle packet.");*/
-                                
+
                                 /// OFF
                                 timer.schedule(new TimerTask()
                                 {
@@ -324,20 +324,20 @@ public final class DupeBot extends Module
                                         PacketCanceller.toggle();
                                     }
                                 }, 600);
-                                
+
                                 timer.schedule(new TimerTask()
                                 {
                                     @Override
                                     public void run()
                                     {
                                         SalHack.SendMessage("Bypass done");
-                                        
+
                                         /// Disable packet canceller
                                         if (PacketCanceller.isEnabled())
                                             PacketCanceller.toggle();
-    
+
                                         SetIgnoreStartClip = false;
-    
+
                                         if (UseEntityDesync.getValue())
                                         {
                                             timer.schedule(new TimerTask()
@@ -347,7 +347,7 @@ public final class DupeBot extends Module
                                                 {
                                                     EntityDesync.toggle();
                                                     SalHack.SendMessage("EntityDesync - ON");
-        
+
                                                     timer.schedule(new TimerTask()
                                                     {
                                                         @Override
@@ -360,7 +360,7 @@ public final class DupeBot extends Module
                                                 }
                                             }, CalculateNewTime(EntityDesyncDelay.getValue(), l_Tps));
                                         }
-                                        
+
                                         timer.schedule(new TimerTask()
                                         {
                                             @Override
@@ -368,12 +368,12 @@ public final class DupeBot extends Module
                                             {
                                                 if (StartPos != Vec3d.ZERO)
                                                     mc.player.setPosition(StartPos.x, StartPos.y, StartPos.z);
-                                                
+
                                                 if (Freecam.isEnabled())
                                                     Freecam.toggle();
                                                 if (PacketCanceller.isEnabled())
                                                     PacketCanceller.toggle();
-                                                
+
                                                 timer.schedule(new TimerTask()
                                                 {
                                                     @Override
@@ -382,7 +382,7 @@ public final class DupeBot extends Module
                                                         RestartDupeNoInv = true;
                                                         mc.player.sendHorseInventory();
                                                         SalHack.SendMessage("Sending inventory.");
-                                                        
+
                                                         timer.schedule(new TimerTask()
                                                         {
                                                             @Override
@@ -406,7 +406,7 @@ public final class DupeBot extends Module
                             }
                         }
                     }, DupeRemountDelay.getValue());
-                    
+
                 }
                 else
                 {
@@ -414,12 +414,12 @@ public final class DupeBot extends Module
 
                     if (StartPos != Vec3d.ZERO)
                         mc.player.setPosition(StartPos.x, StartPos.y, StartPos.z);
-                    
+
                     if (Freecam.isEnabled())
                         Freecam.toggle();
                     if (PacketCanceller.isEnabled())
                         PacketCanceller.toggle();
-                    
+
                     timer.schedule(new TimerTask()
                     {
                         @Override
@@ -428,7 +428,7 @@ public final class DupeBot extends Module
                             RestartDupeNoInv = true;
                             mc.player.sendHorseInventory();
                             SalHack.SendMessage("Sending inventory.");
-                            
+
                             timer.schedule(new TimerTask()
                             {
                                 @Override
@@ -454,20 +454,20 @@ public final class DupeBot extends Module
     private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
         final float seconds = ((System.currentTimeMillis() - this.packetTimer.getTime()) / 1000.0f) % 60.0f;
-        
+
         if (!isEnabled())
             return;
-        
+
         if (StartPos == Vec3d.ZERO)
             return;
-        
+
       //  if (mc.player.isRiding())
       //      mc.player.getRidingEntity().setPosition(StartPos.x, StartPos.y, StartPos.z);
       //  else
         if (!SetIgnoreStartClip)
             if (!IgnorePosUpdate.getValue())
                 mc.player.setPosition(StartPos.x, StartPos.y, StartPos.z);
-        
+
         mc.player.rotationPitch = Pitch;
         mc.player.rotationYaw = Yaw;
     });
@@ -478,7 +478,7 @@ public final class DupeBot extends Module
         if (timer != null)
             timer.cancel();
         timer = null;
-        
+
         StartPos = Vec3d.ZERO;
 
         ToggleOffMods();
@@ -491,50 +491,50 @@ public final class DupeBot extends Module
         {
             this.packetTimer.reset();
         }
-        
+
         if (p_Event.getPacket() instanceof SPacketWindowItems)
         {
             if (!mc.player.isRiding() || (!(mc.player.getRidingEntity() instanceof AbstractChestHorse)))
                 return;
-            
+
             AbstractChestHorse l_Donkey = GetNearDonkey();
-            
+
             RestartDupeNoInv = false;
-            
+
             if (l_Donkey== null)
             {
                 SalHack.SendMessage("Could not find the donkey near you");
                 mc.player.closeScreen();
                 HandleDupe();
-                return; 
+                return;
             }
-            
+
             SalHack.SendMessage("Dumping items from " + mc.player.getRidingEntity().getName());
-            
+
             SPacketWindowItems l_Packet = (SPacketWindowItems)p_Event.getPacket();
-            
+
             int l_I = 0;
-            
+
             for (ItemStack l_Stack : l_Packet.getItemStacks())
             {
                 if (l_I > 1 && l_I < 17)
                 {
                     /// 1 because drop WHOLE stack
                     mc.playerController.windowClick(l_Packet.getWindowId(), l_I, 1, ClickType.THROW, mc.player);
-                    
+
                     if (l_Stack.getItem() instanceof ItemShulkerBox)
                     {
                         ++ShulkersDuped;
                         //SalHack.INSTANCE.getNotificationManager().addNotification("", String.format("Duped %s%s", ChatFormatting.LIGHT_PURPLE, l_Stack.getDisplayName()));
                     }
                 }
-                
+
                 ++l_I;
             }
 
             SalHack.SendMessage(ChatFormatting.GREEN + "Done dumping items from " + mc.player.getRidingEntity().getName() + "!");
             ++StreakCounter;
-            
+
             timer.schedule(new TimerTask()
             {
                 @Override
@@ -547,29 +547,29 @@ public final class DupeBot extends Module
             }, RemountDelay.getValue());
         }
     });
-    
+
     public AbstractChestHorse GetNearDonkey()
     {
         int l_EntityId = riding != null ? riding.getEntityId() : 0;
-        
+
         AbstractChestHorse l_Donkey =  mc.world.loadedEntityList.stream()
                 .filter(entity -> entity instanceof AbstractChestHorse && entity != riding && mc.player.getDistance(entity) < 10.0f && entity.getEntityId() != l_EntityId)
                 .map(entity -> (AbstractChestHorse) entity)
                 .min(Comparator.comparing(c -> mc.player.getDistance(c)))
                 .orElse(null);
-        
+
         return l_Donkey;
     }
-    
-    
+
+
     public void Remount()
     {
         AbstractChestHorse l_Donkey = GetNearDonkey();
-        
+
         if (l_Donkey != null)
         {
             SalHack.SendMessage(ChatFormatting.GREEN + "Processing remount on " + l_Donkey.getName());
-            
+
             riding = null;
             mc.player.connection.sendPacket(new CPacketInput(mc.player.moveStrafing, mc.player.moveForward, mc.player.movementInput.jump, true));
 
@@ -581,7 +581,7 @@ public final class DupeBot extends Module
                     mc.playerController.interactWithEntity(mc.player, l_Donkey, EnumHand.MAIN_HAND);
                 }
             }, 111);
-            
+
             timer.schedule(new TimerTask()
             {
                 @Override
