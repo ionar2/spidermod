@@ -226,7 +226,18 @@ public class BlockInteractionHelper
                 if (l_State2.getBlock() == Blocks.AIR)
                     continue;
 
-                return ValidResult.Ok;
+                for (final EnumFacing side : EnumFacing.values())
+                {
+                    final BlockPos neighbor = pos.offset(side);
+
+                    boolean l_IsWater = mc.world.getBlockState(neighbor).getBlock() == Blocks.WATER;
+
+                    if (mc.world.getBlockState(neighbor).getBlock().canCollideCheck(mc.world.getBlockState(neighbor), false)
+                            || (l_IsWater && ModuleManager.Get().GetMod(LiquidInteractModule.class).isEnabled()))
+                    {
+                        return ValidResult.Ok;
+                    }
+                }
             }
 
             return ValidResult.NoNeighbors;

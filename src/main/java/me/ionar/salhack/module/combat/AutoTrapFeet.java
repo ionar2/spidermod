@@ -282,7 +282,7 @@ public class AutoTrapFeet extends Module
         return false;
     }
 
-    private boolean slotEqualsBlock(int slot, Block type)
+    public boolean slotEqualsBlock(int slot, Block type)
     {
         if (mc.player.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
         {
@@ -293,7 +293,7 @@ public class AutoTrapFeet extends Module
         return false;
     }
 
-    private int findStackHotbar(Block type)
+    public int findStackHotbar(Block type)
     {
         for (int i = 0; i < 9; i++)
         {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import me.ionar.salhack.main.Wrapper;
 import me.ionar.salhack.util.entity.EntityUtil;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -31,19 +32,39 @@ public class CrystalUtils
     /// this already exists
     /// all these funcs must be static
 
-    // this is kind of shitty because idk how filter works ..
-    private static boolean canPlaceCrystal(final BlockPos pos)
+    public static boolean CanPlaceCrystalIfObbyWasAtPos(final BlockPos pos)
     {
-        final Minecraft mc = Minecraft.getMinecraft();
+        final Minecraft mc = Wrapper.GetMC();
+
+        final Block floor = mc.world.getBlockState(pos.add(0, 1, 0)).getBlock();
+        final Block ceil = mc.world.getBlockState(pos.add(0, 2, 0)).getBlock();
+
+        if (floor == Blocks.AIR && ceil == Blocks.AIR)
+        {
+            if (mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos.add(0, 1, 0))).isEmpty())
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean canPlaceCrystal(final BlockPos pos)
+    {
+        final Minecraft mc = Wrapper.GetMC();
 
         final Block block = mc.world.getBlockState(pos).getBlock();
 
-        if (block == Blocks.OBSIDIAN || block == Blocks.BEDROCK) {
+        if (block == Blocks.OBSIDIAN || block == Blocks.BEDROCK)
+        {
             final Block floor = mc.world.getBlockState(pos.add(0, 1, 0)).getBlock();
             final Block ceil = mc.world.getBlockState(pos.add(0, 2, 0)).getBlock();
 
-            if (floor == Blocks.AIR && ceil == Blocks.AIR) {
-                if (mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos.add(0, 1, 0))).isEmpty()) {
+            if (floor == Blocks.AIR && ceil == Blocks.AIR)
+            {
+                if (mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos.add(0, 1, 0))).isEmpty())
+                {
                     return true;
                 }
             }
@@ -61,12 +82,14 @@ public class CrystalUtils
     public static List<BlockPos> findCrystalBlocks(final EntityPlayer p_Player, float p_Range)
     {
         NonNullList<BlockPos> positions = NonNullList.create();
-        positions.addAll(BlockInteractionHelper.getSphere(GetPlayerPosFloored(p_Player), p_Range, (int) p_Range, false, true, 0).stream()
-                .filter(CrystalUtils::canPlaceCrystal).collect(Collectors.toList()));
+        positions.addAll(
+                BlockInteractionHelper.getSphere(GetPlayerPosFloored(p_Player), p_Range, (int) p_Range, false, true, 0)
+                        .stream().filter(CrystalUtils::canPlaceCrystal).collect(Collectors.toList()));
         return positions;
     }
 
-    public static float calculateDamage(final World p_World, double posX, double posY, double posZ, Entity entity, int p_InterlopedAmount)
+    public static float calculateDamage(final World p_World, double posX, double posY, double posZ, Entity entity,
+            int p_InterlopedAmount)
     {
         /// hack
         if (entity == Minecraft.getMinecraft().player)
@@ -74,22 +97,22 @@ public class CrystalUtils
             if (Minecraft.getMinecraft().player.capabilities.isCreativeMode)
                 return 0.0f;
         }
-        
+
         float doubleExplosionSize = 12.0F;
 
         double l_Distance = entity.getDistance(posX, posY, posZ);
-        
+
         if (p_InterlopedAmount > 0)
         {
             Vec3d l_Interloped = EntityUtil.getInterpolatedAmount(entity, p_InterlopedAmount);
             l_Distance = EntityUtil.GetDistance(l_Interloped.x, l_Interloped.y, l_Interloped.z, posX, posY, posZ);
         }
-        
+
         double distancedsize = l_Distance / (double) doubleExplosionSize;
         Vec3d vec3d = new Vec3d(posX, posY, posZ);
         double blockDensity = (double) entity.world.getBlockDensity(vec3d, entity.getEntityBoundingBox());
         double v = (1.0D - distancedsize) * blockDensity;
-        float damage = (int)((v * v + v) / 2.0D * 7.0D * doubleExplosionSize + 1.0D);
+        float damage = (int) ((v * v + v) / 2.0D * 7.0D * doubleExplosionSize + 1.0D);
         double finald = 1.0D;
         /*
          * if (entity instanceof EntityLivingBase) finald =
@@ -123,7 +146,7 @@ public class CrystalUtils
             // damage = Math.max(damage - ep.getAbsorptionAmount(), 0.0F);
             return damage;
         }
-        
+
         damage = CombatRules.getDamageAfterAbsorb(damage, (float) entity.getTotalArmorValue(),
                 (float) entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
         return damage;
