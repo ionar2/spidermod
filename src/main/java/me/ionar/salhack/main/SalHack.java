@@ -37,11 +37,12 @@ public class SalHack
         SalHackMod.log.info("initalizing salhack object (all static fields)");
         m_DirectoryManager.Init();
 
+        /// load before mods
+        m_FontManager.Load();
         m_ModuleManager.Init();
         m_HudManager.Init();
         m_CommandManager.InitalizeCommands();
         
-        m_FontManager.Load();
         m_ImageManager.Load();
         m_DiscordManager.Start();
         m_FriendManager.Load();

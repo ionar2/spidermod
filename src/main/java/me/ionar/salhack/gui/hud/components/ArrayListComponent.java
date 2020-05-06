@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.ionar.salhack.gui.hud.HudComponentItem;
@@ -35,7 +36,7 @@ public class ArrayListComponent extends HudComponentItem
     private Timer ReorderTimer = new Timer();
     private SalRainbowUtil Rainbow = new SalRainbowUtil(9);
 
-    public String GenerateModuleDisplayName(final Module p_Mod, final boolean p_WithColor)
+    public String GenerateModuleDisplayName(final Module p_Mod)
     {
         String l_DisplayName = p_Mod.GetArrayListDisplayName();
 
@@ -50,14 +51,31 @@ public class ArrayListComponent extends HudComponentItem
     public String GetStaticModuleNames(final Module p_Mod)
     {
         if (!m_StaticModuleNames.containsKey(p_Mod))
-            m_StaticModuleNames.put(p_Mod, GenerateModuleDisplayName(p_Mod, false));
+            m_StaticModuleNames.put(p_Mod, GenerateModuleDisplayName(p_Mod));
         return m_StaticModuleNames.get(p_Mod);
+    }
+    
+    @Override
+    public void SetHidden(boolean p_Hidden)
+    {
+        super.SetHidden(p_Hidden);
+        
+        ModuleManager.Get().GetModuleList().forEach(p_Mod ->
+        {
+            if (p_Mod != null && p_Mod.getType() != Module.ModuleType.HIDDEN && p_Mod.isEnabled() && !p_Mod.isHidden())
+            {
+                p_Mod.RemainingXAnimation = RenderUtil.getStringWidth(p_Mod.GetFullArrayListDisplayName())+10f;
+                ModuleManager.Get().OnModEnable(p_Mod);
+            }
+        });
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks)
     {
         super.render(mouseX, mouseY, partialTicks);
+        
+        ModuleManager.Get().Update();
 
         final ArrayList<Module> mods = new ArrayList<>();
 
@@ -93,13 +111,11 @@ public class ArrayListComponent extends HudComponentItem
 
         int l_I = 0;
         
-        final float textheight = 10.5f;
-
         for (Module mod : mods)
         {
             if (mod != null && mod.getType() != Module.ModuleType.HIDDEN && mod.isEnabled() && !mod.isHidden())
             {
-                String name = GenerateModuleDisplayName(mod, true);
+                String name = GenerateModuleDisplayName(mod);
 
                 final float width = RenderUtil.getStringWidth(name);
 

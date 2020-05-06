@@ -11,6 +11,8 @@ import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.gui.click.component.item.ComponentItem;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.managers.CommandManager;
+import me.ionar.salhack.managers.ModuleManager;
+import me.ionar.salhack.util.render.RenderUtil;
 import me.zero.alpine.fork.listener.Listenable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.Style;
@@ -42,12 +44,13 @@ public class Module implements Listenable
     private int color;
     private boolean hidden = false;
     private boolean enabled = false;
+    protected boolean EnabledByDefault = false;
     private ModuleType type;
-    private int m_RemainingXArraylistOffset= 0;
     private boolean m_NeedsClickGuiValueUpdate;
     protected final Minecraft mc = Minecraft.getMinecraft();
     
     private List<Value> valueList = new ArrayList<Value>();
+    public float RemainingXAnimation = 0f;
 
     private Module(String displayName, String[] alias, String key, int color, ModuleType type)
     {
@@ -56,8 +59,6 @@ public class Module implements Listenable
         this.key = key;
         this.color = color;
         this.type = type;
-
-        m_RemainingXArraylistOffset = 0;
     }
 
     public Module(String displayName, String[] alias, String desc, String key, int color, ModuleType type)
@@ -70,6 +71,10 @@ public class Module implements Listenable
     {
         /// allow events to be called
         SalHackMod.EVENT_BUS.subscribe(this);
+        
+        RemainingXAnimation = RenderUtil.getStringWidth(GetFullArrayListDisplayName())+10f;
+        
+        ModuleManager.Get().OnModEnable(this);
     }
 
     public void onDisable()
@@ -327,9 +332,9 @@ public class Module implements Listenable
         this.valueList = valueList;
     }
 
-    public int GetRemainingXArraylistOffset()
+    public float GetRemainingXArraylistOffset()
     {
-        return 0;
+        return RemainingXAnimation;
     }
 
     public void SignalEnumChange()
@@ -368,6 +373,11 @@ public class Module implements Listenable
         return getDisplayName();
     }
     
+    public String GetFullArrayListDisplayName()
+    {
+        return getDisplayName() + (getMetaData() != null ? " " + ChatFormatting.GRAY + getMetaData() : "");
+    }
+    
     protected void SendMessage(String p_Message)
     {
         SalHack.SendMessage(ChatFormatting.AQUA + "[" + GetArrayListDisplayName() + "]: " + ChatFormatting.RESET + p_Message);
@@ -377,7 +387,11 @@ public class Module implements Listenable
     {
         File l_Exists = new File("SalHack/Modules/" + getDisplayName() + ".json");
         if (!l_Exists.exists())
+        {
+            if (EnabledByDefault && !isEnabled())
+                toggle();
             return;
+        }
         
         try 
         {
