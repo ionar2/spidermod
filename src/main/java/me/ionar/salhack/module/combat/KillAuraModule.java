@@ -5,6 +5,7 @@ import java.util.Comparator;
 import javax.annotation.Nullable;
 
 import me.ionar.salhack.events.client.EventClientTick;
+import me.ionar.salhack.managers.FriendManager;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.managers.TickRateManager;
 import me.ionar.salhack.module.Module;
@@ -115,6 +116,10 @@ public class KillAuraModule extends Module
                 return false;
             
             if (!Players.getValue())
+                return false;
+            
+            /// They are a friend, ignore it.
+            if (FriendManager.Get().IsFriend(p_Entity))
                 return false;
         }
         
