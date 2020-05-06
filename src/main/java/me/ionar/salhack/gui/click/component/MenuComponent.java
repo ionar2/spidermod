@@ -244,7 +244,7 @@ public class MenuComponent
         {
             if (!l_DropDown)
                 RenderUtil.drawGradientRect(GetX(), p_Y, GetX()+p_Item.GetWidth(), p_Y+11, 0x99040404, 0x99000000);
-            //l_Color = GetTextColor(); - commented for issue #27
+            l_Color = (p_Item.HasState(ComponentItem.Clicked) && !p_Item.HasFlag(ComponentItem.DontDisplayClickableHighlight)) ? GetTextColor() : l_Color;// - commented for issue #27
             HoveredItem = p_Item;
             
             p_Item.AddState(ComponentItem.Hovered);
