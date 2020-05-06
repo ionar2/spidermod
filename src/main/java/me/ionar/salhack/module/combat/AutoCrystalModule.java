@@ -110,6 +110,7 @@ public class AutoCrystalModule extends Module
     public static final Value<Boolean> Tamed = new Value<Boolean>("Tamed", new String[] {"Tamed"}, "Place on Tamed", false);
     public static final Value<Boolean> ResetRotationNoTarget = new Value<Boolean>("ResetRotationNoTarget", new String[] {"ResetRotationNoTarget"}, "ResetRotationNoTarget", false);
     public static final Value<Boolean> Multiplace = new Value<Boolean>("Multiplace", new String[] {"Multiplace"}, "Multiplace", true);
+    public static final Value<Boolean> OnlyPlaceWithCrystal = new Value<Boolean>("OnlyPlaceWithCrystal ", new String[] {"OPWC"}, "Only places when you're manually using a crystal in your main or offhand", false);
     
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
     public static final Value<Integer> Green = new Value<Integer>("Green", new String[] {"Green"}, "Green for rendering", 0xFF, 0, 255, 5);
@@ -534,6 +535,13 @@ public class AutoCrystalModule extends Module
     
     private BlockPos HandlePlaceCrystal(@Nullable EventPlayerMotionUpdate p_Event)
     {
+        if (OnlyPlaceWithCrystal.getValue())
+        {
+            /// if we don't have crystal in main or offhand, don't place, this was a request from issue #25
+            if (mc.player.getHeldItemMainhand().getItem() != Items.END_CRYSTAL && mc.player.getHeldItemOffhand().getItem() != Items.END_CRYSTAL)
+                return BlockPos.ORIGIN;
+        }
+        
         List<BlockPos> l_AvailableBlockPositions = CrystalUtils.findCrystalBlocks(mc.player, PlaceDistance.getValue());
         
         if (l_AvailableBlockPositions.isEmpty())
