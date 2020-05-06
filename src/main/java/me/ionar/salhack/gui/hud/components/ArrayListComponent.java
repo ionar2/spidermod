@@ -123,17 +123,17 @@ public class ArrayListComponent extends HudComponentItem
                     maxWidth = width;
                 
                 float l_StringYHeight = 12;
+                float l_RemainingXOffset = mod.GetRemainingXArraylistOffset();
 
                 switch (Side)
                 {
                     case 0:
                     case 1:
-                        xOffset = GetWidth() - RenderUtil.getStringWidth(name);
+                        xOffset = GetWidth() - RenderUtil.getStringWidth(name) + l_RemainingXOffset;
                         break;
                     case 2:
                     case 3:
-                        xOffset = 0;
-                        xOffset = 0;
+                        xOffset = -l_RemainingXOffset;
                         break;
                 }
 
@@ -150,12 +150,12 @@ public class ArrayListComponent extends HudComponentItem
                     	{
 	                        RenderUtil.drawRect(GetX() + xOffset - 2 + mod.GetRemainingXArraylistOffset(),
 	                                GetY() + yOffset,
-	                                GetX() + xOffset + RenderUtil.getStringWidth(name) + 4 + mod.GetRemainingXArraylistOffset(),
+	                                GetX() + xOffset + RenderUtil.getStringWidth(name) + 4,
 	                                GetY() + yOffset + (l_StringYHeight + 1.5f),
 	                                0x75101010);
                     	}
                         RenderUtil.drawStringWithShadow(name,
-                                (GetX() + xOffset) + mod.GetRemainingXArraylistOffset(),
+                                (GetX() + xOffset),
                                 GetY() + yOffset,
                                 RainbowVal.getValue() ? Rainbow.GetRainbowColorAt(l_I) : mod.getColor());
                         yOffset += (l_StringYHeight + 1.5f);
@@ -166,12 +166,12 @@ public class ArrayListComponent extends HudComponentItem
                     	{
 	                        RenderUtil.drawRect(GetX() + xOffset - 2 + mod.GetRemainingXArraylistOffset(),
 	                                GetY() + (GetHeight() - l_StringYHeight) + yOffset,
-	                                GetX() + xOffset + RenderUtil.getStringWidth(name) + 4 + mod.GetRemainingXArraylistOffset(),
+	                                GetX() + xOffset + RenderUtil.getStringWidth(name),
 	                                GetY() + (GetHeight() - l_StringYHeight) + yOffset+ (l_StringYHeight + 1.5f),
 	                                0x75101010);
                     	}
                         RenderUtil.drawStringWithShadow(name,
-                                (GetX() + xOffset) + mod.GetRemainingXArraylistOffset(),
+                                (GetX() + xOffset),
                                 GetY() + (GetHeight() - l_StringYHeight) + yOffset,
                                 RainbowVal.getValue() ? Rainbow.GetRainbowColorAt(l_I) : mod.getColor());
                         yOffset -= (l_StringYHeight + 1.5f);
