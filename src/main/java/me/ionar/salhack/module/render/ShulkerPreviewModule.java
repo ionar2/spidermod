@@ -47,7 +47,7 @@ public final class ShulkerPreviewModule extends Module
     public final Value<Boolean> middleClick = new Value("MiddleClick", new String[]
     { "MC", "Mid" }, "Allows you to middle click shulkers and view their contents.", true);
     public final Value<Boolean> EnderChest = new Value("EnderChest", new String[]
-    { "EC", "Ender" }, "Previews your enderchest (Requires you to oepn your ender chest first", true);
+    { "EC", "Ender" }, "Previews your enderchest (Requires you to open your ender chest first", true);
     public final Value<Modes> Mode = new Value<Modes>("Mode", new String[]
     { "Server Mode" }, "Server mode, like 2b2t has custom preview settings", Modes.DropPacket);
 
