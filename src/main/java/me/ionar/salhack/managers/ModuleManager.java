@@ -127,7 +127,7 @@ public class ModuleManager
         /// Render
         Add(new AntiFog());
         Add(new BrightnessModule());
-        Add(new ContainerPreviewModule());
+    //    Add(new ContainerPreviewModule());
         Add(new ESPModule());
         Add(new FreecamModule());
         Add(new HandProgressModule());
