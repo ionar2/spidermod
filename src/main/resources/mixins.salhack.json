@@ -21,6 +21,7 @@
     "MixinEntity",
     "MixinMovementInputFromOptions",
     "MixinWorld",
-    "MixinLayerArmorBase"
+    "MixinLayerArmorBase",
+    "MixinItemRenderer"
   ]
 }
