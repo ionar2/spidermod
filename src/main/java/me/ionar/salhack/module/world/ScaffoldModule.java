@@ -72,7 +72,7 @@ public class ScaffoldModule extends Module
     public ScaffoldModule()
     {
         super("Scaffold", new String[]
-        { "Scaffold" }, "Places blocks under you", "H", 0x36DB24, ModuleType.WORLD);
+        { "Scaffold" }, "Places blocks under you", "NONE", 0x36DB24, ModuleType.WORLD);
     }
 
     private Vec3d Center = Vec3d.ZERO;
