@@ -1,23 +1,15 @@
 package me.ionar.salhack.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.Inject;
-
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import me.ionar.salhack.SalHackMod;
-import me.ionar.salhack.events.player.EventPlayerGetLocationSkin;
-import me.ionar.salhack.events.render.EventRenderSetupFog;
-import me.ionar.salhack.events.render.EventRenderTooltip;
+import me.ionar.salhack.events.player.EventPlayerGetLocationCape;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.util.ResourceLocation;
 
 @Mixin(AbstractClientPlayer.class)
 public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer
@@ -27,16 +19,16 @@ public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer
         super();
     }
 
-    @Inject(method = "getLocationSkin", at = @At("HEAD"), cancellable = true)
-    public void getLocationSkin(CallbackInfoReturnable<ResourceLocation> p_Callback)
+    @Inject(method = "getLocationCape", at = @At(value = "RETURN"), cancellable = true)
+    public void getCape(CallbackInfoReturnable<ResourceLocation> callbackInfo)
     {
-        EventPlayerGetLocationSkin l_Event = new EventPlayerGetLocationSkin();
+        EventPlayerGetLocationCape l_Event = new EventPlayerGetLocationCape((AbstractClientPlayer)(Object)this);
         SalHackMod.EVENT_BUS.post(l_Event);
 
         if (l_Event.isCancelled())
         {
-            p_Callback.cancel();
-            p_Callback.setReturnValue(l_Event.GetResourceLocation());
+            // p_Callback.cancel();
+            callbackInfo.setReturnValue(l_Event.GetResourceLocation());
         }
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import me.ionar.salhack.SalHackMod;
 import me.ionar.salhack.friend.Friend;
+import me.ionar.salhack.managers.CapeManager;
 import me.ionar.salhack.managers.CommandManager;
 import me.ionar.salhack.managers.DirectoryManager;
 import me.ionar.salhack.managers.DiscordManager;
@@ -31,6 +32,7 @@ public class SalHack
     private static TickRateManager m_TickRateManager = new TickRateManager();
     private static NotificationManager m_NotificationManager = new NotificationManager();
     private static WaypointManager m_WaypointManager = new WaypointManager();
+    private static CapeManager m_CapeManager = new CapeManager();
 
     public static void Init()
     {
@@ -108,5 +110,10 @@ public class SalHack
     public static WaypointManager GetWaypointManager()
     {
         return m_WaypointManager;
+    }
+
+    public static CapeManager GetCapeManager()
+    {
+        return m_CapeManager;
     }
 }
