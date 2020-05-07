@@ -9,7 +9,7 @@ public final class ConsoleModule extends Module
 
     public ConsoleModule()
     {
-        super("Console", new String[]{"Console"}, "Displays the click gui", "NONE", 0xDBB024, ModuleType.UI);
+        super("Console", new String[]{"Console"}, "Displays the click gui", "UP", 0xDBB024, ModuleType.UI);
     }
     
     @Override
