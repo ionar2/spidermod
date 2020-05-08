@@ -74,7 +74,7 @@ public final class ElytraFlyModule extends Module
 
     private enum Mode
     {
-        Normal, Tarzan, Superior, Packet
+        Normal, Tarzan, Superior, Packet, Control
     }
 
     public ElytraFlyModule()
@@ -183,6 +183,9 @@ public final class ElytraFlyModule extends Module
                 break;
             case Superior:
                 HandleImmediateModeElytra(p_Event);
+                break;
+            case Control:
+                HandleControlMode(p_Event);
                 break;
             default:
                 break;
@@ -340,6 +343,34 @@ public final class ElytraFlyModule extends Module
         mc.player.limbSwing = 0;
     }
 
+
+    private void HandleControlMode(EventPlayerTravel p_Event)
+    {
+        final double[] dir = MathUtil.directionSpeed(speed.getValue());
+        
+        if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0)
+        {
+            mc.player.motionX = dir[0];
+            mc.player.motionZ = dir[1];
+            
+            mc.player.motionX -= (mc.player.motionX*(Math.abs(mc.player.rotationPitch)+90)/90) - mc.player.motionX;
+            mc.player.motionZ -= (mc.player.motionZ*(Math.abs(mc.player.rotationPitch)+90)/90) - mc.player.motionZ;
+        }
+        else
+        {
+            mc.player.motionX = 0;
+            mc.player.motionZ = 0;
+        }
+        
+        mc.player.motionY = (-MathUtil.degToRad(mc.player.rotationPitch)) * mc.player.movementInput.moveForward;
+        
+
+        mc.player.prevLimbSwingAmount = 0;
+        mc.player.limbSwingAmount = 0;
+        mc.player.limbSwing = 0;
+        p_Event.cancel();
+    }
+    
     public void SetupStashFinder()
     {
         SalHack.SendMessage(ChatFormatting.AQUA + "[ElytraFly]: " + ChatFormatting.LIGHT_PURPLE + " Preparing ElytraFly for stash finder");
