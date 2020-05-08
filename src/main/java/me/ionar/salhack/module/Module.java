@@ -385,7 +385,8 @@ public class Module implements Listenable
     
     protected void SendMessage(String p_Message)
     {
-        SalHack.SendMessage(ChatFormatting.AQUA + "[" + GetArrayListDisplayName() + "]: " + ChatFormatting.RESET + p_Message);
+        if (mc.player != null)
+            SalHack.SendMessage(ChatFormatting.AQUA + "[" + GetArrayListDisplayName() + "]: " + ChatFormatting.RESET + p_Message);
     }
     
     public void LoadSettings()

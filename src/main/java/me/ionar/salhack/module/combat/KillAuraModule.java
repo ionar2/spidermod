@@ -189,7 +189,6 @@ public class KillAuraModule extends Module
             case Closest:
                 l_TargetToHit = mc.world.loadedEntityList.stream()
                         .filter(p_Entity -> IsValidTarget(p_Entity, null))
-                        .map(p_Entity -> (EntityLivingBase) p_Entity)
                         .min(Comparator.comparing(p_Entity -> mc.player.getDistance(p_Entity)))
                         .orElse(null);
                 break;
@@ -198,7 +197,6 @@ public class KillAuraModule extends Module
                 {
                     l_TargetToHit = mc.world.loadedEntityList.stream()
                         .filter(p_Entity -> IsValidTarget(p_Entity, null))
-                        .map(p_Entity -> (EntityLivingBase) p_Entity)
                         .min(Comparator.comparing(p_Entity -> mc.player.getDistance(p_Entity)))
                         .orElse(null);
                 }
@@ -206,7 +204,6 @@ public class KillAuraModule extends Module
             case Switch:
                 l_TargetToHit = mc.world.loadedEntityList.stream()
                     .filter(p_Entity -> IsValidTarget(p_Entity, null))
-                    .map(p_Entity -> (EntityLivingBase) p_Entity)
                     .min(Comparator.comparing(p_Entity -> mc.player.getDistance(p_Entity)))
                     .orElse(null);
                 

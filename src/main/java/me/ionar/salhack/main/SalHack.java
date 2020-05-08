@@ -69,7 +69,8 @@ public class SalHack
     /// Player must be ingame for this
     public static void SendMessage(String string)
     {
-        Wrapper.GetMC().ingameGUI.getChatGUI().printChatMessage(new TextComponentString(string));
+        if (Wrapper.GetMC().ingameGUI != null || Wrapper.GetPlayer() == null)
+            Wrapper.GetMC().ingameGUI.getChatGUI().printChatMessage(new TextComponentString(string));
     }
 
     public static HudManager GetHudManager()
