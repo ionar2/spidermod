@@ -39,17 +39,17 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer
         // return;
     }
 
-    @Redirect(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;move(Lnet/minecraft/entity/MoverType;DDD)V"))
-    public void move(AbstractClientPlayer player, MoverType type, double x, double y, double z)
+    //  public void move(MoverType type, double x, double y, double z)
+    @Inject(method = "move", at = @At("HEAD"), cancellable = true)
+    public void move(MoverType type, double x, double y, double z, CallbackInfo p_Info)
     {
         EventPlayerMove event = new EventPlayerMove(type, x, y, z);
         SalHackMod.EVENT_BUS.post(event);
         if (event.isCancelled())
         {
-            return;
+            super.move(type, event.X, event.Y, event.Z);
+            p_Info.cancel();
         }
-
-        super.move(type, event.X, event.Y, event.Z);
     }
 
     @Inject(method = "onUpdateWalkingPlayer", at = @At("HEAD"), cancellable = true)

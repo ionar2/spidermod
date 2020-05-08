@@ -90,6 +90,7 @@ public final class SafeWalkModule extends Module
         p_Event.X = x;
         p_Event.Y = y;
         p_Event.Z = z;
+        p_Event.cancel();
     });
 
     private boolean isOffsetBBEmpty(double x, double y, double z)
