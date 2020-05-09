@@ -44,7 +44,7 @@ public class TorchAnnihilatorModule extends Module
 
             final double l_Pos[] =  EntityUtil.calculateLookAt(
                     l_ClosestPos.getX() + 0.5,
-                    l_ClosestPos.getY() + 0.5,
+                    l_ClosestPos.getY() - 0.5,
                     l_ClosestPos.getZ() + 0.5,
                     mc.player);
             
