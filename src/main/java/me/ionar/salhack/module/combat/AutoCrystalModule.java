@@ -120,6 +120,9 @@ public class AutoCrystalModule extends Module
     public static final Value<Boolean> PlaceObsidianIfNoValidSpots = new Value<Boolean>("PlaceObsidianIfNoValidSpots ", new String[] {"POINVS"}, "Automatically places obsidian if there are no available crystal spots, so you can crystal your opponent", false);
     public static final Value<Boolean> MinHealthPause = new Value<Boolean>("MinHealthPause", new String[] {"MHP"}, "Automatically pauses if you are below RequiredHealth", false);
     public static final Value<Float> RequiredHealth = new Value<Float>("RequiredHealth", new String[] {""}, "RequiredHealth for autocrystal to function, must be above or equal to this amount.", 11.0f, 0.0f, 20.0f, 1.0f);
+    public static final Value<Boolean> AutoMultiplace = new Value<Boolean>("AutoMultiplace", new String[] {""}, "Automatically enables/disables multiplace", false);
+    public static final Value<Float> HealthBelowAutoMultiplace = new Value<Float>("HealthBelowAutoMultiplace", new String[] {""}, "RequiredHealth for target to be for automatic multiplace toggling.", 11.0f, 0.0f, 20.0f, 1.0f);
+    
     
     public static final Value<Boolean> Render = new Value<Boolean>("Render", new String[] {"Render"}, "Allows for rendering of block placements", true);
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
@@ -199,7 +202,12 @@ public class AutoCrystalModule extends Module
     @Override
     public String getMetaData()
     {
-        return m_Target != null ? m_Target.getName() : null;
+        String l_Result = m_Target != null ? m_Target.getName() : null;
+        
+        if (AutoMultiplace.getValue() && Multiplace.getValue() && l_Result != null)
+            l_Result += " Multiplacing";
+        
+        return l_Result;
     }
 
     @EventHandler
@@ -694,6 +702,14 @@ public class AutoCrystalModule extends Module
         
         if (m_Target == null)
             return BlockPos.ORIGIN;
+        
+        if (AutoMultiplace.getValue())
+        {
+            if (m_Target.getHealth()+m_Target.getAbsorptionAmount() <= HealthBelowAutoMultiplace.getValue())
+                Multiplace.setValue(true);
+            else
+                Multiplace.setValue(false);
+        }
         
         float l_MinDmg = MinDMG.getValue();
         float l_MaxSelfDmg = MaxSelfDMG.getValue();
