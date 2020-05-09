@@ -23,6 +23,7 @@ import net.minecraft.entity.passive.AbstractChestHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityShulkerBullet;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.EnumHand;
@@ -40,6 +41,8 @@ public class KillAuraModule extends Module
     public final Value<Boolean> Tamed = new Value<Boolean>("Tamed", new String[] {"Players"}, "Should we target Tamed", false);
     public final Value<Boolean> Projectiles = new Value<Boolean>("Projectile", new String[] {"Projectile"}, "Should we target Projectiles (shulker bullets, etc)", false);
     public final Value<Boolean> SwordOnly = new Value<Boolean>("SwordOnly", new String[] {"SwordOnly"}, "Only activate on sword", false);
+    public final Value<Boolean> PauseIfCrystal = new Value<Boolean>("PauseIfCrystal", new String[] {"PauseIfCrystal"}, "Pauses if a crystal is in your hand", false);
+    public final Value<Boolean> AutoSwitch = new Value<Boolean>("AutoSwitch", new String[] {"AutoSwitch"}, "Automatically switches to a sword in your hotbar", false);
     public final Value<Integer> Ticks = new Value<Integer>("Ticks", new String[] {"Ticks"}, "If you don't have HitDelay on, how fast the kill aura should be hitting", 10, 0, 40, 1);
     public final Value<Integer> Iterations = new Value<Integer>("Iterations", new String[] {""}, "Allows you to do more iteratons per tick", 1, 1, 10, 1);
     public final Value<Boolean> Only32k = new Value<Boolean>("32kOnly", new String[] {""}, "Only killauras when 32k sword is in your hand", false);
@@ -170,8 +173,30 @@ public class KillAuraModule extends Module
     @EventHandler
     private Listener<EventClientTick> OnTick = new Listener<>(p_Event ->
     {
-        if (SwordOnly.getValue() && !(mc.player.getHeldItemMainhand().getItem() instanceof ItemSword))
-            return;
+        if (!(mc.player.getHeldItemMainhand().getItem() instanceof ItemSword))
+        {
+            if (mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL && PauseIfCrystal.getValue())
+                return;
+            
+            int l_Slot = -1;
+            
+            if (AutoSwitch.getValue())
+            {
+                for (int l_I = 0; l_I < 9; ++l_I)
+                {
+                    if (mc.player.inventory.getStackInSlot(l_I).getItem() instanceof ItemSword)
+                    {
+                        l_Slot = l_I;
+                        mc.player.inventory.currentItem = l_Slot;
+                        mc.playerController.updateController();
+                        break;
+                    }
+                }
+            }
+            
+            if (SwordOnly.getValue() && l_Slot == -1)
+                return;
+        }
         
         if (Only32k.getValue())
         {
