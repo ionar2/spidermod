@@ -117,6 +117,7 @@ public class AutoCrystalModule extends Module
     public static final Value<Boolean> OnlyPlaceWithCrystal = new Value<Boolean>("OnlyPlaceWithCrystal ", new String[] {"OPWC"}, "Only places when you're manually using a crystal in your main or offhand", false);
     public static final Value<Boolean> PlaceObsidianIfNoValidSpots = new Value<Boolean>("PlaceObsidianIfNoValidSpots ", new String[] {"POINVS"}, "Automatically places obsidian if there are no available crystal spots, so you can crystal your opponent", false);
     
+    public static final Value<Boolean> Render = new Value<Boolean>("Render", new String[] {"Render"}, "Allows for rendering of block placements", true);
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
     public static final Value<Integer> Green = new Value<Integer>("Green", new String[] {"Green"}, "Green for rendering", 0xFF, 0, 255, 5);
     public static final Value<Integer> Blue = new Value<Integer>("Blue", new String[] {"Blue"}, "Blue for rendering", 0xF3, 0, 255, 5);
@@ -842,7 +843,7 @@ public class AutoCrystalModule extends Module
     @EventHandler
     private Listener<RenderEvent> OnRenderEvent = new Listener<>(p_Event ->
     {
-        if (mc.getRenderManager() == null)
+        if (mc.getRenderManager() == null || !Render.getValue())
             return;
         
         ArrayList<BlockPos> l_PlacedCrystalsCopy = new ArrayList<BlockPos>(PlacedCrystals);
