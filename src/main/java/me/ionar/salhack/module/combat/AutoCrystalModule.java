@@ -143,6 +143,7 @@ public class AutoCrystalModule extends Module
     private SurroundModule Surround = null;
     private AutoTrapFeet AutoTrapFeet = null;
     private AutoMendArmorModule AutoMend = null;
+    private SelfTrapModule SelfTrap = null;
     
     @Override
     public void SendMessage(String p_Msg)
@@ -163,6 +164,7 @@ public class AutoCrystalModule extends Module
         Surround = (SurroundModule)ModuleManager.Get().GetMod(SurroundModule.class);
         AutoTrapFeet = (AutoTrapFeet)ModuleManager.Get().GetMod(AutoTrapFeet.class);
         AutoMend = (AutoMendArmorModule)ModuleManager.Get().GetMod(AutoMendArmorModule.class);
+        SelfTrap = (SelfTrapModule)ModuleManager.Get().GetMod(SelfTrapModule.class);
         
       //  if (!Holes.isEnabled())
        //     Holes.toggle();
@@ -1040,6 +1042,9 @@ public class AutoCrystalModule extends Module
             return true;
         
         if (AutoMend.isEnabled())
+            return true;
+        
+        if (SelfTrap.isEnabled() && !SelfTrap.IsSelfTrapped() && Surround.HasObsidian())
             return true;
         
         if (MinHealthPause.getValue() && (mc.player.getHealth()+mc.player.getAbsorptionAmount()) < RequiredHealth.getValue())
