@@ -14,6 +14,7 @@ import me.ionar.salhack.util.MathUtil;
 import me.ionar.salhack.util.RotationSpoof;
 import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.util.entity.EntityUtil;
+import me.ionar.salhack.util.entity.ItemUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.entity.Entity;
@@ -40,6 +41,8 @@ public class KillAuraModule extends Module
     public final Value<Boolean> Projectiles = new Value<Boolean>("Projectile", new String[] {"Projectile"}, "Should we target Projectiles (shulker bullets, etc)", false);
     public final Value<Boolean> SwordOnly = new Value<Boolean>("SwordOnly", new String[] {"SwordOnly"}, "Only activate on sword", false);
     public final Value<Integer> Ticks = new Value<Integer>("Ticks", new String[] {"Ticks"}, "If you don't have HitDelay on, how fast the kill aura should be hitting", 10, 0, 40, 1);
+    public final Value<Integer> Iterations = new Value<Integer>("Iterations", new String[] {""}, "Allows you to do more iteratons per tick", 1, 1, 10, 1);
+    public final Value<Boolean> Only32k = new Value<Boolean>("32kOnly", new String[] {""}, "Only killauras when 32k sword is in your hand", false);
     
     public enum Modes
     {
@@ -170,6 +173,12 @@ public class KillAuraModule extends Module
         if (SwordOnly.getValue() && !(mc.player.getHeldItemMainhand().getItem() instanceof ItemSword))
             return;
         
+        if (Only32k.getValue())
+        {
+            if (!ItemUtil.Is32k(mc.player.getHeldItemMainhand()))
+                return;
+        }
+        
         if (AimbotResetTimer.passed(5000))
         {
             AimbotResetTimer.reset();
@@ -239,8 +248,11 @@ public class KillAuraModule extends Module
         RemainingTicks = Ticks.getValue();
         
       //  mc.playerController.attackEntity(mc.player, l_TargetToHit);
-        mc.player.connection.sendPacket(new CPacketUseEntity(l_TargetToHit));
-        mc.player.swingArm(EnumHand.MAIN_HAND);
-        mc.player.resetCooldown();
+        for (int l_I = 0; l_I < Iterations.getValue(); ++l_I)
+        {
+            mc.player.connection.sendPacket(new CPacketUseEntity(l_TargetToHit));
+            mc.player.swingArm(EnumHand.MAIN_HAND);
+            mc.player.resetCooldown();
+        }  
     });
 }
