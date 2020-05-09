@@ -68,6 +68,7 @@ public class NametagsModule extends Module
         if (mc.getRenderManager().options == null)
             return;
 
+        GlStateManager.pushMatrix();
         GlStateManager.enableTexture2D();
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
@@ -78,6 +79,7 @@ public class NametagsModule extends Module
         RenderHelper.disableStandardItemLighting();
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
+        GlStateManager.popMatrix();
     });
 
     private void drawNametag(Entity entityIn)

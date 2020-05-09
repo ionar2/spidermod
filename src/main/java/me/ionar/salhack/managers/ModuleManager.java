@@ -148,8 +148,9 @@ public class ModuleManager
         Add(new HudModule());
         
         /// World
-        Add(new AutoToolModule());
         Add(new AutoBuilderModule());
+        Add(new AutoNameTagModule());
+        Add(new AutoToolModule());
         Add(new AutoWitherModule());
         Add(new FastPlaceModule());
         Add(new LawnmowerModule());
