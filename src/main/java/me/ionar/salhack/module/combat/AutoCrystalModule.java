@@ -113,9 +113,13 @@ public class AutoCrystalModule extends Module
     public static final Value<Boolean> Animals = new Value<Boolean>("Animals", new String[] {"Animals"}, "Place on Animals", false);
     public static final Value<Boolean> Tamed = new Value<Boolean>("Tamed", new String[] {"Tamed"}, "Place on Tamed", false);
     public static final Value<Boolean> ResetRotationNoTarget = new Value<Boolean>("ResetRotationNoTarget", new String[] {"ResetRotationNoTarget"}, "ResetRotationNoTarget", false);
+    
+    /// More options
     public static final Value<Boolean> Multiplace = new Value<Boolean>("Multiplace", new String[] {"Multiplace"}, "Multiplace", true);
     public static final Value<Boolean> OnlyPlaceWithCrystal = new Value<Boolean>("OnlyPlaceWithCrystal ", new String[] {"OPWC"}, "Only places when you're manually using a crystal in your main or offhand", false);
     public static final Value<Boolean> PlaceObsidianIfNoValidSpots = new Value<Boolean>("PlaceObsidianIfNoValidSpots ", new String[] {"POINVS"}, "Automatically places obsidian if there are no available crystal spots, so you can crystal your opponent", false);
+    public static final Value<Boolean> MinHealthPause = new Value<Boolean>("MinHealthPause", new String[] {"MHP"}, "Automatically pauses if you are below RequiredHealth", false);
+    public static final Value<Float> RequiredHealth = new Value<Float>("RequiredHealth", new String[] {""}, "RequiredHealth for autocrystal to function, must be above or equal to this amount.", 11.0f, 0.0f, 20.0f, 1.0f);
     
     public static final Value<Boolean> Render = new Value<Boolean>("Render", new String[] {"Render"}, "Allows for rendering of block placements", true);
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
@@ -1036,6 +1040,9 @@ public class AutoCrystalModule extends Module
             return true;
         
         if (AutoMend.isEnabled())
+            return true;
+        
+        if (MinHealthPause.getValue() && (mc.player.getHealth()+mc.player.getAbsorptionAmount()) < RequiredHealth.getValue())
             return true;
         
         return false;
