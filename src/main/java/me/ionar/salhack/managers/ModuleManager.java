@@ -161,6 +161,7 @@ public class ModuleManager
         Add(new TorchAnnihilatorModule());
         
         /// Schematica
+        Add(new PrinterModule());
         Add(new PrinterBypassModule());
 
         Mods.sort((p_Mod1, p_Mod2) -> p_Mod1.getDisplayName().compareTo(p_Mod2.getDisplayName()));

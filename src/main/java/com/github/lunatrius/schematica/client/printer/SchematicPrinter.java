@@ -50,6 +50,7 @@ public class SchematicPrinter
 
     private boolean isEnabled = true;
     private boolean isPrinting = false;
+    private boolean Stationary = false;
 
     private SchematicWorld schematic = null;
     private byte[][][] timeout = null;
@@ -85,10 +86,15 @@ public class SchematicPrinter
     {
         return this.schematic;
     }
+    
+    public boolean IsStationary()
+    {
+        return schematic == null || Stationary;
+    }
 
     public void setSchematic(final SchematicWorld schematic)
     {
-        this.isPrinting = false;
+   //     this.isPrinting = false;
         this.schematic = schematic;
         refresh();
     }
@@ -155,6 +161,9 @@ public class SchematicPrinter
 
         final double blockReachDistance = this.minecraft.playerController.getBlockReachDistance() - 0.1;
         final double blockReachDistanceSq = blockReachDistance * blockReachDistance;
+        
+        boolean l_IsPrinting = false;
+        
         for (final MBlockPos pos : BlockPosHelper.getAllInBoxXZY(minX, minY, minZ, maxX, maxY, maxZ))
         {
             if (pos.distanceSqToCenter(dX, dY, dZ) > blockReachDistanceSq)
@@ -166,6 +175,7 @@ public class SchematicPrinter
             {
                 if (placeBlock(world, player, pos))
                 {
+                    l_IsPrinting = true;
                     return syncSlotAndSneaking(player, slot, isSneaking, true);
                 }
             }
@@ -175,6 +185,9 @@ public class SchematicPrinter
                 return syncSlotAndSneaking(player, slot, isSneaking, false);
             }
         }
+        
+        if (!l_IsPrinting)
+            Stationary = false;
 
         return syncSlotAndSneaking(player, slot, isSneaking, true);
     }
@@ -398,6 +411,8 @@ public class SchematicPrinter
              //   SalHack.SendMessage("Switching to slot: " + l_Slot);
             }
         }
+        
+        Stationary = false;
         
         EventSchematicaPlaceBlockFull l_Event = new EventSchematicaPlaceBlockFull(pos, itemStack.getItem());
         
