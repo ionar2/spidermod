@@ -11,6 +11,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.InventoryEnderChest;
 import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -235,7 +236,7 @@ public final class ShulkerPreviewModule extends Module
 
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (p_Event.getItemStack().getDisplayName().equals("Ender Chest"))
+        if (Item.getIdFromItem(p_Event.getItemStack().getItem()) == 130)
         {
             // store mouse/event coords
             int x = p_Event.getX();
