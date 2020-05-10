@@ -22,6 +22,8 @@
     "MixinMovementInputFromOptions",
     "MixinWorld",
     "MixinLayerArmorBase",
-    "MixinItemRenderer"
+    "MixinItemRenderer",
+    "MixinActiveRenderInfo",
+    "MixinMapItemRenderer"
   ]
 }
