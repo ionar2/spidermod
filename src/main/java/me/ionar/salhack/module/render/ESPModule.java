@@ -43,6 +43,7 @@ public class ESPModule extends Module
     { "H" }, "Shows holes for crystal pvp", true);
     public final Value<Integer> radius = new Value<Integer>("HoleRadius", new String[]
     { "Radius", "Range", "Distance" }, "Radius in blocks to scan for holes.", 8, 0, 32, 1);
+    public final Value<Integer> YRadius = new Value<Integer>("HoleYRadius", new String[] {"YRadius"}, "Radius for searcher for Y level", 4, 0, 32, 1);
     public final Value<Boolean> Void = new Value<Boolean>("Void", new String[]
     { "V" }, "Shows holes that are void esp", true);
     public final Value<Boolean> Storages = new Value<Boolean>("Storages", new String[]
@@ -102,7 +103,7 @@ public class ESPModule extends Module
         {
             for (int z = playerPos.getZ() - radius.getValue(); z < playerPos.getZ() + radius.getValue(); z++)
             {
-                for (int y = playerPos.getY() + 4; y > playerPos.getY() - 4; y--)
+                for (int y = playerPos.getY() + YRadius.getValue(); y > playerPos.getY() - YRadius.getValue(); y--)
                 {
                     final BlockPos blockPos = new BlockPos(x, y, z);
                     final IBlockState blockState = mc.world.getBlockState(blockPos);
