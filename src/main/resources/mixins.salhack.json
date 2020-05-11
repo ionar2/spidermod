@@ -23,6 +23,7 @@
     "MixinLayerArmorBase",
     "MixinItemRenderer",
     "MixinEntityRenderer",
-    "MixinMapItemRenderer"
+    "MixinMapItemRenderer",
+    "MixinAbstractHorse"
   ]
 }
