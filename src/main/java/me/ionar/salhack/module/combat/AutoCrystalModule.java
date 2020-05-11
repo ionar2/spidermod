@@ -661,7 +661,7 @@ public class AutoCrystalModule extends Module
                     float l_MinDmg = MinDMG.getValue();
                     
                     /// FacePlace
-                    if (m_Target.getHealth() <= FacePlace.getValue())
+                    if (m_Target.getHealth()+m_Target.getAbsorptionAmount() <= FacePlace.getValue())
                         l_MinDmg = 1f;
                     
                     BlockPos l_TargetPos = null;
