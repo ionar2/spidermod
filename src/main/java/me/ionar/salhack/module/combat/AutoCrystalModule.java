@@ -418,15 +418,21 @@ public class AutoCrystalModule extends Module
                 }
                 break;
             case Smart:
-                EntityLivingBase l_Target = GetNearTarget(p_Entity);
+                EntityLivingBase l_Target = m_Target != null ? m_Target : GetNearTarget(p_Entity);
                 
                 if (l_Target == null)
                     return false;
                 
                 float l_TargetDMG = CrystalUtils.calculateDamage(mc.world, p_Entity.posX + 0.5, p_Entity.posY + 1.0, p_Entity.posZ + 0.5, l_Target, 0);
                 float l_SelfDMG = CrystalUtils.calculateDamage(mc.world, p_Entity.posX + 0.5, p_Entity.posY + 1.0, p_Entity.posZ + 0.5, mc.player, 0);
+
+                float l_MinDmg = MinDMG.getValue();
                 
-                if (l_TargetDMG > 0 && l_SelfDMG < MaxSelfDMG.getValue())
+                /// FacePlace
+                if (l_Target.getHealth()+l_Target.getAbsorptionAmount() <= FacePlace.getValue())
+                    l_MinDmg = 1f;
+                
+                if (l_TargetDMG > l_MinDmg && l_SelfDMG < MaxSelfDMG.getValue())
                     return true;
                 
                 break;
