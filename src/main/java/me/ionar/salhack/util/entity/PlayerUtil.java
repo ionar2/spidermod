@@ -121,6 +121,11 @@ public class PlayerUtil
         return new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ));
     }
     
+    public static float GetHealthWithAbsorption()
+    {
+        return mc.player.getHealth() + mc.player.getAbsorptionAmount();
+    }
+    
     public static boolean IsPlayerInHole()
     {
         BlockPos blockPos = GetLocalPlayerPosFloored();
