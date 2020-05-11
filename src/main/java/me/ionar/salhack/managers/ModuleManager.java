@@ -59,6 +59,7 @@ public class ModuleManager
         
         /// Combat
         Add(new AimbotModule());
+        Add(new AntiCityBossModule());
         Add(new Auto32kModule());
         Add(new AutoArmorModule());
         Add(new AutoCrystalModule());

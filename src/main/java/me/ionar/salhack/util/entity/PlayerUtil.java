@@ -16,6 +16,7 @@ import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class PlayerUtil
@@ -246,5 +247,61 @@ public class PlayerUtil
             mc.player.prevOnGround = mc.player.onGround;
             mc.player.autoJumpEnabled = mc.player.mc.gameSettings.autoJump;
         }
+    }
+
+    public static boolean IsPlayerTrapped()
+    {
+        BlockPos l_PlayerPos = GetLocalPlayerPosFloored();
+        
+        final BlockPos[] l_TrapPositions = {
+                l_PlayerPos.down(),
+                l_PlayerPos.up().up(),
+                l_PlayerPos.north(),
+                l_PlayerPos.south(),
+                l_PlayerPos.east(),
+                l_PlayerPos.west(),
+                l_PlayerPos.north().up(),
+                l_PlayerPos.south().up(),
+                l_PlayerPos.east().up(),
+                l_PlayerPos.west().up(),
+                };
+        
+        for (BlockPos l_Pos : l_TrapPositions)
+        {
+            IBlockState l_State = mc.world.getBlockState(l_Pos);
+            
+            if (l_State.getBlock() != Blocks.OBSIDIAN && mc.world.getBlockState(l_Pos).getBlock() != Blocks.BEDROCK)
+                return false;
+        }
+
+        return true;
+    }
+    
+    public enum FacingDirection
+    {
+        North,
+        South,
+        East,
+        West,
+    }
+
+    public static FacingDirection GetFacing()
+    {
+        switch (MathHelper.floor((double) (mc.player.rotationYaw * 8.0F / 360.0F) + 0.5D) & 7)
+        {
+            case 0:
+            case 1:
+                return FacingDirection.South;
+            case 2:
+            case 3:
+                return FacingDirection.West;
+            case 4:
+            case 5:
+                return FacingDirection.North;
+            case 6:
+            case 7:
+                return FacingDirection.East;
+        }
+        return FacingDirection.North;
     }
 }
