@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javax.annotation.Nullable;
 
+import me.ionar.salhack.managers.FontManager;
 import me.ionar.salhack.util.render.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ChatLine;
@@ -82,18 +83,7 @@ public class SalGuiNewChat extends GuiNewChat
                                 drawRect(-2, j2 - 10, 0 + k + 4, j2, l1 / 2 << 24);
                                 String s = chatline.getChatComponent().getFormattedText();
                                 GlStateManager.enableBlend();
-                              /*  int l_CurrentOffset = 0;
-                                for (char c : s.toCharArray())
-                                {
-                                    String test = Character.toString(c);
-
-                                    l_I += 2;
-                                    
-                                    RenderUtil.drawStringWithShadow(test, 0.0F+l_CurrentOffset, (float)(j2 - 10), GetModuleColor(l_I));
-
-                                    l_CurrentOffset += RenderUtil.getStringWidth(test);
-                                }*/
-                                RenderUtil.drawStringWithShadow(s, 0.0F, (float)(j2 - 10), 0xFFFFFF);//);16777215 + (l1 << 24));
+                                FontManager.Get().VerdanaBold.drawStringWithShadow(s, 0.0F, (float)(j2 - 10), -1);
                                 GlStateManager.disableAlpha();
                                 GlStateManager.disableBlend();
                             }
@@ -103,7 +93,7 @@ public class SalGuiNewChat extends GuiNewChat
 
                 if (flag)
                 {
-                    int k2 = (int) RenderUtil.getStringHeight("f");
+                    int k2 = (int) FontManager.Get().VerdanaBold.getStringHeight("f");
                     GlStateManager.translate(-3.0F, 0.0F, 0.0F);
                     int l2 = j * k2 + j;
                     int i3 = l * k2 + l;
@@ -118,6 +108,8 @@ public class SalGuiNewChat extends GuiNewChat
                         drawRect(2, -j3, 1, -j3 - k1, 13421772 + (k3 << 24));
                     }
                 }
+                
+            //    RenderUtil.drawOutlineRect(-2, 40, 55, 66, 1, 0x99000000);
 
                 GlStateManager.popMatrix();
             }
@@ -146,9 +138,9 @@ public class SalGuiNewChat extends GuiNewChat
             {
                 int l = Math.min(this.getLineCount(), this.drawnChatLines.size());
 
-                if (j <= MathHelper.floor((float)this.getChatWidth() / this.getChatScale()) && k < RenderUtil.getStringHeight("U") * l + l)
+                if (j <= MathHelper.floor((float)this.getChatWidth() / this.getChatScale()) && k < FontManager.Get().VerdanaBold.getStringHeight("U") * l + l)
                 {
-                    int i1 = (int) (k / RenderUtil.getStringHeight("U") + this.scrollPos);
+                    int i1 = (int) (k / FontManager.Get().VerdanaBold.getStringHeight("U") + this.scrollPos);
 
                     if (i1 >= 0 && i1 < this.drawnChatLines.size())
                     {
@@ -159,7 +151,7 @@ public class SalGuiNewChat extends GuiNewChat
                         {
                             if (itextcomponent instanceof TextComponentString)
                             {
-                                j1 += RenderUtil.getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(((TextComponentString)itextcomponent).getText(), false));
+                                j1 += FontManager.Get().VerdanaBold.getStringWidth(GuiUtilRenderComponents.removeTextColorsIfConfigured(((TextComponentString)itextcomponent).getText(), false));
 
                                 if (j1 > j)
                                 {

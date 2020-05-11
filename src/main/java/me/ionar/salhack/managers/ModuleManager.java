@@ -147,6 +147,7 @@ public class ModuleManager
         Add(new ClickGuiModule());
         Add(new HudEditorModule());
         Add(new HudModule());
+        Add(new ReliantChatModule());
         
         /// World
         Add(new AutoBuilderModule());

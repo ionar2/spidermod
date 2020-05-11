@@ -9,6 +9,7 @@ public class FontManager
     
     public SalFontRenderer TWCenMt18 = null;
     public SalFontRenderer TwCenMtStd28 = null;
+    public SalFontRenderer VerdanaBold = null;
     
     public FontManager()
     {
@@ -18,6 +19,7 @@ public class FontManager
     {
         TWCenMt18 = new SalFontRenderer("Tw Cen MT", 18);
         TwCenMtStd28 = new SalFontRenderer("Tw Cen MT Std", 28.14f);
+        VerdanaBold = new SalFontRenderer("VerdanaBold", 20f);
         
         for (int l_I = 0; l_I < FontRenderers.length; ++l_I)
             FontRenderers[l_I] = new SalFontRenderer("Tw Cen MT", l_I);
