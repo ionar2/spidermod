@@ -10,7 +10,6 @@
     "MixinRenderLivingBase",
     "MixinBlockLiquid",
     "MixinPlayerControllerMP",
-    "MixinEntityRenderer",
     "MixinGuiScreen",
     "MixinNetworkManager",
     "MixinMinecraft",
@@ -23,7 +22,7 @@
     "MixinWorld",
     "MixinLayerArmorBase",
     "MixinItemRenderer",
-    "MixinActiveRenderInfo",
+    "MixinEntityRenderer",
     "MixinMapItemRenderer"
   ]
 }

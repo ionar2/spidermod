@@ -72,7 +72,7 @@ repositories {
 
 dependencies {
     //mixin needs to be distributed with the mod, very important
-    compile("org.spongepowered:mixin:0.7.8-SNAPSHOT") { // do NOT update this to 8.0 or above, it breaks compatibility with future client
+    compile("org.spongepowered:mixin:0.7.11-SNAPSHOT") { // do NOT update this to 8.0 or above, it breaks compatibility with future client
         exclude module: 'launchwrapper'
         exclude module: 'guava'
         exclude module: 'commons-io'

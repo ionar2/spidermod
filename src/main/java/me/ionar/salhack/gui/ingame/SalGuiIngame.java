@@ -6,6 +6,7 @@ import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.ui.ReliantChatModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngame;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
@@ -19,7 +20,7 @@ public class SalGuiIngame extends GuiIngameForge
         
         ReliantChatModule l_Mod = (ReliantChatModule)ModuleManager.Get().GetMod(ReliantChatModule.class);
         
-        if (l_Mod.isEnabled())
+        if (l_Mod != null && l_Mod.isEnabled())
             l_Mod.Activate();
     }
 
@@ -28,6 +29,6 @@ public class SalGuiIngame extends GuiIngameForge
     {
         super.renderGameOverlay(partialTicks);
         
-        SalHackMod.EVENT_BUS.post(new EventRenderGameOverlay(partialTicks));
+        SalHackMod.EVENT_BUS.post(new EventRenderGameOverlay(partialTicks, new ScaledResolution(mc)));
     }
 }

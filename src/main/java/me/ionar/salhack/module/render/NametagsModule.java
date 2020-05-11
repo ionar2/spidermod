@@ -71,8 +71,6 @@ public class NametagsModule extends Module
     public final Value<Boolean> Ping = new Value<Boolean>("Ping", new String[]{ "" }, "", true);
     
     private ICamera camera = new Frustum();
-    private final ResourceLocation inventory = new ResourceLocation("textures/gui/container/inventory.png");
-
     public NametagsModule()
     {
         super("NameTags", new String[]
@@ -92,7 +90,6 @@ public class NametagsModule extends Module
     
     private void RenderNameTagFor(EntityPlayer e, EventRenderGameOverlay p_Event)
     {
-        GlStateManager.pushMatrix();
         final float[] bounds = this.convertBounds(e, p_Event.getPartialTicks(),
                 p_Event.getScaledResolution().getScaledWidth(),
                 p_Event.getScaledResolution().getScaledHeight());
@@ -269,7 +266,6 @@ public class NametagsModule extends Module
                 }
             }
         }
-        GlStateManager.popMatrix();
     }
     
     @EventHandler

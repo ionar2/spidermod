@@ -88,9 +88,9 @@ public class MixinEntityRenderer
             p_Info.cancel();
     }
 
-    /*@Inject(method = "renderWorldPass", at = @At("RETURN"))
-    private void renderWorldPass(CallbackInfo p_Info)
+    @Inject(method = "renderWorldPass", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand:Z", shift = At.Shift.AFTER))
+    private void renderWorldPassPost(int pass, float partialTicks, long finishTimeNano, CallbackInfo callbackInfo)
     {
         RenderUtil.updateModelViewProjectionMatrix();
-    }*/
+    }
 }
