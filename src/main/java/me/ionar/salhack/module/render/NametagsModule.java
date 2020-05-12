@@ -105,7 +105,7 @@ public class NametagsModule extends Module
             if (friend != null)
             {
                 name = friend.GetAlias();
-                color = 0xFF9900EE;
+                color = 0x00C3EE;
             }
 
             final EntityPlayer player = (EntityPlayer) e;
@@ -123,7 +123,7 @@ public class NametagsModule extends Module
                 {}
             }
             
-            String l_Name = String.format("%s %sms %s", name, responseTime, Math.floor(e.getHealth()+e.getAbsorptionAmount()));
+            String l_Name = String.format("%s %sms %s", name, responseTime, ChatFormatting.GREEN + String.valueOf(Math.floor(e.getHealth()+e.getAbsorptionAmount())));
 
             RenderUtil.drawStringWithShadow(l_Name,
                     bounds[0] + (bounds[2] - bounds[0]) / 2 - RenderUtil.getStringWidth(l_Name) / 2,
@@ -151,7 +151,7 @@ public class NametagsModule extends Module
 
                 int x = 0;
                 
-                if (!e.getHeldItemMainhand().isEmpty())
+                if (!e.getHeldItemMainhand().isEmpty() && e.getHeldItemMainhand().hasDisplayName())
                 {
                     l_Name = e.getHeldItemMainhand().getDisplayName();
                     
