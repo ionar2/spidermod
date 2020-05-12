@@ -18,6 +18,9 @@ import me.ionar.salhack.SalHackMod;
 import me.ionar.salhack.events.schematica.EventSchematicaPlaceBlock;
 import me.ionar.salhack.events.schematica.EventSchematicaPlaceBlockFull;
 import me.ionar.salhack.main.SalHack;
+import me.ionar.salhack.managers.ModuleManager;
+import me.ionar.salhack.module.exploit.LiquidInteractModule;
+import me.ionar.salhack.util.BlockInteractionHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -161,9 +164,7 @@ public class SchematicPrinter
 
         final double blockReachDistance = this.minecraft.playerController.getBlockReachDistance() - 0.1;
         final double blockReachDistanceSq = blockReachDistance * blockReachDistance;
-        
-        boolean l_IsPrinting = false;
-        
+
         for (final MBlockPos pos : BlockPosHelper.getAllInBoxXZY(minX, minY, minZ, maxX, maxY, maxZ))
         {
             if (pos.distanceSqToCenter(dX, dY, dZ) > blockReachDistanceSq)
@@ -175,7 +176,7 @@ public class SchematicPrinter
             {
                 if (placeBlock(world, player, pos))
                 {
-                    l_IsPrinting = true;
+                    Stationary = false;
                     return syncSlotAndSneaking(player, slot, isSneaking, true);
                 }
             }
@@ -185,9 +186,8 @@ public class SchematicPrinter
                 return syncSlotAndSneaking(player, slot, isSneaking, false);
             }
         }
-        
-        if (!l_IsPrinting)
-            Stationary = false;
+
+        Stationary = true;
 
         return syncSlotAndSneaking(player, slot, isSneaking, true);
     }
@@ -327,6 +327,8 @@ public class SchematicPrinter
             return Arrays.asList(EnumFacing.VALUES);
         }
 
+        boolean l_LiquidInteract = ModuleManager.Get().GetMod(LiquidInteractModule.class).isEnabled();
+
         final List<EnumFacing> list = new ArrayList<EnumFacing>();
 
         for (final EnumFacing side : EnumFacing.VALUES)
@@ -335,6 +337,14 @@ public class SchematicPrinter
             {
                 list.add(side);
             }
+        }
+
+        if (list.isEmpty() && l_LiquidInteract)
+        {
+            BlockInteractionHelper.ValidResult l_Result = BlockInteractionHelper.valid(pos);
+
+            if (l_Result == BlockInteractionHelper.ValidResult.Ok)
+                list.add(EnumFacing.UP);
         }
 
         return list;
