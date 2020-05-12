@@ -68,6 +68,7 @@ public class ModuleManager
         Add(new AutoTrapFeet());
         Add(new BowSpamModule());
         Add(new CriticalsModule());
+        Add(new HoleFillerModule());
         Add(new KillAuraModule());
         Add(new ReachModule());
         Add(new SelfTrapModule());

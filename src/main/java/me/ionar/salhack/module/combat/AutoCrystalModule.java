@@ -147,6 +147,7 @@ public class AutoCrystalModule extends Module
     private AutoTrapFeet AutoTrapFeet = null;
     private AutoMendArmorModule AutoMend = null;
     private SelfTrapModule SelfTrap = null;
+    private HoleFillerModule HoleFiller = null;
     
     @Override
     public void SendMessage(String p_Msg)
@@ -168,6 +169,7 @@ public class AutoCrystalModule extends Module
         AutoTrapFeet = (AutoTrapFeet)ModuleManager.Get().GetMod(AutoTrapFeet.class);
         AutoMend = (AutoMendArmorModule)ModuleManager.Get().GetMod(AutoMendArmorModule.class);
         SelfTrap = (SelfTrapModule)ModuleManager.Get().GetMod(SelfTrapModule.class);
+        HoleFiller = (HoleFillerModule)ModuleManager.Get().GetMod(HoleFillerModule.class);
         
       //  if (!Holes.isEnabled())
        //     Holes.toggle();
@@ -1070,6 +1072,9 @@ public class AutoCrystalModule extends Module
             return true;
         
         if (MinHealthPause.getValue() && (mc.player.getHealth()+mc.player.getAbsorptionAmount()) < RequiredHealth.getValue())
+            return true;
+
+        if (HoleFiller.isEnabled() && HoleFiller.IsProcessing())
             return true;
         
         return false;
