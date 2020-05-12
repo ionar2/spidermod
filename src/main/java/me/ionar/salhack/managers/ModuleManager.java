@@ -159,6 +159,7 @@ public class ModuleManager
         Add(new AutoWitherModule());
         Add(new FastPlaceModule());
         Add(new LawnmowerModule());
+        Add(new NoGlitchBlocksModule());
         Add(new NoWeatherModule());
         Add(new ScaffoldModule());
         Add(new SpeedyGonzales());

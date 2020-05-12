@@ -1,5 +1,6 @@
 package me.ionar.salhack.mixin.client;
 
+import me.ionar.salhack.events.player.EventPlayerDestroyBlock;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
@@ -68,6 +69,20 @@ public class MixinPlayerControllerMP
         {
             callback.setReturnValue(false);
             callback.cancel();
+        }
+    }
+
+    @Inject(method = "onPlayerDestroyBlock", at = @At("HEAD"), cancellable = true)
+    public void onPlayerDestroyBlock(BlockPos pos, CallbackInfoReturnable<Boolean> info)
+    {
+        EventPlayerDestroyBlock l_Event = new EventPlayerDestroyBlock(pos);
+
+        SalHackMod.EVENT_BUS.post(l_Event);
+
+        if (l_Event.isCancelled())
+        {
+            info.setReturnValue(false);
+            info.cancel();
         }
     }
 }
