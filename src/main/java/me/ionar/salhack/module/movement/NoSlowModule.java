@@ -1,5 +1,9 @@
 package me.ionar.salhack.module.movement;
 
+import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -31,6 +35,7 @@ public final class NoSlowModule extends Module
     { "it" }, "Disables the slowness from using items (shields, eating, etc).", true);
     public final Value<Boolean> ice = new Value<Boolean>("Ice", new String[]
     { "ic" }, "Disables slowness from walking on ice.", true);
+    public final Value<Boolean> NCPStrict = new Value<Boolean>("NCPStrict", new String[]{"NCP"}, "Allows NoSlow to work on nocheatplus", true);
 
     public NoSlowModule()
     {
@@ -105,7 +110,6 @@ public final class NoSlowModule extends Module
     @EventHandler
     private Listener<EventClientTick> OnTick = new Listener<>(p_Event ->
     {
-
         if (mc.player.isHandActive())
         {
             if (mc.player.getHeldItem(mc.player.getActiveHand()).getItem() instanceof ItemShield)
@@ -135,13 +139,27 @@ public final class NoSlowModule extends Module
 
     });
 
+    private boolean Flag = false;
+
     @EventHandler
     private Listener<EventPlayerUpdateMoveState> OnUpdateMoveState = new Listener<>(event ->
     {
         if (items.getValue() && mc.player.isHandActive() && !mc.player.isRiding())
         {
+            if (Flag && NCPStrict.getValue())
+            {
+                if (mc.player.isSprinting())
+                {
+                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SPRINTING));
+                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SPRINTING));
+                }
+
+                Flag = false;
+            }
+
             mc.player.movementInput.moveForward /= 0.2F;
             mc.player.movementInput.moveStrafe /= 0.2F;
         }
+        else Flag = true;
     });
 }
