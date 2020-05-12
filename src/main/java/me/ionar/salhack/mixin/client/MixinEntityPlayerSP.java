@@ -1,14 +1,23 @@
 package me.ionar.salhack.mixin.client;
 
+import com.google.common.base.Predicate;
+import me.ionar.salhack.events.render.EventRenderGetEntitiesINAABBexcluding;
+import me.ionar.salhack.gui.chest.SalGuiChest;
+import me.ionar.salhack.main.Wrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraft.util.EnumHand;
 
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.IInteractionObject;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,6 +30,9 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import me.ionar.salhack.SalHackMod;
 import me.ionar.salhack.events.MinecraftEvent.Era;
 import me.ionar.salhack.events.player.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(EntityPlayerSP.class)
 public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer
@@ -119,6 +131,18 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer
         catch (Exception v3)
         {
             v3.printStackTrace();
+        }
+    }
+
+    @Inject(method = "displayGUIChest", at = @At("HEAD"), cancellable = true)
+    public void displayGUIChest(IInventory inventory, CallbackInfo ci)
+    {
+        /// @todo move to events
+        String id = inventory instanceof IInteractionObject ? ((IInteractionObject) inventory).getGuiID() : "minecraft:container";
+        if (id.equals("minecraft:chest"))
+        {
+            Wrapper.GetMC().displayGuiScreen(new SalGuiChest(Wrapper.GetPlayer().inventory, inventory));
+            ci.cancel();
         }
     }
 }

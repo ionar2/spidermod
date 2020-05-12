@@ -64,7 +64,7 @@ public class ChestStealerModule extends Module
             {
                 ItemStack l_Stack = l_Chest.lowerChestInventory.getStackInSlot(l_I);
 
-                if (l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR)
+                if ((l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR) && Mode.getValue() == Modes.Store)
                 {
                     HandleStoring(l_Chest.inventorySlots.windowId, l_Chest.lowerChestInventory.getSizeInventory() - 9);
                     return;
@@ -94,7 +94,7 @@ public class ChestStealerModule extends Module
             {
                 ItemStack l_Stack = l_Chest.horseInventory.getStackInSlot(l_I);
 
-                if (l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR)
+                if ((l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR) && Mode.getValue() == Modes.Store)
                 {
                     HandleStoring(l_Chest.inventorySlots.windowId, l_Chest.horseInventory.getSizeInventory() - 9);
                     return;
@@ -124,7 +124,7 @@ public class ChestStealerModule extends Module
             {
                 ItemStack l_Stack = l_Chest.inventory.getStackInSlot(l_I);
 
-                if (l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR)
+                if ((l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR) && Mode.getValue() == Modes.Store)
                 {
                     HandleStoring(l_Chest.inventorySlots.windowId, l_Chest.inventory.getSizeInventory() - 9);
                     return;
