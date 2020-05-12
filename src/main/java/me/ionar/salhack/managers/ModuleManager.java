@@ -132,6 +132,7 @@ public class ModuleManager
         /// Render
         Add(new AntiFog());
         Add(new BlockHighlightModule());
+        Add(new BreakHighlightModule());
         Add(new BrightnessModule());
     //    Add(new ContainerPreviewModule());
         Add(new ESPModule());
