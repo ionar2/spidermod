@@ -139,7 +139,7 @@ public class FriendManager
         if (!m_FriendsModule.isEnabled())
             return null;
         
-        if (FriendList.containsKey(e.getName().toLowerCase()))
+        if (!FriendList.containsKey(e.getName().toLowerCase()))
             return null;
         
         return FriendList.get(e.getName().toLowerCase());

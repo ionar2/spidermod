@@ -37,7 +37,9 @@ public class SurroundModule extends Module
     
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]
     { "rotate" }, "Rotate", true);
-    public final Value<Integer> BlocksPerTick = new Value<Integer>("BlocksPerTick", new String[] {"BPT"}, "Blocks per tick", 4, 1, 10, 1);
+    public final Value<Integer> BlocksPerTick = new Value<Integer>("BlocksPerTick", new String[] {"BPT"}, "Blocks per tick", 1, 1, 10, 1);
+    public final Value<Boolean> ActivateOnlyOnShift = new Value<Boolean>("ActivateOnlyOnShift", new String[]
+    { "AoOS" }, "Activates only when shift is pressed.", false);
     
     public enum CenterModes
     {
@@ -70,6 +72,9 @@ public class SurroundModule extends Module
             toggle();
             return;
         }
+        
+        if (ActivateOnlyOnShift.getValue())
+            return;
 
         Center = GetCenter(mc.player.posX, mc.player.posY, mc.player.posZ);
         
@@ -81,18 +86,8 @@ public class SurroundModule extends Module
         
         if (CenterMode.getValue() == CenterModes.Teleport)
         {
-          //  
-            
-        //    double l_MotionX = l_Center.x-mc.player.posX;
-        //    double l_MotionZ = l_Center.z-mc.player.posZ;
-            
-       //     SalHack.INSTANCE.logChat(String.format("%s %s %s %s", l_MotionX, l_MotionZ, mc.player.getPositionVector(), l_Center.toString()));
-            
-     //       mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + l_MotionX/2, l_Center.y, mc.player.posZ + l_MotionZ/2, false));
             mc.player.connection.sendPacket(new CPacketPlayer.Position(Center.x, Center.y, Center.z, true));
             mc.player.setPosition(Center.x, Center.y, Center.z);
-            
-           // mc.player.moveToBlockPosAndAngles(pos, rotationYawIn, rotationPitchIn);
         }
     }
 
@@ -107,6 +102,32 @@ public class SurroundModule extends Module
     {
         if (p_Event.getEra() != Era.PRE)
             return;
+        
+        if (ActivateOnlyOnShift.getValue())
+        {
+            if (!mc.gameSettings.keyBindSneak.isKeyDown())
+            {
+                Center = Vec3d.ZERO;
+                return;
+            }
+            
+            if (Center == Vec3d.ZERO)
+            {
+                Center = GetCenter(mc.player.posX, mc.player.posY, mc.player.posZ);
+                
+                if (CenterMode.getValue() != CenterModes.None)
+                {
+                    mc.player.motionX = 0;
+                    mc.player.motionZ = 0;
+                }
+                
+                if (CenterMode.getValue() == CenterModes.Teleport)
+                {
+                    mc.player.connection.sendPacket(new CPacketPlayer.Position(Center.x, Center.y, Center.z, true));
+                    mc.player.setPosition(Center.x, Center.y, Center.z);
+                }
+            }
+        }
         
         /// NCP Centering
         if (Center != Vec3d.ZERO && CenterMode.getValue() == CenterModes.NCP)
@@ -128,7 +149,7 @@ public class SurroundModule extends Module
             }
         }
         
-        if (!mc.player.onGround && !mc.player.prevOnGround)
+        if (!mc.player.onGround && !mc.player.prevOnGround && !ActivateOnlyOnShift.getValue())
         {
             if (ToggleOffGround.getValue())
             {

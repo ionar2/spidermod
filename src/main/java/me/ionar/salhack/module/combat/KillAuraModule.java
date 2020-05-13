@@ -14,6 +14,7 @@ import me.ionar.salhack.util.MathUtil;
 import me.ionar.salhack.util.RotationSpoof;
 import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.util.entity.EntityUtil;
+import me.ionar.salhack.util.entity.ItemUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.entity.Entity;
@@ -22,6 +23,7 @@ import net.minecraft.entity.passive.AbstractChestHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityShulkerBullet;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.CPacketUseEntity;
 import net.minecraft.util.EnumHand;
@@ -39,7 +41,11 @@ public class KillAuraModule extends Module
     public final Value<Boolean> Tamed = new Value<Boolean>("Tamed", new String[] {"Players"}, "Should we target Tamed", false);
     public final Value<Boolean> Projectiles = new Value<Boolean>("Projectile", new String[] {"Projectile"}, "Should we target Projectiles (shulker bullets, etc)", false);
     public final Value<Boolean> SwordOnly = new Value<Boolean>("SwordOnly", new String[] {"SwordOnly"}, "Only activate on sword", false);
+    public final Value<Boolean> PauseIfCrystal = new Value<Boolean>("PauseIfCrystal", new String[] {"PauseIfCrystal"}, "Pauses if a crystal is in your hand", false);
+    public final Value<Boolean> AutoSwitch = new Value<Boolean>("AutoSwitch", new String[] {"AutoSwitch"}, "Automatically switches to a sword in your hotbar", false);
     public final Value<Integer> Ticks = new Value<Integer>("Ticks", new String[] {"Ticks"}, "If you don't have HitDelay on, how fast the kill aura should be hitting", 10, 0, 40, 1);
+    public final Value<Integer> Iterations = new Value<Integer>("Iterations", new String[] {""}, "Allows you to do more iteratons per tick", 1, 1, 10, 1);
+    public final Value<Boolean> Only32k = new Value<Boolean>("32kOnly", new String[] {""}, "Only killauras when 32k sword is in your hand", false);
     
     public enum Modes
     {
@@ -91,6 +97,12 @@ public class KillAuraModule extends Module
     public String getMetaData()
     {
         return Mode.getValue().toString();
+    }
+    
+    @Override
+    public void toggleNoSave()
+    {
+        
     }
     
     private boolean IsValidTarget(Entity p_Entity, @Nullable Entity p_ToIgnore)
@@ -161,8 +173,36 @@ public class KillAuraModule extends Module
     @EventHandler
     private Listener<EventClientTick> OnTick = new Listener<>(p_Event ->
     {
-        if (SwordOnly.getValue() && !(mc.player.getHeldItemMainhand().getItem() instanceof ItemSword))
-            return;
+        if (!(mc.player.getHeldItemMainhand().getItem() instanceof ItemSword))
+        {
+            if (mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL && PauseIfCrystal.getValue())
+                return;
+            
+            int l_Slot = -1;
+            
+            if (AutoSwitch.getValue())
+            {
+                for (int l_I = 0; l_I < 9; ++l_I)
+                {
+                    if (mc.player.inventory.getStackInSlot(l_I).getItem() instanceof ItemSword)
+                    {
+                        l_Slot = l_I;
+                        mc.player.inventory.currentItem = l_Slot;
+                        mc.playerController.updateController();
+                        break;
+                    }
+                }
+            }
+            
+            if (SwordOnly.getValue() && l_Slot == -1)
+                return;
+        }
+        
+        if (Only32k.getValue())
+        {
+            if (!ItemUtil.Is32k(mc.player.getHeldItemMainhand()))
+                return;
+        }
         
         if (AimbotResetTimer.passed(5000))
         {
@@ -183,7 +223,6 @@ public class KillAuraModule extends Module
             case Closest:
                 l_TargetToHit = mc.world.loadedEntityList.stream()
                         .filter(p_Entity -> IsValidTarget(p_Entity, null))
-                        .map(p_Entity -> (EntityLivingBase) p_Entity)
                         .min(Comparator.comparing(p_Entity -> mc.player.getDistance(p_Entity)))
                         .orElse(null);
                 break;
@@ -192,7 +231,6 @@ public class KillAuraModule extends Module
                 {
                     l_TargetToHit = mc.world.loadedEntityList.stream()
                         .filter(p_Entity -> IsValidTarget(p_Entity, null))
-                        .map(p_Entity -> (EntityLivingBase) p_Entity)
                         .min(Comparator.comparing(p_Entity -> mc.player.getDistance(p_Entity)))
                         .orElse(null);
                 }
@@ -200,7 +238,6 @@ public class KillAuraModule extends Module
             case Switch:
                 l_TargetToHit = mc.world.loadedEntityList.stream()
                     .filter(p_Entity -> IsValidTarget(p_Entity, null))
-                    .map(p_Entity -> (EntityLivingBase) p_Entity)
                     .min(Comparator.comparing(p_Entity -> mc.player.getDistance(p_Entity)))
                     .orElse(null);
                 
@@ -236,8 +273,11 @@ public class KillAuraModule extends Module
         RemainingTicks = Ticks.getValue();
         
       //  mc.playerController.attackEntity(mc.player, l_TargetToHit);
-        mc.player.connection.sendPacket(new CPacketUseEntity(l_TargetToHit));
-        mc.player.swingArm(EnumHand.MAIN_HAND);
-        mc.player.resetCooldown();
+        for (int l_I = 0; l_I < Iterations.getValue(); ++l_I)
+        {
+            mc.player.connection.sendPacket(new CPacketUseEntity(l_TargetToHit));
+            mc.player.swingArm(EnumHand.MAIN_HAND);
+            mc.player.resetCooldown();
+        }  
     });
 }

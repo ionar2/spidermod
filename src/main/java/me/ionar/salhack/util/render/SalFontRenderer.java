@@ -77,6 +77,8 @@ public class SalFontRenderer
             return getFontFromInput("/assets/salhack/fonts/verdanabold.ttf");
         if (name == "Lucida Console")
             return getFontFromInput("/assets/salhack/fonts/lucdia-console.ttf");
+        if (name == "VerdanaBold")
+            return getFontFromInput("/assets/salhack/fonts/verdanabold.ttf");
         
         /// default
         return getFontFromInput("/assets/salhack/fonts/tcm.TTF");

@@ -113,10 +113,18 @@ public class AutoCrystalModule extends Module
     public static final Value<Boolean> Animals = new Value<Boolean>("Animals", new String[] {"Animals"}, "Place on Animals", false);
     public static final Value<Boolean> Tamed = new Value<Boolean>("Tamed", new String[] {"Tamed"}, "Place on Tamed", false);
     public static final Value<Boolean> ResetRotationNoTarget = new Value<Boolean>("ResetRotationNoTarget", new String[] {"ResetRotationNoTarget"}, "ResetRotationNoTarget", false);
+    
+    /// More options
     public static final Value<Boolean> Multiplace = new Value<Boolean>("Multiplace", new String[] {"Multiplace"}, "Multiplace", true);
     public static final Value<Boolean> OnlyPlaceWithCrystal = new Value<Boolean>("OnlyPlaceWithCrystal ", new String[] {"OPWC"}, "Only places when you're manually using a crystal in your main or offhand", false);
     public static final Value<Boolean> PlaceObsidianIfNoValidSpots = new Value<Boolean>("PlaceObsidianIfNoValidSpots ", new String[] {"POINVS"}, "Automatically places obsidian if there are no available crystal spots, so you can crystal your opponent", false);
+    public static final Value<Boolean> MinHealthPause = new Value<Boolean>("MinHealthPause", new String[] {"MHP"}, "Automatically pauses if you are below RequiredHealth", false);
+    public static final Value<Float> RequiredHealth = new Value<Float>("RequiredHealth", new String[] {""}, "RequiredHealth for autocrystal to function, must be above or equal to this amount.", 11.0f, 0.0f, 20.0f, 1.0f);
+    public static final Value<Boolean> AutoMultiplace = new Value<Boolean>("AutoMultiplace", new String[] {""}, "Automatically enables/disables multiplace", false);
+    public static final Value<Float> HealthBelowAutoMultiplace = new Value<Float>("HealthBelowAutoMultiplace", new String[] {""}, "RequiredHealth for target to be for automatic multiplace toggling.", 11.0f, 0.0f, 20.0f, 1.0f);
     
+    
+    public static final Value<Boolean> Render = new Value<Boolean>("Render", new String[] {"Render"}, "Allows for rendering of block placements", true);
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
     public static final Value<Integer> Green = new Value<Integer>("Green", new String[] {"Green"}, "Green for rendering", 0xFF, 0, 255, 5);
     public static final Value<Integer> Blue = new Value<Integer>("Blue", new String[] {"Blue"}, "Blue for rendering", 0xF3, 0, 255, 5);
@@ -138,6 +146,8 @@ public class AutoCrystalModule extends Module
     private SurroundModule Surround = null;
     private AutoTrapFeet AutoTrapFeet = null;
     private AutoMendArmorModule AutoMend = null;
+    private SelfTrapModule SelfTrap = null;
+    private HoleFillerModule HoleFiller = null;
     
     @Override
     public void SendMessage(String p_Msg)
@@ -158,6 +168,8 @@ public class AutoCrystalModule extends Module
         Surround = (SurroundModule)ModuleManager.Get().GetMod(SurroundModule.class);
         AutoTrapFeet = (AutoTrapFeet)ModuleManager.Get().GetMod(AutoTrapFeet.class);
         AutoMend = (AutoMendArmorModule)ModuleManager.Get().GetMod(AutoMendArmorModule.class);
+        SelfTrap = (SelfTrapModule)ModuleManager.Get().GetMod(SelfTrapModule.class);
+        HoleFiller = (HoleFillerModule)ModuleManager.Get().GetMod(HoleFillerModule.class);
         
       //  if (!Holes.isEnabled())
        //     Holes.toggle();
@@ -192,7 +204,12 @@ public class AutoCrystalModule extends Module
     @Override
     public String getMetaData()
     {
-        return m_Target != null ? m_Target.getName() : null;
+        String l_Result = m_Target != null ? m_Target.getName() : null;
+        
+        if (AutoMultiplace.getValue() && Multiplace.getValue() && l_Result != null)
+            l_Result += " Multiplacing";
+        
+        return l_Result;
     }
 
     @EventHandler
@@ -403,15 +420,21 @@ public class AutoCrystalModule extends Module
                 }
                 break;
             case Smart:
-                EntityLivingBase l_Target = GetNearTarget(p_Entity);
+                EntityLivingBase l_Target = m_Target != null ? m_Target : GetNearTarget(p_Entity);
                 
                 if (l_Target == null)
                     return false;
                 
                 float l_TargetDMG = CrystalUtils.calculateDamage(mc.world, p_Entity.posX + 0.5, p_Entity.posY + 1.0, p_Entity.posZ + 0.5, l_Target, 0);
                 float l_SelfDMG = CrystalUtils.calculateDamage(mc.world, p_Entity.posX + 0.5, p_Entity.posY + 1.0, p_Entity.posZ + 0.5, mc.player, 0);
+
+                float l_MinDmg = MinDMG.getValue();
                 
-                if (l_TargetDMG > 0 && l_SelfDMG < MaxSelfDMG.getValue())
+                /// FacePlace
+                if (l_Target.getHealth()+l_Target.getAbsorptionAmount() <= FacePlace.getValue())
+                    l_MinDmg = 1f;
+                
+                if (l_TargetDMG > l_MinDmg && l_SelfDMG < MaxSelfDMG.getValue())
                     return true;
                 
                 break;
@@ -646,7 +669,7 @@ public class AutoCrystalModule extends Module
                     float l_MinDmg = MinDMG.getValue();
                     
                     /// FacePlace
-                    if (m_Target.getHealth() <= FacePlace.getValue())
+                    if (m_Target.getHealth()+m_Target.getAbsorptionAmount() <= FacePlace.getValue())
                         l_MinDmg = 1f;
                     
                     BlockPos l_TargetPos = null;
@@ -687,6 +710,14 @@ public class AutoCrystalModule extends Module
         
         if (m_Target == null)
             return BlockPos.ORIGIN;
+        
+        if (AutoMultiplace.getValue())
+        {
+            if (m_Target.getHealth()+m_Target.getAbsorptionAmount() <= HealthBelowAutoMultiplace.getValue())
+                Multiplace.setValue(true);
+            else
+                Multiplace.setValue(false);
+        }
         
         float l_MinDmg = MinDMG.getValue();
         float l_MaxSelfDmg = MaxSelfDMG.getValue();
@@ -842,7 +873,7 @@ public class AutoCrystalModule extends Module
     @EventHandler
     private Listener<RenderEvent> OnRenderEvent = new Listener<>(p_Event ->
     {
-        if (mc.getRenderManager() == null)
+        if (mc.getRenderManager() == null || !Render.getValue())
             return;
         
         ArrayList<BlockPos> l_PlacedCrystalsCopy = new ArrayList<BlockPos>(PlacedCrystals);
@@ -1035,6 +1066,15 @@ public class AutoCrystalModule extends Module
             return true;
         
         if (AutoMend.isEnabled())
+            return true;
+        
+        if (SelfTrap.isEnabled() && !SelfTrap.IsSelfTrapped() && Surround.HasObsidian())
+            return true;
+        
+        if (MinHealthPause.getValue() && (mc.player.getHealth()+mc.player.getAbsorptionAmount()) < RequiredHealth.getValue())
+            return true;
+
+        if (HoleFiller.isEnabled() && HoleFiller.IsProcessing())
             return true;
         
         return false;

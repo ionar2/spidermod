@@ -405,6 +405,16 @@ public class MenuComponent
         return Height;
     }
 
+    public void SetX(float p_X)
+    {
+        X = p_X;
+    }
+    
+    public void SetY(float p_Y)
+    {
+        Y = p_Y;
+    }
+    
     public void keyTyped(char typedChar, int keyCode)
     {
         for (ComponentItem l_Item : Items)

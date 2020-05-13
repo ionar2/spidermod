@@ -51,9 +51,6 @@ public class ChestStealerModule extends Module
     @EventHandler
     private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
-        if (!(mc.currentScreen instanceof GuiChest) || !(mc.currentScreen instanceof GuiScreenHorseInventory) || !(mc.currentScreen instanceof GuiShulkerBox))
-            return;
-
         if (!timer.passed(Delay.getValue() * 100f))
             return;
 
@@ -67,10 +64,10 @@ public class ChestStealerModule extends Module
             {
                 ItemStack l_Stack = l_Chest.lowerChestInventory.getStackInSlot(l_I);
 
-                if (l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR)
+                if ((l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR) && Mode.getValue() == Modes.Store)
                 {
                     HandleStoring(l_Chest.inventorySlots.windowId, l_Chest.lowerChestInventory.getSizeInventory() - 9);
-                    continue;
+                    return;
                 }
 
                 if (Shulkers.getValue() && !(l_Stack.getItem() instanceof ItemShulkerBox))
@@ -97,10 +94,10 @@ public class ChestStealerModule extends Module
             {
                 ItemStack l_Stack = l_Chest.horseInventory.getStackInSlot(l_I);
 
-                if (l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR)
+                if ((l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR) && Mode.getValue() == Modes.Store)
                 {
                     HandleStoring(l_Chest.inventorySlots.windowId, l_Chest.horseInventory.getSizeInventory() - 9);
-                    continue;
+                    return;
                 }
 
                 if (Shulkers.getValue() && !(l_Stack.getItem() instanceof ItemShulkerBox))
@@ -127,10 +124,10 @@ public class ChestStealerModule extends Module
             {
                 ItemStack l_Stack = l_Chest.inventory.getStackInSlot(l_I);
 
-                if (l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR)
+                if ((l_Stack.isEmpty() || l_Stack.getItem() == Items.AIR) && Mode.getValue() == Modes.Store)
                 {
                     HandleStoring(l_Chest.inventorySlots.windowId, l_Chest.inventory.getSizeInventory() - 9);
-                    continue;
+                    return;
                 }
 
                 if (Shulkers.getValue() && !(l_Stack.getItem() instanceof ItemShulkerBox))

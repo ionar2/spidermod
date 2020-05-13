@@ -91,6 +91,8 @@ public final class AutoTotemModule extends Module
                         ClickType.PICKUP, mc.player);
                 mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP,
                         mc.player);
+                
+                /// @todo: this might cause desyncs, we need a callback for windowclicks for transaction complete packet.
                 mc.playerController.windowClick(mc.player.inventoryContainer.windowId, l_Slot, 0,
                         ClickType.PICKUP, mc.player);
                 mc.playerController.updateController();
@@ -108,14 +110,14 @@ public final class AutoTotemModule extends Module
         
         if (!mc.player.getHeldItemMainhand().isEmpty())
         {
-            if (health.getValue() <= mc.player.getHealth() && mc.player.getHeldItemMainhand().getItem() instanceof ItemSword && OffhandStrNoStrSword.getValue() && !mc.player.isPotionActive(MobEffects.STRENGTH))
+            if (health.getValue() <= PlayerUtil.GetHealthWithAbsorption() && mc.player.getHeldItemMainhand().getItem() instanceof ItemSword && OffhandStrNoStrSword.getValue() && !mc.player.isPotionActive(MobEffects.STRENGTH))
             {
                 SwitchOffHandIfNeed(AutoTotemMode.Strength);
                 return;
             }
             
             /// Sword override
-            if (health.getValue() <= mc.player.getHealth() && mc.player.getHeldItemMainhand().getItem() instanceof ItemSword && OffhandGapOnSword.getValue())
+            if (health.getValue() <= PlayerUtil.GetHealthWithAbsorption() && mc.player.getHeldItemMainhand().getItem() instanceof ItemSword && OffhandGapOnSword.getValue())
             {
                 SwitchOffHandIfNeed(AutoTotemMode.Gap);
                 return;
@@ -123,7 +125,7 @@ public final class AutoTotemModule extends Module
         }
         
         /// First check health, most important as we don't want to die for no reason.
-        if (health.getValue() > mc.player.getHealth() || Mode.getValue() == AutoTotemMode.Totem || (TotemOnElytra.getValue() && mc.player.isElytraFlying()) || (mc.player.fallDistance >= FallDistance.getValue() && !mc.player.isElytraFlying()))
+        if (health.getValue() > PlayerUtil.GetHealthWithAbsorption() || Mode.getValue() == AutoTotemMode.Totem || (TotemOnElytra.getValue() && mc.player.isElytraFlying()) || (mc.player.fallDistance >= FallDistance.getValue() && !mc.player.isElytraFlying()))
         {
             SwitchOffHandIfNeed(AutoTotemMode.Totem);
             return;

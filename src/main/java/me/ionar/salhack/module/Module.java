@@ -7,6 +7,8 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.ionar.salhack.SalHackMod;
 import me.ionar.salhack.events.render.RenderEvent;
+import me.ionar.salhack.events.salhack.EventSalHackModuleDisable;
+import me.ionar.salhack.events.salhack.EventSalHackModuleEnable;
 import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.gui.click.component.item.ComponentItem;
 import me.ionar.salhack.main.SalHack;
@@ -75,12 +77,15 @@ public class Module implements Listenable
         RemainingXAnimation = RenderUtil.getStringWidth(GetFullArrayListDisplayName())+10f;
         
         ModuleManager.Get().OnModEnable(this);
+        
+        SalHackMod.EVENT_BUS.post(new EventSalHackModuleEnable(this));
     }
 
     public void onDisable()
     {
         /// disallow events to be called
         SalHackMod.EVENT_BUS.unsubscribe(this);
+        SalHackMod.EVENT_BUS.post(new EventSalHackModuleDisable(this));
     }
 
     public void onToggle()
@@ -380,7 +385,8 @@ public class Module implements Listenable
     
     protected void SendMessage(String p_Message)
     {
-        SalHack.SendMessage(ChatFormatting.AQUA + "[" + GetArrayListDisplayName() + "]: " + ChatFormatting.RESET + p_Message);
+        if (mc.player != null)
+            SalHack.SendMessage(ChatFormatting.AQUA + "[" + GetArrayListDisplayName() + "]: " + ChatFormatting.RESET + p_Message);
     }
     
     public void LoadSettings()

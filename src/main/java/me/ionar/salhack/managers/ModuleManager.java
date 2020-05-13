@@ -59,6 +59,8 @@ public class ModuleManager
         
         /// Combat
         Add(new AimbotModule());
+        Add(new AntiCityBossModule());
+        Add(new Auto32kModule());
         Add(new AutoArmorModule());
         Add(new AutoCrystalModule());
         Add(new AutoTotemModule());
@@ -66,8 +68,10 @@ public class ModuleManager
         Add(new AutoTrapFeet());
         Add(new BowSpamModule());
         Add(new CriticalsModule());
+        Add(new HoleFillerModule());
         Add(new KillAuraModule());
         Add(new ReachModule());
+        Add(new SelfTrapModule());
         Add(new SurroundModule());
         Add(new VelocityModule());
         
@@ -99,10 +103,12 @@ public class ModuleManager
         Add(new AutoTendModule());
         Add(new BuildHeightModule());
         Add(new ChatModificationsModule());
+        Add(new ChatNotifierModule());
         Add(new ChestStealerModule());
         Add(new FriendsModule());
         Add(new GlobalLocationModule());
         Add(new HotbarCacheModule());
+        Add(new MiddleClickFriendsModule());
         Add(new RetardChatModule());
         Add(new StopWatchModule());
         Add(new TotemPopNotifierModule());
@@ -125,8 +131,10 @@ public class ModuleManager
         
         /// Render
         Add(new AntiFog());
+        Add(new BlockHighlightModule());
+        Add(new BreakHighlightModule());
         Add(new BrightnessModule());
-        Add(new ContainerPreviewModule());
+    //    Add(new ContainerPreviewModule());
         Add(new ESPModule());
         Add(new FreecamModule());
         Add(new HandProgressModule());
@@ -142,13 +150,16 @@ public class ModuleManager
         Add(new ClickGuiModule());
         Add(new HudEditorModule());
         Add(new HudModule());
+        Add(new ReliantChatModule());
         
         /// World
-        Add(new AutoToolModule());
         Add(new AutoBuilderModule());
+        Add(new AutoNameTagModule());
+        Add(new AutoToolModule());
         Add(new AutoWitherModule());
         Add(new FastPlaceModule());
         Add(new LawnmowerModule());
+        Add(new NoGlitchBlocksModule());
         Add(new NoWeatherModule());
         Add(new ScaffoldModule());
         Add(new SpeedyGonzales());
@@ -156,6 +167,7 @@ public class ModuleManager
         Add(new TorchAnnihilatorModule());
         
         /// Schematica
+        Add(new PrinterModule());
         Add(new PrinterBypassModule());
 
         Mods.sort((p_Mod1, p_Mod2) -> p_Mod1.getDisplayName().compareTo(p_Mod2.getDisplayName()));

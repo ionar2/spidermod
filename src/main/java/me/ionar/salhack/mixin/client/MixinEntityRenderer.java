@@ -32,6 +32,7 @@ import me.ionar.salhack.events.render.EventRenderHand;
 import me.ionar.salhack.events.render.EventRenderHurtCameraEffect;
 import me.ionar.salhack.events.render.EventRenderSetupFog;
 import me.ionar.salhack.events.render.EventRenderUpdateLightmap;
+import me.ionar.salhack.util.render.RenderUtil;
 
 @Mixin(EntityRenderer.class)
 public class MixinEntityRenderer
@@ -76,7 +77,6 @@ public class MixinEntityRenderer
             info.cancel();
     }
 
-
     @Inject(method = "updateLightmap", at = @At("HEAD"), cancellable = true)
     private void updateLightmap(float partialTicks, CallbackInfo p_Info)
     {
@@ -86,5 +86,11 @@ public class MixinEntityRenderer
         
         if (l_Event.isCancelled())
             p_Info.cancel();
+    }
+
+    @Inject(method = "renderWorldPass", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand:Z", shift = At.Shift.AFTER))
+    private void renderWorldPassPost(int pass, float partialTicks, long finishTimeNano, CallbackInfo callbackInfo)
+    {
+        RenderUtil.updateModelViewProjectionMatrix();
     }
 }

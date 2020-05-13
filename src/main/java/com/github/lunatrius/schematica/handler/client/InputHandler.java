@@ -33,7 +33,7 @@ public class InputHandler {
     private static final KeyBinding KEY_BINDING_LAYER_DEC = new KeyBinding(Names.Keys.LAYER_DEC, Keyboard.KEY_NONE, Names.Keys.CATEGORY);
     private static final KeyBinding KEY_BINDING_LAYER_TOGGLE = new KeyBinding(Names.Keys.LAYER_TOGGLE, Keyboard.KEY_NONE, Names.Keys.CATEGORY);
     private static final KeyBinding KEY_BINDING_RENDER_TOGGLE = new KeyBinding(Names.Keys.RENDER_TOGGLE, Keyboard.KEY_NONE, Names.Keys.CATEGORY);
-    private static final KeyBinding KEY_BINDING_PRINTER_TOGGLE = new KeyBinding(Names.Keys.PRINTER_TOGGLE, Keyboard.KEY_NONE, Names.Keys.CATEGORY);
+   // private static final KeyBinding KEY_BINDING_PRINTER_TOGGLE = new KeyBinding(Names.Keys.PRINTER_TOGGLE, Keyboard.KEY_NONE, Names.Keys.CATEGORY);
     private static final KeyBinding KEY_BINDING_MOVE_HERE = new KeyBinding(Names.Keys.MOVE_HERE, Keyboard.KEY_NONE, Names.Keys.CATEGORY);
     private static final KeyBinding KEY_BINDING_PICK_BLOCK = new KeyBinding(Names.Keys.PICK_BLOCK, KeyConflictContext.IN_GAME, KeyModifier.SHIFT, -98, Names.Keys.CATEGORY);
 
@@ -45,7 +45,7 @@ public class InputHandler {
             KEY_BINDING_LAYER_DEC,
             KEY_BINDING_LAYER_TOGGLE,
             KEY_BINDING_RENDER_TOGGLE,
-            KEY_BINDING_PRINTER_TOGGLE,
+        //    KEY_BINDING_PRINTER_TOGGLE,
             KEY_BINDING_MOVE_HERE,
             KEY_BINDING_PICK_BLOCK
     };
@@ -101,12 +101,12 @@ public class InputHandler {
                 }
             }
 
-            if (KEY_BINDING_PRINTER_TOGGLE.isPressed()) {
+            /*if (KEY_BINDING_PRINTER_TOGGLE.isPressed()) {
                 if (ClientProxy.schematic != null) {
                     final boolean printing = SchematicPrinter.INSTANCE.togglePrinting();
                     this.minecraft.player.sendMessage(new TextComponentTranslation(Names.Messages.TOGGLE_PRINTER, I18n.format(printing ? Names.Gui.ON : Names.Gui.OFF)));
                 }
-            }
+            }*/
 
             if (KEY_BINDING_MOVE_HERE.isPressed()) {
                 final SchematicWorld schematic = ClientProxy.schematic;

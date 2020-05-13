@@ -6,6 +6,7 @@ import me.ionar.salhack.events.player.EventPlayerIsPotionActive;
 import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
 import me.ionar.salhack.events.render.EventRenderArmorLayer;
 import me.ionar.salhack.events.render.EventRenderHurtCameraEffect;
+import me.ionar.salhack.events.render.EventRenderMap;
 import me.ionar.salhack.events.render.EventRenderSign;
 import me.ionar.salhack.events.render.EventRenderUpdateLightmap;
 import me.ionar.salhack.module.Module;
@@ -31,6 +32,7 @@ public class NoRenderModule extends Module
     public final Value<Boolean> SignText = new Value<Boolean>("SignText", new String[] {"SignText"}, "Doesn't render SignText", false);
     public final Value<Boolean> NoArmor = new Value<Boolean>("NoArmor", new String[] {"NoArmor"}, "Doesn't render armor", false);
     public final Value<Boolean> NoArmorPlayers = new Value<Boolean>("NoArmorPlayers", new String[] {"NoArmorPlayers"}, "Use in conjunction with the above mod", false);
+    public final Value<Boolean> Maps = new Value<Boolean>("Maps", new String[] {"Maps"}, "Doesn't render maps", false);
     
     public enum NoItemsMode
     {
@@ -114,4 +116,12 @@ public class NoRenderModule extends Module
             p_Event.cancel();
         }
     });
+
+    @EventHandler
+    private Listener<EventRenderMap> OnRenderMap = new Listener<>(p_Event ->
+    {
+        if (Maps.getValue())
+            p_Event.cancel();
+    });
+
 }

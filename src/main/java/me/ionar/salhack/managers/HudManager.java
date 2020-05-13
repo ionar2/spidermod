@@ -56,6 +56,7 @@ public class HudManager
         Add(new TrueDurabilityComponent());
         Add(new StopwatchComponent());
         Add(new PvPInfoComponent());
+        Add(new SchematicaMaterialInfoComponent());
 
         /// MUST be last in list
         Add(new SelectorMenuComponent());

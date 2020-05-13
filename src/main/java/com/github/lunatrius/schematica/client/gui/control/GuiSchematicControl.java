@@ -44,13 +44,13 @@ public class GuiSchematicControl extends GuiScreenBase {
     private GuiButton btnRotate = null;
 
     private GuiButton btnMaterials = null;
-    private GuiButton btnPrint = null;
+   // private GuiButton btnPrint = null;
 
     private final String strMoveSchematic = I18n.format(Names.Gui.Control.MOVE_SCHEMATIC);
     private final String strOperations = I18n.format(Names.Gui.Control.OPERATIONS);
     private final String strUnload = I18n.format(Names.Gui.Control.UNLOAD);
     private final String strMaterials = I18n.format(Names.Gui.Control.MATERIALS);
-    private final String strPrinter = I18n.format(Names.Gui.Control.PRINTER);
+   // private final String strPrinter = I18n.format(Names.Gui.Control.PRINTER);
     private final String strHide = I18n.format(Names.Gui.Control.HIDE);
     private final String strShow = I18n.format(Names.Gui.Control.SHOW);
     private final String strX = I18n.format(Names.Gui.X);
@@ -113,8 +113,8 @@ public class GuiSchematicControl extends GuiScreenBase {
         this.btnMaterials = new GuiButton(id++, 10, this.height - 70, 80, 20, this.strMaterials);
         this.buttonList.add(this.btnMaterials);
 
-        this.btnPrint = new GuiButton(id++, 10, this.height - 30, 80, 20, this.printer.isPrinting() ? this.strOn : this.strOff);
-        this.buttonList.add(this.btnPrint);
+       // this.btnPrint = new GuiButton(id++, 10, this.height - 30, 80, 20, this.printer.isPrinting() ? this.strOn : this.strOff);
+       // this.buttonList.add(this.btnPrint);
 
         this.numericX.setEnabled(this.schematic != null);
         this.numericY.setEnabled(this.schematic != null);
@@ -131,7 +131,7 @@ public class GuiSchematicControl extends GuiScreenBase {
         this.btnRotateDirection.enabled = this.schematic != null;
         this.btnRotate.enabled = this.schematic != null;
         this.btnMaterials.enabled = this.schematic != null;
-        this.btnPrint.enabled = this.schematic != null && this.printer.isEnabled();
+       // this.btnPrint.enabled = this.schematic != null && this.printer.isEnabled();
 
         setMinMax(this.numericX);
         setMinMax(this.numericY);
@@ -213,10 +213,11 @@ public class GuiSchematicControl extends GuiScreenBase {
                 }
             } else if (guiButton.id == this.btnMaterials.id) {
                 this.mc.displayGuiScreen(new GuiSchematicMaterials(this));
-            } else if (guiButton.id == this.btnPrint.id && this.printer.isEnabled()) {
+            } 
+            /*else if (guiButton.id == this.btnPrint.id && this.printer.isEnabled()) {
                 final boolean isPrinting = this.printer.togglePrinting();
                 this.btnPrint.displayString = isPrinting ? this.strOn : this.strOff;
-            }
+            }*/
         }
     }
 
@@ -239,7 +240,7 @@ public class GuiSchematicControl extends GuiScreenBase {
 
         drawCenteredString(this.fontRenderer, this.strMoveSchematic, this.centerX, this.centerY - 45, 0xFFFFFF);
         drawCenteredString(this.fontRenderer, this.strMaterials, 50, this.height - 85, 0xFFFFFF);
-        drawCenteredString(this.fontRenderer, this.strPrinter, 50, this.height - 45, 0xFFFFFF);
+      //  drawCenteredString(this.fontRenderer, this.strPrinter, 50, this.height - 45, 0xFFFFFF);
         drawCenteredString(this.fontRenderer, this.strOperations, this.width - 50, this.height - 120, 0xFFFFFF);
 
         drawString(this.fontRenderer, this.strX, this.centerX - 65, this.centerY - 24, 0xFFFFFF);
