@@ -134,7 +134,7 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer
         }
     }
 
-    @Inject(method = "displayGUIChest", at = @At("HEAD"), cancellable = true)
+    /*@Inject(method = "displayGUIChest", at = @At("HEAD"), cancellable = true)
     public void displayGUIChest(IInventory inventory, CallbackInfo ci)
     {
         /// @todo move to events
@@ -144,5 +144,5 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer
             Wrapper.GetMC().displayGuiScreen(new SalGuiChest(Wrapper.GetPlayer().inventory, inventory));
             ci.cancel();
         }
-    }
+    }*/
 }
