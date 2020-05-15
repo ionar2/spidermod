@@ -19,7 +19,6 @@ import me.ionar.salhack.main.Wrapper;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Module.ModuleType;
 import me.ionar.salhack.module.Value;
-import me.ionar.salhack.module.bot.*;
 import me.ionar.salhack.module.combat.*;
 import me.ionar.salhack.module.exploit.*;
 import me.ionar.salhack.module.misc.*;
@@ -54,9 +53,6 @@ public class ModuleManager
     
     public void Init()
     {
-        /// Bot
-        Add(new DupeBot());
-        
         /// Combat
         Add(new AimbotModule());
         Add(new AntiCityBossModule());
@@ -81,7 +77,6 @@ public class ModuleManager
         Add(new CrashExploitModule());
         Add(new EntityDesyncModule());
         Add(new LiquidInteractModule());
-        Add(new ModifiedFreecam());
         Add(new MountBypassModule());
         Add(new NoMiningTrace());
         Add(new NewChunksModule());
