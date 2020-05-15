@@ -17,9 +17,9 @@ public final class TimerModule extends Module
 {
 
     public final Value<Float> speed = new Value<Float>("Speed", new String[]
-    { "Spd" }, "Tick-rate multiplier. [(20tps/second) * (this value)]", 4.0f, 0.0f, 10.0f, 0.1f);
+    { "Spd" }, "Tick-rate multiplier. [(20tps/second) * (this value)]", 4.0f, 0.1f, 10.0f, 0.1f);
     public final Value<Boolean> Accelerate = new Value<Boolean>("Accelerate", new String[]
-    { "Acc" }, "Accelerate's from 1.0 until the anticheat lags you back", true);
+    { "Acc" }, "Accelerate's from 1.0 until the anticheat lags you back", false);
     public final Value<Boolean> TPSSync = new Value<Boolean>("TPSSync", new String[]
     { "TPS" }, "Syncs the game time to the current TPS", false);
 
@@ -56,13 +56,13 @@ public final class TimerModule extends Module
             return l_Format.format((l_TPS/20));
         }
         
-        return l_Format.format(speed.getValue());
+        return l_Format.format(GetSpeed());
     }
 
     @EventHandler
     private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
-        if (OverrideSpeed != 1.0f)
+        if (OverrideSpeed != 1.0f && OverrideSpeed > 0.1f)
         {
             mc.timer.tickLength = 50.0f / OverrideSpeed;
             return;
@@ -72,10 +72,10 @@ public final class TimerModule extends Module
         {
             float l_TPS = TickRateManager.Get().getTickRate();
 
-            mc.timer.tickLength = 50.0f * (20/l_TPS);
+            mc.timer.tickLength = Math.min(500, 50.0f * (20/l_TPS));
         }
         else
-            mc.timer.tickLength = 50.0f / speed.getValue();
+            mc.timer.tickLength = 50.0f / GetSpeed();
 
         if (Accelerate.getValue() && timer.passed(2000))
         {
@@ -92,6 +92,11 @@ public final class TimerModule extends Module
             speed.setValue(1.0f);
         }
     });
+
+    private float GetSpeed()
+    {
+        return Math.max(speed.getValue(), 0.1f);
+    }
 
     public void SetOverrideSpeed(float f)
     {
