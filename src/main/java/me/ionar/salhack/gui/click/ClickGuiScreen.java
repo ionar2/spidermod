@@ -37,18 +37,18 @@ public class ClickGuiScreen extends SalGuiScreen
     public ClickGuiScreen(ClickGuiModule p_Mod, ColorsModule p_Colors)
     {
         // COMBAT, EXPLOIT, MOVEMENT, RENDER, WORLD, MISC, HIDDEN, UI
-        MenuComponents.add(new MenuComponentModList("Combat", ModuleType.COMBAT, 10, 3, "Shield", p_Colors));
-        MenuComponents.add(new MenuComponentModList("Exploit", ModuleType.EXPLOIT, 120, 3, "skull", p_Colors));
+        MenuComponents.add(new MenuComponentModList("Combat", ModuleType.COMBAT, 10, 3, "Shield", p_Colors, p_Mod));
+        MenuComponents.add(new MenuComponentModList("Exploit", ModuleType.EXPLOIT, 120, 3, "skull", p_Colors, p_Mod));
         // MenuComponents.add(new MenuComponentModList("Hidden", ModuleType.HIDDEN, 320,
         // 3));
-        MenuComponents.add(new MenuComponentModList("Misc", ModuleType.MISC, 230, 3, "questionmark", p_Colors));
-        MenuComponents.add(new MenuComponentModList("Movement", ModuleType.MOVEMENT, 340, 3, "Arrow", p_Colors));
-        MenuComponents.add(new MenuComponentModList("Render", ModuleType.RENDER, 450, 3, "Eye", p_Colors));
-        MenuComponents.add(new MenuComponentModList("UI", ModuleType.UI, 560, 3, "mouse", p_Colors));
-        MenuComponents.add(new MenuComponentModList("World", ModuleType.WORLD, 670, 3, "blockimg", p_Colors));
-        MenuComponents.add(new MenuComponentModList("Bot", ModuleType.BOT, 780, 3, "robotimg", p_Colors));
+        MenuComponents.add(new MenuComponentModList("Misc", ModuleType.MISC, 230, 3, "questionmark", p_Colors, p_Mod));
+        MenuComponents.add(new MenuComponentModList("Movement", ModuleType.MOVEMENT, 340, 3, "Arrow", p_Colors, p_Mod));
+        MenuComponents.add(new MenuComponentModList("Render", ModuleType.RENDER, 450, 3, "Eye", p_Colors, p_Mod));
+        MenuComponents.add(new MenuComponentModList("UI", ModuleType.UI, 560, 3, "mouse", p_Colors, p_Mod));
+        MenuComponents.add(new MenuComponentModList("World", ModuleType.WORLD, 670, 3, "blockimg", p_Colors, p_Mod));
+     //   MenuComponents.add(new MenuComponentModList("Bot", ModuleType.BOT, 780, 3, "robotimg", p_Colors));
         MenuComponents
-                .add(new MenuComponentModList("Schematica", ModuleType.SCHEMATICA, 10, 203, "robotimg", p_Colors));
+                .add(new MenuComponentModList("Schematica", ModuleType.SCHEMATICA, 10, 203, "robotimg", p_Colors, p_Mod));
 
         ClickGuiMod = p_Mod;
 
@@ -159,6 +159,7 @@ public class ClickGuiScreen extends SalGuiScreen
 
         GlStateManager.pushMatrix();
 
+        GlStateManager.disableRescaleNormal();
         RenderHelper.disableStandardItemLighting();
 
         MenuComponent l_LastHovered = null;
@@ -176,6 +177,7 @@ public class ClickGuiScreen extends SalGuiScreen
 
         RenderHelper.enableGUIStandardItemLighting();
 
+        GlStateManager.enableRescaleNormal();
         GlStateManager.popMatrix();
     }
 

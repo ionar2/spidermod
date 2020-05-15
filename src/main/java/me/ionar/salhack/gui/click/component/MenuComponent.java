@@ -8,6 +8,7 @@ import me.ionar.salhack.gui.click.component.item.ComponentItem;
 import me.ionar.salhack.main.Wrapper;
 import me.ionar.salhack.managers.FontManager;
 import me.ionar.salhack.managers.ImageManager;
+import me.ionar.salhack.module.ui.ClickGuiModule;
 import me.ionar.salhack.module.ui.ColorsModule;
 import me.ionar.salhack.util.imgs.SalDynamicTexture;
 import me.ionar.salhack.util.render.AbstractGui;
@@ -38,8 +39,9 @@ public class MenuComponent
     private int MousePlayAnim;
     private SalDynamicTexture BarTexture = null;
     private ColorsModule Colors;
+    private ClickGuiModule ClickGUI;
     
-    public MenuComponent(String p_DisplayName, float p_X, float p_Y, float p_Height, float p_Width, String p_Image, ColorsModule p_Colors)
+    public MenuComponent(String p_DisplayName, float p_X, float p_Y, float p_Height, float p_Width, String p_Image, ColorsModule p_Colors, ClickGuiModule p_ClickGui)
     {
         DisplayName = p_DisplayName;
         X = p_X;
@@ -56,6 +58,7 @@ public class MenuComponent
         }
         
         Colors = p_Colors;
+        ClickGUI = p_ClickGui;
     }
     
     public void AddItem(ComponentItem p_Item)
@@ -200,7 +203,7 @@ public class MenuComponent
                 IsMaximizing = false;
             }
             
-            if (HoveredItem != null)
+            if (HoveredItem != null && (ClickGUI != null ? ClickGUI.HoverDescriptions.getValue() : true))
             {
                 if (HoveredItem.GetDescription() != null && HoveredItem.GetDescription() != "")
                 {
