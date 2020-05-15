@@ -112,6 +112,7 @@ public class ModuleManager
         Add(new RetardChatModule());
         Add(new StopWatchModule());
         Add(new TotemPopNotifierModule());
+        Add(new VisualRangeModule());
         Add(new XCarryModule());
         
         /// Movement
