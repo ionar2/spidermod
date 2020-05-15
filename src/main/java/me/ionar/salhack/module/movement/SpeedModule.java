@@ -28,6 +28,8 @@ public class SpeedModule extends Module
     public final Value<Boolean> AutoSprint = new Value<Boolean>("AutoSprint", new String[]
     { "AutoSprint" }, "Automatically sprints for you", false);
     public final Value<Boolean> SpeedInWater = new Value<Boolean>("SpeedInWater", new String[] {"SpeedInWater"}, "Speeds in water", false);
+    public final Value<Boolean> AutoJump = new Value<Boolean>("AutoJump", new String[] {"AutoJump"}, "Automatically jumps", true);
+    public final Value<Boolean> Strict = new Value<Boolean>("Strict", new String[] {"Strict"}, "Strict mode, use this for when hauses patch comes back for strafe", false);
 
     public enum Modes
     {
@@ -56,8 +58,40 @@ public class SpeedModule extends Module
         
         Timer = (TimerModule) ModuleManager.Get().GetMod(TimerModule.class);
     }
+    
+    @EventHandler
+    private Listener<EventPlayerMotionUpdate> OnMotionUpdate = new Listener<>(p_Event ->
+    {
+        if (p_Event.getEra() != Era.POST)
+            return;
 
-    public float GetRotationYawForCalc()
+        if (mc.player.isInWater() || mc.player.isInLava())
+        {
+            if (!SpeedInWater.getValue())
+                return;
+        }
+        
+        if (UseTimer.getValue())
+            Timer.SetOverrideSpeed(1.088f);
+        
+        if (mc.player.moveForward > 0.0f || mc.player.moveStrafing != 0.0f)
+        { 
+            if (AutoSprint.getValue())
+                mc.player.setSprinting(true);
+            
+            if (mc.player.onGround)
+            {
+                if (AutoJump.getValue())
+                    mc.player.motionY = 0.405f;
+                
+                final float yaw = GetRotationYawForCalc();
+                mc.player.motionX -= MathHelper.sin(yaw) * 0.2f;
+                mc.player.motionZ += MathHelper.cos(yaw) * 0.2f;                
+            }
+        }
+    });
+    
+    private float GetRotationYawForCalc()
     {
         float rotationYaw = mc.player.rotationYaw;
         if (mc.player.moveForward < 0.0f)
@@ -85,104 +119,36 @@ public class SpeedModule extends Module
     }
 
     @EventHandler
-    private Listener<EventPlayerMotionUpdate> OnMotionUpdate = new Listener<>(p_Event ->
+    private Listener<EventPlayerJump> OnPlayerJump = new Listener<>(p_Event ->
     {
-        if (p_Event.getEra() != Era.POST)
+        p_Event.cancel();
+    });
+    
+    @EventHandler
+    private Listener<EventPlayerMove> OnPlayerMove = new Listener<>(p_Event ->
+    {
+        if (p_Event.getEra() != Era.PRE)
             return;
-
+        
         if (mc.player.isInWater() || mc.player.isInLava())
         {
             if (!SpeedInWater.getValue())
                 return;
         }
         
-        if (UseTimer.getValue())
-            Timer.SetOverrideSpeed(1.088f);
+        if (mc.player.capabilities != null)
+        {
+            if (mc.player.capabilities.isFlying || ModuleManager.Get().GetMod(FlightModule.class).isEnabled() || mc.player.isElytraFlying())
+                return;
+        }
         
-        if (mc.player.moveForward > 0.0f || mc.player.moveStrafing != 0.0f)
-        {
-            if (AutoSprint.getValue())
-                mc.player.setSprinting(true);
-
-            final float yaw = GetRotationYawForCalc();
-
-            if (mc.player.onGround)
-            {
-                mc.player.motionY = 0.405f;
-                // mc.player.jump();
-
-                mc.player.motionX -= MathHelper.sin(yaw) * 0.2f;
-                mc.player.motionZ += MathHelper.cos(yaw) * 0.2f;
-            }
-            else
-            {
-                final double sqrt = Math.sqrt(mc.player.motionX * mc.player.motionX + mc.player.motionZ * mc.player.motionZ);
-                mc.player.motionX = -Math.sin(yaw) * 1.0064f * sqrt;
-                mc.player.motionZ = Math.cos(yaw) * 1.0064f * sqrt;
-            }
-        }
-    });
-
-
-    @EventHandler
-    private Listener<EventPlayerJump> OnPlayerJump = new Listener<>(p_Event ->
-    {
-        if (mc.player.collidedHorizontally)
-            return;
-
-        float n = (float) p_Event.MotionX;
-        float n2 = (float) p_Event.MotionY;
-
-        final MovementInput movementInput = mc.player.movementInput;
-        float moveForward = movementInput.moveForward;
-        float moveStrafe = movementInput.moveStrafe;
-        float rotationYaw = mc.player.rotationYaw;
-        if (moveForward != 0.0)
-        {
-            if (moveStrafe > 0.0)
-            {
-                rotationYaw += ((moveForward > 0.0) ? -45 : 45);
-            }
-            else if (moveStrafe < 0.0)
-            {
-                rotationYaw += ((moveForward > 0.0) ? 45 : -45);
-            }
-            moveStrafe = 0.0f;
-            if (moveForward > 0.0)
-            {
-                moveForward = 1.0f;
-            }
-            else if (moveForward < 0.0)
-            {
-                moveForward = -1.0f;
-            }
-        }
-        if (moveStrafe > 0.0)
-        {
-            moveStrafe = 1.0f;
-        }
-        else if (moveStrafe < 0.0)
-        {
-            moveStrafe = -1.0f;
-        }
-        mc.player.motionX = n + (moveForward * 0.2 * Math.cos(Math.toRadians(rotationYaw + 90.0f)) + moveStrafe * 0.2 * Math.sin(Math.toRadians(rotationYaw + 90.0f)));
-        mc.player.motionZ = n2 + (moveForward * 0.2 * Math.sin(Math.toRadians(rotationYaw + 90.0f)) - moveStrafe * 0.2 * Math.cos(Math.toRadians(rotationYaw + 90.0f)));
-    });
-    
-    @EventHandler
-    private Listener<EventPlayerMove> OnEventPlayerMove = new Listener<>(p_Event ->
-    {
-        if (p_Event.getEra() != Era.PRE)
+        if (mc.player.onGround)
             return;
         
-        if (!mc.player.collidedHorizontally)
-            return;
-
         // movement data variables
         float playerSpeed = 0.2873f;
         float moveForward = mc.player.movementInput.moveForward;
         float moveStrafe = mc.player.movementInput.moveStrafe;
-        float rotationPitch = mc.player.rotationPitch;
         float rotationYaw = mc.player.rotationYaw;
 
         // check for speed potion
@@ -190,6 +156,11 @@ public class SpeedModule extends Module
         {
             final int amplifier = mc.player.getActivePotionEffect(MobEffects.SPEED).getAmplifier();
             playerSpeed *= (1.0f + 0.2f * (amplifier + 1));
+        }
+        
+        if (!Strict.getValue())
+        {
+            playerSpeed *= 1.0064f;
         }
 
         // not movement input, stop all motion

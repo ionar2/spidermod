@@ -123,10 +123,12 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer
     {
         try
         {
-            double l_MotionX = motionX;
-            double l_MotionZ = motionZ;
-            super.jump();
-            SalHackMod.EVENT_BUS.post(new EventPlayerJump(l_MotionX, l_MotionZ));
+            EventPlayerJump l_Event = new EventPlayerJump(motionX, motionZ);
+
+            SalHackMod.EVENT_BUS.post(l_Event);
+            
+            if (!l_Event.isCancelled())
+                super.jump();
         }
         catch (Exception v3)
         {
