@@ -11,6 +11,9 @@ import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VisualRangeModule extends Module
 {
     public final Value<Modes> Mode = new Value<Modes>("Mode", new String[] {"M"}, "Mode of notifying to use", Modes.Both);
@@ -34,10 +37,20 @@ public class VisualRangeModule extends Module
                 { "VR" }, "Notifies you when one enters or leaves your visual range.", "NONE", -1, Module.ModuleType.MISC);
     }
 
+    private List<String> Entities = new ArrayList<String>();
+
     @Override
     public String getMetaData()
     {
         return String.valueOf(Mode.getValue());
+    }
+
+    @Override
+    public void onEnable()
+    {
+        super.onEnable();
+
+        Entities.clear();
     }
 
     @EventHandler
@@ -49,7 +62,11 @@ public class VisualRangeModule extends Module
         if (!VerifyEntity(p_Event.GetEntity()))
             return;
 
-        Notify(String.format("%s has entered your visual range.", p_Event.GetEntity().getName()));
+        if (!Entities.contains(p_Event.GetEntity().getName()))
+        {
+            Entities.add(p_Event.GetEntity().getName());
+            Notify(String.format("%s has entered your visual range.", p_Event.GetEntity().getName()));
+        }
     });
 
     @EventHandler
@@ -61,7 +78,11 @@ public class VisualRangeModule extends Module
         if (!VerifyEntity(p_Event.GetEntity()))
             return;
 
-        Notify(String.format("%s has left your visual range.", p_Event.GetEntity().getName()));
+        if (Entities.contains(p_Event.GetEntity().getName()))
+        {
+            Entities.remove(p_Event.GetEntity().getName());
+            Notify(String.format("%s has left your visual range.", p_Event.GetEntity().getName()));
+        }
     });
 
     private boolean VerifyEntity(Entity p_Entity)
