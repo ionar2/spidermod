@@ -122,7 +122,7 @@ public class AutoCrystalModule extends Module
     public static final Value<Float> RequiredHealth = new Value<Float>("RequiredHealth", new String[] {""}, "RequiredHealth for autocrystal to function, must be above or equal to this amount.", 11.0f, 0.0f, 20.0f, 1.0f);
     public static final Value<Boolean> AutoMultiplace = new Value<Boolean>("AutoMultiplace", new String[] {""}, "Automatically enables/disables multiplace", false);
     public static final Value<Float> HealthBelowAutoMultiplace = new Value<Float>("HealthBelowAutoMultiplace", new String[] {""}, "RequiredHealth for target to be for automatic multiplace toggling.", 11.0f, 0.0f, 20.0f, 1.0f);
-    
+    public static final Value<Boolean> PauseIfHittingBlock = new Value<Boolean>("PauseIfHittingBlock", new String[] {""}, "Pauses when your hitting a block with a pickaxe", false);
     
     public static final Value<Boolean> Render = new Value<Boolean>("Render", new String[] {"Render"}, "Allows for rendering of block placements", true);
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
@@ -1075,6 +1075,9 @@ public class AutoCrystalModule extends Module
             return true;
 
         if (HoleFiller.isEnabled() && HoleFiller.IsProcessing())
+            return true;
+
+        if (PauseIfHittingBlock.getValue() && mc.playerController.isHittingBlock && mc.player.getHeldItemMainhand().getItem() instanceof ItemTool)
             return true;
         
         return false;
