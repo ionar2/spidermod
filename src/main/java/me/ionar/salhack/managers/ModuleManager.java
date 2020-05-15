@@ -118,6 +118,7 @@ public class ModuleManager
         
         /// Movement
         Add(new AntiLevitationModule());
+        Add(new BlinkModule());
         Add(new ElytraFlyModule());
         Add(new EntityControlModule());
         Add(new FlightModule());
