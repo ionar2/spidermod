@@ -23,7 +23,7 @@ public class BlinkModule extends Module
     public BlinkModule()
     {
         super("Blink", new String[]
-                { "FakeLag" }, "Allows you to walk on water", "NONE", -1, ModuleType.MOVEMENT);
+                { "FakeLag" }, "Holds move packets until disabled", "NONE", -1, ModuleType.MOVEMENT);
     }
 
     private EntityOtherPlayerMP Original;
