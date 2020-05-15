@@ -155,8 +155,7 @@ public class FreecamModule extends Module
                 || (p_Event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock)
                 || (p_Event.getPacket() instanceof CPacketPlayer)
                 || (p_Event.getPacket() instanceof CPacketVehicleMove)
-                || (p_Event.getPacket() instanceof CPacketChatMessage)
-                || (p_Event.getPacket() instanceof CPacketKeepAlive))
+                || (p_Event.getPacket() instanceof CPacketChatMessage))
         {
             p_Event.cancel();
         }
