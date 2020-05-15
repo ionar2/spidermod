@@ -20,7 +20,8 @@ public class FreecamModule extends Module
 {   
     public final Value<Float> speed = new Value<Float>("Speed", new String[]
     { "Spd" }, "Speed of freecam flight, higher number equals quicker motion.", 1.0f, 0.0f, 10.0f, 0.1f);
-
+    public final Value<Boolean> CancelPackes = new Value<Boolean>("Cancel Packets", new String[] {""}, "Cancels the packets, you won't be able to freely move without this.", true);
+    
     public FreecamModule()
     {
         super("Freecam", new String[] {"OutOfBody"}, "Allows out of body movement", "NONE", -1, ModuleType.RENDER);
@@ -150,6 +151,9 @@ public class FreecamModule extends Module
     @EventHandler
     private Listener<EventNetworkPacketEvent> PacketEvent = new Listener<>(p_Event ->
     {
+        if (!CancelPackes.getValue())
+            return;
+        
         if ((p_Event.getPacket() instanceof CPacketUseEntity)
                 || (p_Event.getPacket() instanceof CPacketPlayerTryUseItem)
                 || (p_Event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock)
