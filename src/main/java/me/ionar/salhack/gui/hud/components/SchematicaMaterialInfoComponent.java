@@ -38,6 +38,7 @@ public class SchematicaMaterialInfoComponent extends HudComponentItem
             RenderUtil.drawStringWithShadow(l_String, GetX(), GetY(), -1);
             SetWidth(RenderUtil.getStringWidth(l_String));
             SetHeight(RenderUtil.getStringHeight(l_String));
+            GL11.glPopMatrix();
             return;
         }
 
