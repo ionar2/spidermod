@@ -1,6 +1,8 @@
 package me.ionar.salhack.module.render;
 
+import me.ionar.salhack.events.blocks.EventSetOpaqueCube;
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
+import me.ionar.salhack.events.player.EventPlayerMove;
 import me.ionar.salhack.events.player.EventPlayerUpdate;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
@@ -29,6 +31,12 @@ public class FreecamModule extends Module
     private Vec3d position;
     private float yaw;
     private float pitch;
+
+    @Override
+    public void toggleNoSave()
+    {
+
+    }
     
     @Override
     public void onEnable()
@@ -57,12 +65,10 @@ public class FreecamModule extends Module
         mc.player.noClip = true;
     }
     
-    
     @Override
     public void onDisable()
     {
         super.onDisable();
-        Camera = null;
         
         if (mc.world != null)
         {
@@ -88,13 +94,23 @@ public class FreecamModule extends Module
     }
 
     @EventHandler
+    private Listener<EventPlayerMove> OnPlayerMove = new Listener<>(p_Event ->
+    {
+        mc.player.noClip = true;
+    });
+
+    @EventHandler
+    private Listener<EventSetOpaqueCube> OnEventSetOpaqueCube  = new Listener<>(p_Event ->
+    {
+        p_Event.cancel();
+    });
+
+    @EventHandler
     private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
         mc.player.noClip = true;
 
         mc.player.setVelocity(0, 0, 0);
-        mc.player.renderArmPitch = 5000;
-        mc.player.jumpMovementFactor = this.speed.getValue();
 
         final double[] dir = MathUtil.directionSpeed(this.speed.getValue());
 
@@ -134,13 +150,13 @@ public class FreecamModule extends Module
     @EventHandler
     private Listener<EventNetworkPacketEvent> PacketEvent = new Listener<>(p_Event ->
     {
-        if (!(p_Event.getPacket() instanceof CPacketUseEntity)
-                && !(p_Event.getPacket() instanceof CPacketPlayerTryUseItem)
-                && !(p_Event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock)
-                && !(p_Event.getPacket() instanceof CPacketPlayer)
-                && !(p_Event.getPacket() instanceof CPacketVehicleMove)
-                && !(p_Event.getPacket() instanceof CPacketChatMessage)
-                && !(p_Event.getPacket() instanceof CPacketKeepAlive))
+        if ((p_Event.getPacket() instanceof CPacketUseEntity)
+                || (p_Event.getPacket() instanceof CPacketPlayerTryUseItem)
+                || (p_Event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock)
+                || (p_Event.getPacket() instanceof CPacketPlayer)
+                || (p_Event.getPacket() instanceof CPacketVehicleMove)
+                || (p_Event.getPacket() instanceof CPacketChatMessage)
+                || (p_Event.getPacket() instanceof CPacketKeepAlive))
         {
             p_Event.cancel();
         }
