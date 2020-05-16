@@ -10,9 +10,13 @@ import static org.lwjgl.opengl.GL11.glLineWidth;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 
 import org.lwjgl.opengl.GL11;
+
+import com.google.common.collect.Lists;
+import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
 import me.ionar.salhack.events.render.EventRenderGameOverlay;
@@ -24,6 +28,8 @@ import me.ionar.salhack.util.render.GLUProjection;
 import me.ionar.salhack.util.render.RenderUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
+import net.minecraft.block.BlockShulkerBox;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -31,9 +37,15 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.server.SPacketOpenWindow;
 import net.minecraft.network.play.server.SPacketWindowItems;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -65,6 +77,14 @@ public class ContainerPreviewModule extends Module
 
             if (ray.typeOfHit != RayTraceResult.Type.BLOCK)
                 return;
+            
+            IBlockState l_State = mc.world.getBlockState(ray.getBlockPos());
+            
+            if (l_State == null)
+                return;
+            
+            if (l_State.getBlock() != Blocks.CHEST && !(l_State.getBlock() instanceof BlockShulkerBox))
+                return;
 
             SPacketWindowItems l_Packet = (SPacketWindowItems) p_Event.getPacket();
 
@@ -81,7 +101,7 @@ public class ContainerPreviewModule extends Module
                 if (itemStack == null)
                     continue;
 
-                if (i > TotalSlots)
+                if (i >= TotalSlots)
                     break;
 
                 l_List.add(itemStack);
@@ -112,96 +132,77 @@ public class ContainerPreviewModule extends Module
 
         BlockPos l_Pos = ray.getBlockPos();
         
-    });
-
-    @EventHandler
-    private Listener<RenderEvent> OnRenderEvent = new Listener<>(p_Event ->
-    {
-        final RayTraceResult ray = mc.objectMouseOver;
-        if (ray == null)
-            return;
-        if (ray.typeOfHit != RayTraceResult.Type.BLOCK)
-            return;
-
-        if (!PosItems.containsKey(ray.getBlockPos()))
-            return;
-
-        BlockPos l_Pos = ray.getBlockPos();
-
-        final AxisAlignedBB bb = new AxisAlignedBB(l_Pos.getX() - mc.getRenderManager().viewerPosX, l_Pos.getY() - mc.getRenderManager().viewerPosY, l_Pos.getZ() - mc.getRenderManager().viewerPosZ,
-                l_Pos.getX() + 1 - mc.getRenderManager().viewerPosX, l_Pos.getY() + 1 - mc.getRenderManager().viewerPosY, l_Pos.getZ() + 1 - mc.getRenderManager().viewerPosZ);
-
-        RenderUtil.drawBoundingBox(bb, 1, 0x90000000);
-
-        final ArrayList<ItemStack> l_List = PosItems.get(ray.getBlockPos());
-
-        GlStateManager.pushMatrix();
-
-        final boolean bobbing = mc.gameSettings.viewBobbing;
-        mc.gameSettings.viewBobbing = false;
-        mc.entityRenderer.setupCameraTransform(p_Event.getPartialTicks(), 0);
-        RenderUtil.glBillboard((float) l_Pos.getX()+0.5f, (float) l_Pos.getY()+0.5f, (float) l_Pos.getZ()+0.5f);
-
-        GL11.glTranslatef(0, 20, 0);
-
-        GlStateManager.scale(-40, -40, 40);
-
-        GlStateManager.disableDepth();
-      //  GlStateManager.translate(((l_List.size() - 1) / 2f) * .5f, .6, 0);
-        GlStateManager.translate(1.5f, 1f, 0f);
+        ArrayList<ItemStack> l_Items = PosItems.get(l_Pos);
         
-        int l_Iterations = l_List.size()/9;
+        if (l_Items == null)
+            return;
         
-        for (int x = 0; x < l_Iterations; x++)
+        final float[] bounds = this.convertBounds(l_Pos, p_Event.getPartialTicks(),
+                p_Event.getScaledResolution().getScaledWidth(),
+                p_Event.getScaledResolution().getScaledHeight());
+
+        if (bounds != null)
         {
-            GlStateManager.pushMatrix();
+            int l_I = 0;
+            int l_Y = -20;
+            int x = 0;
             
-            int l_Itr = 0;
-            
-            for (int i = 0; i < 9; ++i)
+            for (ItemStack stack : l_Items)
             {
-                ItemStack itemStack = l_List.get(i + l_Itr++);
+                if (stack != null)
+                {
+                    //final Item item = stack.getItem();
+                    //if (item != Items.AIR)
+                    {
+                        GlStateManager.pushMatrix();
+                        GlStateManager.enableBlend();
+                        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                        RenderHelper.enableGUIStandardItemLighting();
+                        GlStateManager.translate(
+                                bounds[0] + (bounds[2] - bounds[0]) / 2 + x,
+                                l_Y + bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 19,
+                                0);
+                        mc.getRenderItem().renderItemAndEffectIntoGUI(stack, 0, 0);
+                        mc.getRenderItem().renderItemOverlays(mc.fontRenderer, stack, 0, 0);
+                        RenderHelper.disableStandardItemLighting();
+                        GlStateManager.disableBlend();
+                        GlStateManager.color(1, 1, 1, 1);
+                        GlStateManager.popMatrix();
+                        x += 16;
+                    }
+                }
                 
-                if (itemStack == null)
-                    break;
-                
-                GlStateManager.pushAttrib();
-                RenderHelper.enableStandardItemLighting();
-                GlStateManager.scale(.25, .25, 0);
-                GlStateManager.disableLighting();
-                mc.getRenderItem().zLevel = -5;
-                mc.getRenderItem().renderItem(itemStack,ItemCameraTransforms.TransformType.NONE);
-                mc.getRenderItem().zLevel = 0;
-                GlStateManager.scale(4, 4, 0);
-                GlStateManager.popAttrib();
-    
-                GlStateManager.translate(-0.25f, 0f, 0f);
+                if (++l_I % 9 == 0)
+                {
+                    x = 0;
+                    l_Y += 15;
+                }
             }
-
-            GlStateManager.popMatrix();
-            GlStateManager.translate(0f, 0.25f, 0f);
         }
-
-        mc.gameSettings.viewBobbing = bobbing;
-        mc.entityRenderer.setupCameraTransform(p_Event.getPartialTicks(), 0);
-        GlStateManager.popMatrix();
+        
     });
 
-    private float[] convertBounds(Entity e, float partialTicks, int width, int height)
+    private float[] convertBounds(BlockPos e, float partialTicks, int width, int height)
     {
         float x = -1;
         float y = -1;
         float w = width + 1;
         float h = height + 1;
 
-        final Vec3d pos = MathUtil.interpolateEntity(e, partialTicks);
+        final Vec3d pos = new Vec3d(e.getX(), e.getY(), e.getZ());
 
         if (pos == null)
         {
             return null;
         }
 
-        AxisAlignedBB bb = e.getEntityBoundingBox();
+        AxisAlignedBB bb = new AxisAlignedBB(
+                e.getX() - mc.getRenderManager().viewerPosX,
+                e.getY() - mc.getRenderManager().viewerPosY,
+                e.getZ() - mc.getRenderManager().viewerPosZ,
+                e.getX() + 1 - mc.getRenderManager().viewerPosX,
+                e.getY() + 1 - mc.getRenderManager().viewerPosY,
+                e.getZ() + 1 - mc.getRenderManager().viewerPosZ);
 
         bb = bb.expand(0.15f, 0.1f, 0.15f);
 
@@ -211,19 +212,20 @@ public class ContainerPreviewModule extends Module
 
         if (!camera.isBoundingBoxInFrustum(bb))
         {
-            return null;
+            /// @todo: fix this
+    //        return null;
         }
 
         final Vec3d corners[] =
-        { new Vec3d(bb.minX - bb.maxX + e.width / 2, 0, bb.minZ - bb.maxZ + e.width / 2),
-                new Vec3d(bb.maxX - bb.minX - e.width / 2, 0, bb.minZ - bb.maxZ + e.width / 2),
-                new Vec3d(bb.minX - bb.maxX + e.width / 2, 0, bb.maxZ - bb.minZ - e.width / 2),
-                new Vec3d(bb.maxX - bb.minX - e.width / 2, 0, bb.maxZ - bb.minZ - e.width / 2),
+        { new Vec3d(bb.minX - bb.maxX + 1 / 2, 0, bb.minZ - bb.maxZ + 1 / 2),
+                new Vec3d(bb.maxX - bb.minX - 1 / 2, 0, bb.minZ - bb.maxZ + 1 / 2),
+                new Vec3d(bb.minX - bb.maxX + 1 / 2, 0, bb.maxZ - bb.minZ - 1 / 2),
+                new Vec3d(bb.maxX - bb.minX - 1 / 2, 0, bb.maxZ - bb.minZ - 1 / 2),
 
-                new Vec3d(bb.minX - bb.maxX + e.width / 2, bb.maxY - bb.minY, bb.minZ - bb.maxZ + e.width / 2),
-                new Vec3d(bb.maxX - bb.minX - e.width / 2, bb.maxY - bb.minY, bb.minZ - bb.maxZ + e.width / 2),
-                new Vec3d(bb.minX - bb.maxX + e.width / 2, bb.maxY - bb.minY, bb.maxZ - bb.minZ - e.width / 2),
-                new Vec3d(bb.maxX - bb.minX - e.width / 2, bb.maxY - bb.minY, bb.maxZ - bb.minZ - e.width / 2) };
+                new Vec3d(bb.minX - bb.maxX + 1 / 2, bb.maxY - bb.minY, bb.minZ - bb.maxZ + 1 / 2),
+                new Vec3d(bb.maxX - bb.minX - 1 / 2, bb.maxY - bb.minY, bb.minZ - bb.maxZ + 1 / 2),
+                new Vec3d(bb.minX - bb.maxX + 1 / 2, bb.maxY - bb.minY, bb.maxZ - bb.minZ - 1 / 2),
+                new Vec3d(bb.maxX - bb.minX - 1 / 2, bb.maxY - bb.minY, bb.maxZ - bb.minZ - 1 / 2) };
 
         for (Vec3d vec : corners)
         {

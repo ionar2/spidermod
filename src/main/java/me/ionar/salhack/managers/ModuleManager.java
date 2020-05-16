@@ -132,7 +132,7 @@ public class ModuleManager
         Add(new BlockHighlightModule());
         Add(new BreakHighlightModule());
         Add(new BrightnessModule());
-    //    Add(new ContainerPreviewModule());
+        Add(new ContainerPreviewModule());
         Add(new ESPModule());
         Add(new FreecamModule());
         Add(new HandProgressModule());
