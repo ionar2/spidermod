@@ -25,6 +25,7 @@
     "MixinEntityRenderer",
     "MixinMapItemRenderer",
     "MixinAbstractHorse",
-    "MixinVisGraph"
+    "MixinVisGraph",
+    "MixinGuiBossOverlay"
   ]
 }

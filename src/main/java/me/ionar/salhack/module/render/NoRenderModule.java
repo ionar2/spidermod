@@ -5,6 +5,7 @@ import me.ionar.salhack.events.particles.EventParticleEmitParticleAtEntity;
 import me.ionar.salhack.events.player.EventPlayerIsPotionActive;
 import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
 import me.ionar.salhack.events.render.EventRenderArmorLayer;
+import me.ionar.salhack.events.render.EventRenderBossHealth;
 import me.ionar.salhack.events.render.EventRenderHurtCameraEffect;
 import me.ionar.salhack.events.render.EventRenderMap;
 import me.ionar.salhack.events.render.EventRenderSign;
@@ -33,6 +34,7 @@ public class NoRenderModule extends Module
     public final Value<Boolean> NoArmor = new Value<Boolean>("NoArmor", new String[] {"NoArmor"}, "Doesn't render armor", false);
     public final Value<Boolean> NoArmorPlayers = new Value<Boolean>("NoArmorPlayers", new String[] {"NoArmorPlayers"}, "Use in conjunction with the above mod", false);
     public final Value<Boolean> Maps = new Value<Boolean>("Maps", new String[] {"Maps"}, "Doesn't render maps", false);
+    public final Value<Boolean> BossHealth = new Value<Boolean>("BossHealth", new String[] {"WitherNames"}, "Doesn't render wither names, and other boss health", false);
     
     public enum NoItemsMode
     {
@@ -122,6 +124,13 @@ public class NoRenderModule extends Module
     {
         if (Maps.getValue())
             p_Event.cancel();
+    });
+    
+    @EventHandler
+    private Listener<EventRenderBossHealth> OnRenderBossHealth = new Listener<>(p_Event ->
+    {
+       if (BossHealth.getValue())
+           p_Event.cancel();
     });
 
 }
