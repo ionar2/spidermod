@@ -47,6 +47,12 @@ public class AntiCityBossModule extends Module
         if (TrapCheck.getValue() && !PlayerUtil.IsPlayerTrapped())
             return;
         
+        final int slot = findStackHotbar(Blocks.OBSIDIAN);
+        
+        /// Make sure we have obby.
+        if (slot == -1)
+            return;
+        
         BlockPos l_CenterPos = PlayerUtil.GetLocalPlayerPosFloored();
         ArrayList<BlockPos> BlocksToFill = new ArrayList<BlockPos>();
         
@@ -96,7 +102,6 @@ public class AntiCityBossModule extends Module
         if (l_PosToFill != null)
         {
             int lastSlot;
-            final int slot = findStackHotbar(Blocks.OBSIDIAN);
             lastSlot = mc.player.inventory.currentItem;
             mc.player.inventory.currentItem = slot;
             mc.playerController.updateController();
