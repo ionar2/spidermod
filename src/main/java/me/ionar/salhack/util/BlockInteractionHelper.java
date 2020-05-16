@@ -272,7 +272,7 @@ public class BlockInteractionHelper
         boolean l_Replaceable = l_State.getMaterial().isReplaceable();
 
         boolean l_IsSlabAtBlock = l_State.getBlock() instanceof BlockSlab;
-
+        
         if (!l_Replaceable && !l_IsSlabAtBlock)
             return PlaceResult.NotReplaceable;
         if (!BlockInteractionHelper.checkForNeighbours(pos))

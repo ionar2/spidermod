@@ -30,7 +30,9 @@ import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.util.entity.PlayerUtil;
 import me.ionar.salhack.util.render.RenderUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockObsidian;
 import net.minecraft.block.BlockSlab;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -52,11 +54,9 @@ import net.minecraft.util.math.Vec3d;
 public class AutoBuilderModule extends Module
 {
     public final Value<Modes> Mode = new Value<Modes>("Mode", new String[] {""}, "Mode", Modes.Highway);
-    
-    public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]
-    { "rotate" }, "Rotate", true);
     public final Value<Integer> BlocksPerTick = new Value<Integer>("BlocksPerTick", new String[] {"BPT"}, "Blocks per tick", 4, 1, 10, 1);
     public final Value<Float> Delay = new Value<Float>("Delay", new String[] {"Delay"}, "Delay of the place", 0f, 0.0f, 1.0f, 0.1f);
+    public final Value<Boolean> Visualize = new Value<Boolean>("Visualize", new String[] {"Render"}, "Visualizes where blocks are to be placed", true);
     
     public enum Modes
     {
@@ -67,6 +67,7 @@ public class AutoBuilderModule extends Module
         Flat,
         Tower,
         Cover,
+        Wall,
     }
 
     public AutoBuilderModule()
@@ -78,6 +79,7 @@ public class AutoBuilderModule extends Module
     private Vec3d Center = Vec3d.ZERO;
     private ICamera camera = new Frustum();
     private Timer timer = new Timer();
+    private Timer NetherPortalTimer = new Timer();
 
     @Override
     public void onEnable()
@@ -125,7 +127,6 @@ public class AutoBuilderModule extends Module
         final Vec3d pos = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
 
         BlockPos orignPos = new BlockPos(pos.x, pos.y+0.5f, pos.z);
-        BlockPos interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
 
         /*l_Array.add(interpPos.north());
         l_Array.add(interpPos.north().north());
@@ -143,14 +144,14 @@ public class AutoBuilderModule extends Module
         int slot = -1;
         double l_Offset = pos.y - orignPos.getY();
         
+        BlockPos interpPos;
+        
         if (l_Pair != null)
         {
             slot = l_Pair.getFirst();
             
             if (l_Pair.getSecond() instanceof BlockSlab)
             {
-          //      SalHack.SendMessage(String.format("%s %f", l_Offset, Math.ceil(pos.y)));
-                
                 if (l_Offset == 0.5f)
                 {
                     orignPos = new BlockPos(pos.x, pos.y+0.5f, pos.z);
@@ -162,16 +163,59 @@ public class AutoBuilderModule extends Module
         switch (Mode.getValue())
         {
             case Highway:
-                l_Array.add(orignPos.down());
-                l_Array.add(orignPos.down().north());
-                l_Array.add(orignPos.down().north().east());
-                l_Array.add(orignPos.down().north().west());
-                l_Array.add(orignPos.down().north().east().east());
-                l_Array.add(orignPos.down().north().west().west());
-                l_Array.add(orignPos.down().north().east().east().east());
-                l_Array.add(orignPos.down().north().west().west().west());
-                l_Array.add(orignPos.down().north().east().east().east().up());
-                l_Array.add(orignPos.down().north().west().west().west().up());
+                switch (PlayerUtil.GetFacing())
+                {
+                    case East:
+                        l_Array.add(orignPos.down());
+                        l_Array.add(orignPos.down().east());
+                        l_Array.add(orignPos.down().east().north());
+                        l_Array.add(orignPos.down().east().south());
+                        l_Array.add(orignPos.down().east().north().north());
+                        l_Array.add(orignPos.down().east().south().south());
+                        l_Array.add(orignPos.down().east().north().north().north());
+                        l_Array.add(orignPos.down().east().south().south().south());
+                        l_Array.add(orignPos.down().east().north().north().north().up());
+                        l_Array.add(orignPos.down().east().south().south().south().up());
+                        break;
+                    case North:
+                        l_Array.add(orignPos.down());
+                        l_Array.add(orignPos.down().north());
+                        l_Array.add(orignPos.down().north().east());
+                        l_Array.add(orignPos.down().north().west());
+                        l_Array.add(orignPos.down().north().east().east());
+                        l_Array.add(orignPos.down().north().west().west());
+                        l_Array.add(orignPos.down().north().east().east().east());
+                        l_Array.add(orignPos.down().north().west().west().west());
+                        l_Array.add(orignPos.down().north().east().east().east().up());
+                        l_Array.add(orignPos.down().north().west().west().west().up());
+                        break;
+                    case South:
+                        l_Array.add(orignPos.down());
+                        l_Array.add(orignPos.down().south());
+                        l_Array.add(orignPos.down().south().east());
+                        l_Array.add(orignPos.down().south().west());
+                        l_Array.add(orignPos.down().south().east().east());
+                        l_Array.add(orignPos.down().south().west().west());
+                        l_Array.add(orignPos.down().south().east().east().east());
+                        l_Array.add(orignPos.down().south().west().west().west());
+                        l_Array.add(orignPos.down().south().east().east().east().up());
+                        l_Array.add(orignPos.down().south().west().west().west().up());
+                        break;
+                    case West:
+                        l_Array.add(orignPos.down());
+                        l_Array.add(orignPos.down().west());
+                        l_Array.add(orignPos.down().west().north());
+                        l_Array.add(orignPos.down().west().south());
+                        l_Array.add(orignPos.down().west().north().north());
+                        l_Array.add(orignPos.down().west().south().south());
+                        l_Array.add(orignPos.down().west().north().north().north());
+                        l_Array.add(orignPos.down().west().south().south().south());
+                        l_Array.add(orignPos.down().west().north().north().north().up());
+                        l_Array.add(orignPos.down().west().south().south().south().up());
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case HighwayTunnel:
                 l_Array.add(orignPos.down());
@@ -198,39 +242,167 @@ public class AutoBuilderModule extends Module
                 l_Array.add(orignPos.down().north().west().west().west().up().up().up().up().east().east().east());
                 break;
             case Swastika:
-                l_Array.add(interpPos);
-                l_Array.add(interpPos.west());
-                l_Array.add(interpPos.west().west());
-                l_Array.add(interpPos.up());
-                l_Array.add(interpPos.up().up());
-                l_Array.add(interpPos.up().up().west());
-                l_Array.add(interpPos.up().up().west().west());
-                l_Array.add(interpPos.up().up().west().west().up());
-                l_Array.add(interpPos.up().up().west().west().up().up());
-                l_Array.add(interpPos.up().up().east());
-                l_Array.add(interpPos.up().up().east().east());
-                l_Array.add(interpPos.up().up().east().east().down());
-                l_Array.add(interpPos.up().up().east().east().down().down());
-                l_Array.add(interpPos.up().up().up());
-                l_Array.add(interpPos.up().up().up().up());
-                l_Array.add(interpPos.up().up().up().up().east());
-                l_Array.add(interpPos.up().up().up().up().east().east());
+                switch (PlayerUtil.GetFacing())
+                {
+                    case East:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).east().east();
+                        l_Array.add(interpPos);
+                        l_Array.add(interpPos.north());
+                        l_Array.add(interpPos.north().north());
+                        l_Array.add(interpPos.up());
+                        l_Array.add(interpPos.up().up());
+                        l_Array.add(interpPos.up().up().north());
+                        l_Array.add(interpPos.up().up().north().north());
+                        l_Array.add(interpPos.up().up().north().north().up());
+                        l_Array.add(interpPos.up().up().north().north().up().up());
+                        l_Array.add(interpPos.up().up().south());
+                        l_Array.add(interpPos.up().up().south().south());
+                        l_Array.add(interpPos.up().up().south().south().down());
+                        l_Array.add(interpPos.up().up().south().south().down().down());
+                        l_Array.add(interpPos.up().up().up());
+                        l_Array.add(interpPos.up().up().up().up());
+                        l_Array.add(interpPos.up().up().up().up().south());
+                        l_Array.add(interpPos.up().up().up().up().south().south());
+                        break;
+                    case North:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
+                        l_Array.add(interpPos);
+                        l_Array.add(interpPos.west());
+                        l_Array.add(interpPos.west().west());
+                        l_Array.add(interpPos.up());
+                        l_Array.add(interpPos.up().up());
+                        l_Array.add(interpPos.up().up().west());
+                        l_Array.add(interpPos.up().up().west().west());
+                        l_Array.add(interpPos.up().up().west().west().up());
+                        l_Array.add(interpPos.up().up().west().west().up().up());
+                        l_Array.add(interpPos.up().up().east());
+                        l_Array.add(interpPos.up().up().east().east());
+                        l_Array.add(interpPos.up().up().east().east().down());
+                        l_Array.add(interpPos.up().up().east().east().down().down());
+                        l_Array.add(interpPos.up().up().up());
+                        l_Array.add(interpPos.up().up().up().up());
+                        l_Array.add(interpPos.up().up().up().up().east());
+                        l_Array.add(interpPos.up().up().up().up().east().east());
+                        break;
+                    case South:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).south().south();
+                        l_Array.add(interpPos);
+                        l_Array.add(interpPos.east());
+                        l_Array.add(interpPos.east().east());
+                        l_Array.add(interpPos.up());
+                        l_Array.add(interpPos.up().up());
+                        l_Array.add(interpPos.up().up().east());
+                        l_Array.add(interpPos.up().up().east().east());
+                        l_Array.add(interpPos.up().up().east().east().up());
+                        l_Array.add(interpPos.up().up().east().east().up().up());
+                        l_Array.add(interpPos.up().up().west());
+                        l_Array.add(interpPos.up().up().west().west());
+                        l_Array.add(interpPos.up().up().west().west().down());
+                        l_Array.add(interpPos.up().up().west().west().down().down());
+                        l_Array.add(interpPos.up().up().up());
+                        l_Array.add(interpPos.up().up().up().up());
+                        l_Array.add(interpPos.up().up().up().up().west());
+                        l_Array.add(interpPos.up().up().up().up().west().west());
+                        break;
+                    case West:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).west().west();
+                        l_Array.add(interpPos);
+                        l_Array.add(interpPos.south());
+                        l_Array.add(interpPos.south().south());
+                        l_Array.add(interpPos.up());
+                        l_Array.add(interpPos.up().up());
+                        l_Array.add(interpPos.up().up().south());
+                        l_Array.add(interpPos.up().up().south().south());
+                        l_Array.add(interpPos.up().up().south().south().up());
+                        l_Array.add(interpPos.up().up().south().south().up().up());
+                        l_Array.add(interpPos.up().up().north());
+                        l_Array.add(interpPos.up().up().north().north());
+                        l_Array.add(interpPos.up().up().north().north().down());
+                        l_Array.add(interpPos.up().up().north().north().down().down());
+                        l_Array.add(interpPos.up().up().up());
+                        l_Array.add(interpPos.up().up().up().up());
+                        l_Array.add(interpPos.up().up().up().up().north());
+                        l_Array.add(interpPos.up().up().up().up().north().north());
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case Portal:
-                l_Array.add(interpPos.east());
-                l_Array.add(interpPos.east().east());
-                l_Array.add(interpPos);
-                l_Array.add(interpPos.east().east().up());
-                l_Array.add(interpPos.east().east().up().up());
-                l_Array.add(interpPos.east().east().up().up().up());
-                l_Array.add(interpPos.east().east().up().up().up().up());
-                l_Array.add(interpPos.east().east().up().up().up().up().west());
-                l_Array.add(interpPos.east().east().up().up().up().up().west().west());
-                l_Array.add(interpPos.east().east().up().up().up().up().west().west().west());
-                l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down());
-                l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down());
-                l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down());
-                l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down().down());
+
+                switch (PlayerUtil.GetFacing())
+                {
+                    case East:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).east().east();
+                        l_Array.add(interpPos.south());
+                        l_Array.add(interpPos.south().south());
+                        l_Array.add(interpPos);
+                        l_Array.add(interpPos.south().south().up());
+                        l_Array.add(interpPos.south().south().up().up());
+                        l_Array.add(interpPos.south().south().up().up().up());
+                        l_Array.add(interpPos.south().south().up().up().up().up());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north().down());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north().down().down());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down().down());
+                        break;
+                    case North:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
+                        l_Array.add(interpPos.east());
+                        l_Array.add(interpPos.east().east());
+                        l_Array.add(interpPos);
+                        l_Array.add(interpPos.east().east().up());
+                        l_Array.add(interpPos.east().east().up().up());
+                        l_Array.add(interpPos.east().east().up().up().up());
+                        l_Array.add(interpPos.east().east().up().up().up().up());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down().down());
+                        break;
+                    case South:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).south().south();
+                        l_Array.add(interpPos.east());
+                        l_Array.add(interpPos.east().east());
+                        l_Array.add(interpPos);
+                        l_Array.add(interpPos.east().east().up());
+                        l_Array.add(interpPos.east().east().up().up());
+                        l_Array.add(interpPos.east().east().up().up().up());
+                        l_Array.add(interpPos.east().east().up().up().up().up());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down());
+                        l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down().down());
+                        break;
+                    case West:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).west().west();
+                        l_Array.add(interpPos.south());
+                        l_Array.add(interpPos.south().south());
+                        l_Array.add(interpPos);
+                        l_Array.add(interpPos.south().south().up());
+                        l_Array.add(interpPos.south().south().up().up());
+                        l_Array.add(interpPos.south().south().up().up().up());
+                        l_Array.add(interpPos.south().south().up().up().up().up());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north().down());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north().down().down());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down());
+                        l_Array.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down().down());
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case Flat:
                 
@@ -242,7 +414,6 @@ public class AutoBuilderModule extends Module
                 
                 break;
             case Cover:
-                
                 if (l_Pair == null)
                     return;
                 
@@ -255,8 +426,7 @@ public class AutoBuilderModule extends Module
                         if (mc.world.getBlockState(l_Pos).getBlock() == l_Pair.getSecond() || mc.world.getBlockState(l_Pos.down()).getBlock() == Blocks.AIR || mc.world.getBlockState(l_Pos.down()).getBlock() == l_Pair.getSecond())
                             continue;
                         
-                        
-                        while (mc.world.getBlockState(l_Pos).getBlock() != Blocks.AIR)
+                        while (mc.world.getBlockState(l_Pos).getBlock() != Blocks.AIR && mc.world.getBlockState(l_Pos).getBlock() != Blocks.FIRE)
                         {
                             if (mc.world.getBlockState(l_Pos).getBlock() == l_Pair.getSecond())
                                 break;
@@ -274,6 +444,58 @@ public class AutoBuilderModule extends Module
                 l_Array.add(orignPos.up());
                 l_Array.add(orignPos);
                 l_Array.add(orignPos.down());
+                break;
+            case Wall:
+
+                switch (PlayerUtil.GetFacing())
+                {
+                    case East:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).east().east();
+                        
+                        for (int l_X = -3; l_X <= 3; ++l_X)
+                        {
+                            for (int l_Y = -3; l_Y <= 3; ++l_Y)
+                            {
+                                l_Array.add(interpPos.add(0, l_Y, l_X));
+                            }
+                        }
+                        break;
+                    case North:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
+                        
+                        for (int l_X = -3; l_X <= 3; ++l_X)
+                        {
+                            for (int l_Y = -3; l_Y <= 3; ++l_Y)
+                            {
+                                l_Array.add(interpPos.add(l_X, l_Y, 0));
+                            }
+                        }
+                        break;
+                    case South:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).south().south();
+                        
+                        for (int l_X = -3; l_X <= 3; ++l_X)
+                        {
+                            for (int l_Y = -3; l_Y <= 3; ++l_Y)
+                            {
+                                l_Array.add(interpPos.add(l_X, l_Y, 0));
+                            }
+                        }
+                        break;
+                    case West:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).west().west();
+                        
+                        for (int l_X = -3; l_X <= 3; ++l_X)
+                        {
+                            for (int l_Y = -3; l_Y <= 3; ++l_Y)
+                            {
+                                l_Array.add(interpPos.add(0, l_Y, l_X));
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
                 break;
             default:
                 break;
@@ -325,32 +547,45 @@ public class AutoBuilderModule extends Module
         
         if (!l_NeedPlace && Mode.getValue() == Modes.Portal)
         {
-            if (mc.world.getBlockState(l_Array.get(0).up()).getBlock() == Blocks.PORTAL)
+            if (mc.world.getBlockState(l_Array.get(0).up()).getBlock() == Blocks.PORTAL || !VerifyPortalFrame(l_Array))
                 return;
             
-            for (int l_I = 0; l_I < 9; ++l_I)
+            if (mc.player.getHeldItemMainhand().getItem() != Items.FLINT_AND_STEEL)
             {
-                ItemStack l_Stack = mc.player.inventory.getStackInSlot(l_I);
-                if (l_Stack.isEmpty())
-                    continue;
-                
-                if (l_Stack.getItem() == Items.FLINT_AND_STEEL)
+                for (int l_I = 0; l_I < 9; ++l_I)
                 {
-                    mc.player.inventory.currentItem = l_I;
-                    mc.playerController.updateController();
-                    break;
+                    ItemStack l_Stack = mc.player.inventory.getStackInSlot(l_I);
+                    if (l_Stack.isEmpty())
+                        continue;
+                    
+                    if (l_Stack.getItem() == Items.FLINT_AND_STEEL)
+                    {
+                        mc.player.inventory.currentItem = l_I;
+                        mc.playerController.updateController();
+                        NetherPortalTimer.reset();
+                        break;
+                    }
                 }
             }
             
-            //  public CPacketPlayerTryUseItemOnBlock(BlockPos posIn, EnumFacing placedBlockDirectionIn, EnumHand handIn, float facingXIn, float facingYIn, float facingZIn)
-            
-            if (SentPacket)
-                mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(l_Array.get(0), EnumFacing.UP, EnumHand.MAIN_HAND, 0f, 0f, 0f));
-            rotations = BlockInteractionHelper.getLegitRotations(new Vec3d(l_Array.get(0).getX(), l_Array.get(0).getY(), l_Array.get(0).getZ()));
-            l_NeedPlace = true;
+            if (!NetherPortalTimer.passed(500))
+            {
+                if (SentPacket)
+                {
+                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                    mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(l_Array.get(0), EnumFacing.UP, EnumHand.MAIN_HAND, 0f, 0f, 0f));
+                }
+                
+                rotations = BlockInteractionHelper.getLegitRotations(new Vec3d(l_Array.get(0).getX(), l_Array.get(0).getY()+0.5f, l_Array.get(0).getZ()));
+                l_NeedPlace = true;
+            }
+            else
+                return;
         }
+        else if (l_NeedPlace && Mode.getValue() == Modes.Portal)
+            NetherPortalTimer.reset();
         
-        if (!rotate.getValue() || !l_NeedPlace || rotations ==null)
+        if (!l_NeedPlace || rotations == null)
         {
             PitchHead = -420.0f;
             SentPacket = false;
@@ -358,6 +593,8 @@ public class AutoBuilderModule extends Module
         }
         
         p_Event.cancel();
+        
+        /// @todo: clean this up
 
         boolean l_IsSprinting = mc.player.isSprinting();
 
@@ -455,11 +692,19 @@ public class AutoBuilderModule extends Module
     @EventHandler
     private Listener<RenderEvent> OnRenderEvent = new Listener<>(p_Event ->
     {
+        if (!Visualize.getValue())
+            return;
+        
         Iterator l_Itr = l_Array.iterator();
 
         while (l_Itr.hasNext()) 
         {
             BlockPos l_Pos = (BlockPos) l_Itr.next();
+            
+            IBlockState l_State = mc.world.getBlockState(l_Pos);
+            
+            if (l_State != null && l_State.getBlock() != Blocks.AIR)
+                continue;
             
             final AxisAlignedBB bb = new AxisAlignedBB(l_Pos.getX() - mc.getRenderManager().viewerPosX,
                     l_Pos.getY() - mc.getRenderManager().viewerPosY, l_Pos.getZ() - mc.getRenderManager().viewerPosZ,
@@ -493,7 +738,7 @@ public class AutoBuilderModule extends Module
                 //  public static void drawBoundingBox(AxisAlignedBB bb, float width, int color)
                 
                 
-                int l_Color = 0x1000FFFF;
+                int l_Color = 0x9000FFFF;
                 
                 RenderUtil.drawBoundingBox(bb, 1.0f, l_Color);
                 RenderUtil.drawFilledBox(bb, l_Color);
@@ -543,5 +788,19 @@ public class AutoBuilderModule extends Module
         double z = Math.floor(posZ) + 0.5D ;
         
         return new Vec3d(x, y, z);
+    }
+
+    /// Verifies the array is all obsidian
+    private boolean VerifyPortalFrame(ArrayList<BlockPos> p_Blocks)
+    {
+        for (BlockPos l_Pos : p_Blocks)
+        {
+            IBlockState l_State = mc.world.getBlockState(l_Pos);
+            
+            if (l_State == null || !(l_State.getBlock() instanceof BlockObsidian))
+                return false;
+        }
+        
+        return true;
     }
 }
