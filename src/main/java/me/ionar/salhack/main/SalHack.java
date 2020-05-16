@@ -33,6 +33,7 @@ public class SalHack
     private static NotificationManager m_NotificationManager = new NotificationManager();
     private static WaypointManager m_WaypointManager = new WaypointManager();
     private static CapeManager m_CapeManager = new CapeManager();
+    private static AlwaysEnabledModule m_AlwaysEnabledMod;
 
     public static void Init()
     {
@@ -48,6 +49,9 @@ public class SalHack
         m_ImageManager.Load();
         m_DiscordManager.Start();
         m_FriendManager.Load();
+        
+        /// features people can't turn off
+        m_AlwaysEnabledMod = new AlwaysEnabledModule();
     }
 
     public static ModuleManager GetModuleManager()
