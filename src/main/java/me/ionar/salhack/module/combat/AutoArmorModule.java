@@ -52,12 +52,12 @@ public final class AutoArmorModule extends Module
             if (!timer.passed(delay.getValue()))
                 return;
             
-            timer.reset();
-            
             final int l_FoundSlot = findArmorSlot(p_Slot);
 
             if (l_FoundSlot != -1)
             {
+                timer.reset();
+                
                 /// support for xcarry
                 if (l_FoundSlot <= 4)
                 {
