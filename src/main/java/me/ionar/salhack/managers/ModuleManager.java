@@ -134,6 +134,7 @@ public class ModuleManager
         Add(new BrightnessModule());
         Add(new ContainerPreviewModule());
         Add(new ESPModule());
+        Add(new FarmESPModule());
         Add(new FreecamModule());
         Add(new HandProgressModule());
         Add(new NametagsModule());
