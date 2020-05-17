@@ -89,6 +89,9 @@ public class SpeedModule extends Module
                 mc.player.motionZ += MathHelper.cos(yaw) * 0.2f;                
             }
         }
+        
+        if (mc.gameSettings.keyBindJump.isKeyDown() && mc.player.onGround)
+            mc.player.motionY = 0.405f;
     });
     
     private float GetRotationYawForCalc()
