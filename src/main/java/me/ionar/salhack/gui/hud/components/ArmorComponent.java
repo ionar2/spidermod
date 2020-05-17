@@ -116,12 +116,12 @@ public class ArmorComponent extends HudComponentItem
                     
                     l_X += 20;
                     
-                    if (l_I < 3)
+                    if (l_I < l_Stacks.size()-1)
                     {
                         float l_Pct = GetPctFromStack(l_Stacks.get(l_I+1));
                         
                         if (l_Pct == 100.0f)
-                            l_TextX += 20;
+                            l_TextX += 22;
                         else if (l_Pct >= 10.0)
                             l_TextX += 21f;
                         else

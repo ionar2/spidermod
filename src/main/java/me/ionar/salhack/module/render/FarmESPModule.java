@@ -68,7 +68,6 @@ public class FarmESPModule extends Module
             timer.reset();
             new Thread(() -> 
             {
-                    
                 PositionsToHighlight.clear();
                 
                 BlockInteractionHelper.getSphere(PlayerUtil.GetLocalPlayerPosFloored(),
