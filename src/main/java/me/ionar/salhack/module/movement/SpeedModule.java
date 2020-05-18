@@ -60,9 +60,9 @@ public class SpeedModule extends Module
     }
     
     @EventHandler
-    private Listener<EventPlayerMotionUpdate> OnMotionUpdate = new Listener<>(p_Event ->
+    private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
-        if (p_Event.getEra() != Era.POST)
+        if (mc.player.isRiding())
             return;
 
         if (mc.player.isInWater() || mc.player.isInLava())
