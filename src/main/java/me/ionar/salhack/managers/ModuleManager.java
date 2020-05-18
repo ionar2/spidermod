@@ -2,20 +2,12 @@ package me.ionar.salhack.managers;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.lwjgl.opengl.GL11;
-
-import com.google.gson.internal.LinkedTreeMap;
-
 import me.ionar.salhack.SalHackMod;
-import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.main.SalHack;
-import me.ionar.salhack.main.Wrapper;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Module.ModuleType;
 import me.ionar.salhack.module.Value;
@@ -27,16 +19,8 @@ import me.ionar.salhack.module.render.*;
 import me.ionar.salhack.module.schematica.*;
 import me.ionar.salhack.module.ui.*;
 import me.ionar.salhack.module.world.*;
-import me.ionar.salhack.util.Pair;
-import me.ionar.salhack.util.entity.EntityUtil;
-import me.ionar.salhack.util.render.CustomTessellator;
 import me.ionar.salhack.util.render.RenderUtil;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 
 public class ModuleManager
 {
@@ -68,6 +52,7 @@ public class ModuleManager
         Add(new CriticalsModule());
         Add(new HoleFillerModule());
         Add(new KillAuraModule());
+        Add(new OffhandModule());
         Add(new ReachModule());
         Add(new SelfTrapModule());
         Add(new SurroundModule());

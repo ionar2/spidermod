@@ -4,7 +4,9 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.ionar.salhack.events.player.EventPlayerTravel;
 import me.ionar.salhack.events.player.EventPlayerUpdate;
+import me.ionar.salhack.gui.SalGuiScreen;
 import me.ionar.salhack.main.SalHack;
+import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.entity.PlayerUtil;
@@ -48,6 +50,8 @@ public final class AutoTotemModule extends Module
         super("AutoTotem", new String[]
         { "Totem" }, "Automatically places a totem of undying in your offhand", "NONE", 0xDADB24, ModuleType.COMBAT);
     }
+    
+    private OffhandModule OffhandMod = null;
 
     @Override
     public String getMetaData()
@@ -105,7 +109,7 @@ public final class AutoTotemModule extends Module
     @EventHandler
     private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
-        if (mc.currentScreen != null && !(mc.currentScreen instanceof GuiInventory))
+        if (mc.currentScreen != null && (!(mc.currentScreen instanceof GuiInventory) && !(mc.currentScreen instanceof SalGuiScreen)) || OffhandMod.isEnabled())
             return;
         
         if (!mc.player.getHeldItemMainhand().isEmpty())
@@ -134,6 +138,14 @@ public final class AutoTotemModule extends Module
         /// If we meet the required health
         SwitchOffHandIfNeed(Mode.getValue());
     });
+    
+    @Override
+    public void onEnable()
+    {
+        super.onEnable();
+        
+        OffhandMod = (OffhandModule)ModuleManager.Get().GetMod(OffhandModule.class);
+    }
     
     public Item GetItemFromModeVal(AutoTotemMode p_Val)
     {
