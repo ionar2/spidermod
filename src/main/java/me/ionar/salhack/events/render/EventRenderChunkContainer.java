@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.chunk.RenderChunk;
 
 public class EventRenderChunkContainer extends MinecraftEvent
 {
-    public net.minecraft.client.renderer.chunk.RenderChunk RenderChunk;
+    public RenderChunk RenderChunk;
     public EventRenderChunkContainer(RenderChunk renderChunk)
     {
         RenderChunk = renderChunk;
