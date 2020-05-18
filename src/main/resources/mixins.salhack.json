@@ -26,6 +26,8 @@
     "MixinMapItemRenderer",
     "MixinAbstractHorse",
     "MixinVisGraph",
-    "MixinGuiBossOverlay"
+    "MixinGuiBossOverlay",
+    "MixinChunkRenderContainer",
+    "MixinRenderChunk"
   ]
 }

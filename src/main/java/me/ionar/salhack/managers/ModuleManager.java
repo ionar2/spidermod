@@ -119,6 +119,7 @@ public class ModuleManager
         Add(new BlockHighlightModule());
         Add(new BreakHighlightModule());
         Add(new BrightnessModule());
+        Add(new ChunkAnimator());
         Add(new ContainerPreviewModule());
         Add(new ESPModule());
         Add(new FarmESPModule());
