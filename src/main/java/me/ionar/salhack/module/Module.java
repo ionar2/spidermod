@@ -17,6 +17,7 @@ import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.util.render.RenderUtil;
 import me.zero.alpine.fork.listener.Listenable;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.HoverEvent;
@@ -36,6 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.lwjgl.input.Keyboard;
 
 public class Module implements Listenable
 { 
@@ -278,6 +281,43 @@ public class Module implements Listenable
     public String getKey()
     {
         return key;
+    }
+    
+    public boolean IsKeyPressed(String p_KeyCode)
+    {
+        if (GuiScreen.isAltKeyDown() || GuiScreen.isCtrlKeyDown() || GuiScreen.isShiftKeyDown())
+        {
+            if (key.contains(" + "))
+            {
+                if (GuiScreen.isAltKeyDown() && key.contains("MENU"))
+                {
+                    String l_Result = key.replace(Keyboard.isKeyDown(56) ? "LMENU + " : "RMENU + ", "");
+                    return l_Result.equals(p_KeyCode);
+                }
+                else if (GuiScreen.isCtrlKeyDown() && key.contains("CONTROL"))
+                {
+                    String l_CtrlKey = "";
+                    
+                    if (Minecraft.IS_RUNNING_ON_MAC)
+                        l_CtrlKey = Keyboard.isKeyDown(219) ? "LCONTROL" : "RCONTROL";
+                    else
+                        l_CtrlKey = Keyboard.isKeyDown(29) ? "LCONTROL" : "RCONTROL";
+                    
+                    String l_Result = key.replace(l_CtrlKey + " + ", "");
+                    return l_Result.equals(p_KeyCode);
+                }
+                else if (GuiScreen.isShiftKeyDown() && key.contains("SHIFT"))
+                {
+                    String l_Result = key.replace((Keyboard.isKeyDown(42) ? "LSHIFT" : "RSHIFT") + " + ", "");
+                    return l_Result.equals(p_KeyCode);
+                }
+            }
+            
+            if (!ModuleManager.Get().IgnoreStrictKeybinds())
+                return false;
+        }
+        
+        return key.equals(p_KeyCode);
     }
 
     public void setKey(String key)

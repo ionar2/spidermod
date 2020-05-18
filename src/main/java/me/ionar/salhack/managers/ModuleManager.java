@@ -31,6 +31,7 @@ import me.ionar.salhack.util.Pair;
 import me.ionar.salhack.util.entity.EntityUtil;
 import me.ionar.salhack.util.render.CustomTessellator;
 import me.ionar.salhack.util.render.RenderUtil;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
@@ -50,6 +51,7 @@ public class ModuleManager
 
     public ArrayList<Module> Mods = new ArrayList<Module>();
     private ArrayList<Module> ArrayListAnimations = new ArrayList<Module>();
+    private KeybindsModule Keybinds = null;
     
     public void Init()
     {
@@ -149,6 +151,7 @@ public class ModuleManager
         Add(new ClickGuiModule());
         Add(new HudEditorModule());
         Add(new HudModule());
+        Add(Keybinds = new KeybindsModule());
         Add(new ReliantChatModule());
         
         /// World
@@ -223,14 +226,14 @@ public class ModuleManager
         return Mods;
     }
 
-    public void OnBind(String string)
+    public void OnKeyPress(String string)
     {
         if (string == null || string.isEmpty() || string.equalsIgnoreCase("NONE"))
             return;
         
         Mods.forEach(p_Mod ->
         {
-            if (p_Mod.getKey().equals(string))
+            if (p_Mod.IsKeyPressed(string))
             {
                 p_Mod.toggle();
             }
@@ -296,5 +299,17 @@ public class ModuleManager
             ArrayListAnimations.remove(l_Mod);
             l_Mod.RemainingXAnimation = 0;
         }
+    }
+
+    public boolean IgnoreStrictKeybinds()
+    {
+        if (GuiScreen.isAltKeyDown() && !Keybinds.Alt.getValue())
+            return true;
+        if (GuiScreen.isCtrlKeyDown() && !Keybinds.Ctrl.getValue())
+            return true;
+        if (GuiScreen.isShiftKeyDown() && !Keybinds.Shift.getValue())
+            return true;
+        
+        return false;
     }
 }

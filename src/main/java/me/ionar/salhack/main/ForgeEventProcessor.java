@@ -89,7 +89,7 @@ public class ForgeEventProcessor
     public void onKeyInput(InputEvent.KeyInputEvent event)
     {
         if (Keyboard.getEventKeyState())
-            ModuleManager.Get().OnBind(Keyboard.getKeyName(Keyboard.getEventKey()));
+            ModuleManager.Get().OnKeyPress(Keyboard.getKeyName(Keyboard.getEventKey()));
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
