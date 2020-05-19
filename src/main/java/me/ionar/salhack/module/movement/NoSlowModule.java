@@ -1,29 +1,24 @@
 package me.ionar.salhack.module.movement;
 
-import net.minecraft.network.play.client.CPacketEntityAction;
-import net.minecraft.network.play.client.CPacketUseEntity;
+import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.network.play.client.CPacketPlayerDigging.Action;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import me.ionar.salhack.events.client.EventClientTick;
+import me.ionar.salhack.events.network.EventNetworkPostPacketEvent;
 import me.ionar.salhack.events.player.EventPlayerIsKeyPressed;
 import me.ionar.salhack.events.player.EventPlayerUpdateMoveState;
 import me.ionar.salhack.gui.SalGuiScreen;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
+import me.ionar.salhack.util.entity.PlayerUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemShield;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.client.event.InputUpdateEvent;
 
 public final class NoSlowModule extends Module
 {
@@ -139,27 +134,26 @@ public final class NoSlowModule extends Module
 
     });
 
-    private boolean Flag = false;
-
     @EventHandler
     private Listener<EventPlayerUpdateMoveState> OnUpdateMoveState = new Listener<>(event ->
     {
         if (items.getValue() && mc.player.isHandActive() && !mc.player.isRiding())
         {
-            if (Flag && NCPStrict.getValue())
-            {
-                if (mc.player.isSprinting())
-                {
-                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SPRINTING));
-                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SPRINTING));
-                }
-
-                Flag = false;
-            }
-
             mc.player.movementInput.moveForward /= 0.2F;
             mc.player.movementInput.moveStrafe /= 0.2F;
         }
-        else Flag = true;
+    });
+
+    @EventHandler
+    private Listener<EventNetworkPostPacketEvent> PacketEvent = new Listener<>(p_Event ->
+    {
+        if (p_Event.getPacket() instanceof CPacketPlayer)
+        {
+            if (NCPStrict.getValue())
+            {
+                if (items.getValue() && mc.player.isHandActive() && !mc.player.isRiding())
+                    mc.player.connection.sendPacket(new CPacketPlayerDigging(Action.ABORT_DESTROY_BLOCK, PlayerUtil.GetLocalPlayerPosFloored(), EnumFacing.DOWN));
+            }
+        }
     });
 }
