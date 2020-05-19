@@ -113,6 +113,7 @@ public class ModuleManager
         Add(new SneakModule());
         Add(new SpeedModule());
         Add(new SprintModule());
+        Add(new StepModule());
         Add(new YawModule());
         
         /// Render
