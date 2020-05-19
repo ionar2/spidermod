@@ -211,6 +211,13 @@ public final class ElytraFlyModule extends Module
                 || mc.gameSettings.keyBindBack.isKeyDown();
 
         boolean l_CancelInWater = !mc.player.isInWater() && !mc.player.isInLava() && CancelInWater.getValue();
+        
+        if (mc.gameSettings.keyBindJump.isKeyDown())
+        {
+            p_Travel.cancel();
+            Accelerate();
+            return;
+        }
 
         if (!l_IsMoveKeyDown)
         {
@@ -235,78 +242,46 @@ public final class ElytraFlyModule extends Module
 
     public void HandleImmediateModeElytra(EventPlayerTravel p_Travel)
     {
-        p_Travel.cancel();
-
-        boolean moveForward = mc.gameSettings.keyBindForward.isKeyDown();
-        boolean moveBackward = mc.gameSettings.keyBindBack.isKeyDown();
-        boolean moveLeft = mc.gameSettings.keyBindLeft.isKeyDown();
-        boolean moveRight = mc.gameSettings.keyBindRight.isKeyDown();
-        boolean moveUp = mc.gameSettings.keyBindJump.isKeyDown();
-        boolean moveDown = mc.gameSettings.keyBindSneak.isKeyDown();
-        float moveForwardFactor = moveForward ? 1.0f : (float) (moveBackward ? -1 : 0);
-        float yawDeg = mc.player.rotationYaw;
-
-        if (moveLeft && (moveForward || moveBackward))
+        if (mc.gameSettings.keyBindJump.isKeyDown())
         {
-            yawDeg -= 40.0f * moveForwardFactor;
-        }
-        else if (moveRight && (moveForward || moveBackward))
-        {
-            yawDeg += 40.0f * moveForwardFactor;
-        }
-        else if (moveLeft)
-        {
-            yawDeg -= 90.0f;
-        }
-        else if (moveRight)
-        {
-            yawDeg += 90.0f;
-        }
-        if (moveBackward)
-            yawDeg -= 180.0f;
-
-        float yaw = (float) Math.toRadians(yawDeg);
-        double motionAmount = Math.sqrt(mc.player.motionX * mc.player.motionX + mc.player.motionZ * mc.player.motionZ);
-        if (moveUp || moveForward || moveBackward || moveLeft || moveRight)
-        {
-            if ((moveUp) && motionAmount > 1.0)
+            double l_MotionSq = Math.sqrt(mc.player.motionX * mc.player.motionX + mc.player.motionZ * mc.player.motionZ);
+            
+            if (l_MotionSq > 1.0)
             {
-                if (mc.player.motionX == 0.0 && mc.player.motionZ == 0.0)
-                {
-                    mc.player.motionY = UpSpeed.getValue();
-                }
-                else
-                {
-                    double calcMotionDiff = motionAmount * 0.008;
-                    mc.player.motionY += calcMotionDiff * 3.2;
-                    mc.player.motionX -= (double) (-MathHelper.sin(yaw)) * calcMotionDiff / 1.0;
-                    mc.player.motionZ -= (double) MathHelper.cos(yaw) * calcMotionDiff / 1.0;
-                    mc.player.motionX *= 0.99f;
-                    mc.player.motionY *= 0.98f;
-                    mc.player.motionZ *= 0.99f;
-                }
+                return;
             }
             else
-            { /* runs when pressing wasd */
-                mc.player.motionX = (double) (-MathHelper.sin(yaw)) * 1.8f;
+            {
+                double[] dir = MathUtil.directionSpeedNoForward(speed.getValue());
+                
+                mc.player.motionX = dir[0];
                 mc.player.motionY = -(GlideSpeed.getValue() / 10000f);
-                mc.player.motionZ = (double) MathHelper.cos(yaw) * 1.8f;
+                mc.player.motionZ = dir[1];
             }
+
+            p_Travel.cancel();
+            return;
         }
-        else
-        { /* Stop moving if no inputs are pressed */
-            mc.player.motionX = 0.0;
-            mc.player.motionY = 0.0;
-            mc.player.motionZ = 0.0;
-        }
-        if (moveDown)
+        
+        mc.player.setVelocity(0, 0, 0);
+
+        p_Travel.cancel();
+       
+        double[] dir = MathUtil.directionSpeed(speed.getValue());
+
+        if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0)
         {
+            mc.player.motionX = dir[0];
+            mc.player.motionY = -(GlideSpeed.getValue() / 10000f);
+            mc.player.motionZ = dir[1];
+        }
+
+        if (mc.gameSettings.keyBindSneak.isKeyDown())
             mc.player.motionY = -DownSpeed.getValue();
-        }
-        if (moveUp || moveDown)
-        {
-            // hoverTarget = mc.player.posY;
-        }
+        
+        mc.player.prevLimbSwingAmount = 0;
+        mc.player.limbSwingAmount = 0;
+        mc.player.limbSwing = 0;
     }
 
     public void Accelerate()
