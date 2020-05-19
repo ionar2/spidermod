@@ -12,6 +12,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntityPigZombie;
@@ -272,5 +274,10 @@ public class EntityUtil
     public static double GetDistanceOfEntityToBlock(Entity p_Entity, BlockPos p_Pos)
     {
         return GetDistance(p_Entity.posX, p_Entity.posY, p_Entity.posZ, p_Pos.getX(), p_Pos.getY(), p_Pos.getZ());
+    }
+
+    public static boolean IsVehicle(Entity entity)
+    {
+        return entity instanceof EntityBoat || entity instanceof EntityMinecart;
     }
 }

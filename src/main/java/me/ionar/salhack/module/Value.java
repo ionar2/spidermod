@@ -9,7 +9,7 @@ public class Value<T>
     private String[] alias;
     private String desc;
     private Module Mod;
-    private ValueListeners Listener;
+    public ValueListeners Listener;
 
     private T value;
 

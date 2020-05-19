@@ -3,6 +3,7 @@ package me.ionar.salhack.main;
 import com.google.gson.Gson;
 
 import me.ionar.salhack.SalHackMod;
+import me.ionar.salhack.events.client.EventSalHackTick;
 import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.managers.CapeManager;
 import me.ionar.salhack.managers.CommandManager;
@@ -52,6 +53,21 @@ public class SalHack
         
         /// features people can't turn off
         m_AlwaysEnabledMod = new AlwaysEnabledModule();
+        
+        new Thread(() ->
+        {
+            while (true)
+            {
+                try
+                {
+                    SalHackMod.EVENT_BUS.post(new EventSalHackTick());
+                }
+                catch (Exception e)
+                {
+                    
+                }
+            }
+        }).start();
     }
 
     public static ModuleManager GetModuleManager()

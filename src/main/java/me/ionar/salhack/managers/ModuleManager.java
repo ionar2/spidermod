@@ -122,15 +122,19 @@ public class ModuleManager
         Add(new BrightnessModule());
         Add(new ChunkAnimator());
         Add(new ContainerPreviewModule());
-        Add(new ESPModule());
+        Add(new EntityESPModule());
         Add(new FarmESPModule());
         Add(new FreecamModule());
         Add(new HandProgressModule());
+        Add(new HoleESPModule());
         Add(new NametagsModule());
         Add(new NoBobModule());
         Add(new NoRenderModule());
         Add(new ShulkerPreviewModule());
+        Add(new StorageESPModule());
         Add(new TrajectoriesModule());
+        Add(new VoidESPModule());
+        Add(new VulnerabilityESPModule());
 
         /// UI
         Add(new ColorsModule());
