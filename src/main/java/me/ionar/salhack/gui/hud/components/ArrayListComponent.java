@@ -166,7 +166,7 @@ public class ArrayListComponent extends HudComponentItem
                     	{
 	                        RenderUtil.drawRect(GetX() + xOffset - 2 + mod.GetRemainingXArraylistOffset(),
 	                                GetY() + (GetHeight() - l_StringYHeight) + yOffset,
-	                                GetX() + xOffset + RenderUtil.getStringWidth(name),
+	                                GetX() + xOffset + RenderUtil.getStringWidth(name) + 4,
 	                                GetY() + (GetHeight() - l_StringYHeight) + yOffset+ (l_StringYHeight + 1.5f),
 	                                0x75101010);
                     	}
