@@ -41,18 +41,15 @@ public class StorageESPModule extends Module
         {
             Storages.clear();
     
-            if (Chests.getValue() || EnderChests.getValue() || Shulkers.getValue())
+            mc.world.loadedTileEntityList.forEach(p_Tile ->
             {
-                mc.world.loadedTileEntityList.forEach(p_Tile ->
-                {
-                    if (p_Tile instanceof TileEntityEnderChest)
-                        Storages.add(new StorageBlockPos(p_Tile.getPos().getX(), p_Tile.getPos().getY(), p_Tile.getPos().getZ(), StorageType.Ender));
-                    else if (p_Tile instanceof TileEntityChest)
-                        Storages.add(new StorageBlockPos(p_Tile.getPos().getX(), p_Tile.getPos().getY(), p_Tile.getPos().getZ(), StorageType.Chest));
-                    else if (p_Tile instanceof TileEntityShulkerBox)
-                        Storages.add(new StorageBlockPos(p_Tile.getPos().getX(), p_Tile.getPos().getY(), p_Tile.getPos().getZ(), StorageType.Shulker));
-                });
-            }
+                if (p_Tile instanceof TileEntityEnderChest && EnderChests.getValue())
+                    Storages.add(new StorageBlockPos(p_Tile.getPos().getX(), p_Tile.getPos().getY(), p_Tile.getPos().getZ(), StorageType.Ender));
+                else if (p_Tile instanceof TileEntityChest && Chests.getValue())
+                    Storages.add(new StorageBlockPos(p_Tile.getPos().getX(), p_Tile.getPos().getY(), p_Tile.getPos().getZ(), StorageType.Chest));
+                else if (p_Tile instanceof TileEntityShulkerBox && Shulkers.getValue())
+                    Storages.add(new StorageBlockPos(p_Tile.getPos().getX(), p_Tile.getPos().getY(), p_Tile.getPos().getZ(), StorageType.Shulker));
+            });
         }).start();
     });
 
