@@ -88,6 +88,7 @@ public class ModuleManager
         Add(new ChatModificationsModule());
         Add(new ChatNotifierModule());
         Add(new ChestStealerModule());
+        Add(new ChestSwapModule());
         Add(new FriendsModule());
         Add(new GlobalLocationModule());
         Add(new HotbarCacheModule());
