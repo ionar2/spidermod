@@ -15,6 +15,7 @@ import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.Hole;
 import me.ionar.salhack.util.Hole.HoleTypes;
+import me.ionar.salhack.util.entity.PlayerUtil;
 import me.ionar.salhack.util.render.ESPUtil.HoleModes;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
@@ -31,6 +32,7 @@ public class HoleESPModule extends Module
 {
     public final Value<HoleModes> HoleMode = new Value<HoleModes>("Mode", new String[] {"HM"}, "Mode for rendering holes", HoleModes.FlatOutline);
     public final Value<Integer> Radius = new Value<Integer>("Radius", new String[] { "Radius", "Range", "Distance" }, "Radius in blocks to scan for holes.", 8, 0, 32, 1);
+    public final Value<Boolean> IgnoreOwnHole = new Value<Boolean>("IgnoreOwnHole", new String[] {"NoSelfHole"}, "Doesn't render the hole you're standing in", false);
     
     /// Colors
     public final Value<Float> ObsidianRed = new Value<Float>("ObsidianRed", new String[] {"oRed"}, "Red for rendering", 0f, 0f, 1.0f, 0.1f);
@@ -69,6 +71,10 @@ public class HoleESPModule extends Module
                         if (HoleMode.getValue() != HoleModes.None)
                         {
                             final BlockPos blockPos = new BlockPos(x, y, z);
+
+                            if (IgnoreOwnHole.getValue() && mc.player.getDistanceSq(blockPos) <= 1)
+                                continue;
+
                             final IBlockState blockState = mc.world.getBlockState(blockPos);
         
                             HoleTypes l_Type = isBlockValid(blockState, blockPos);
