@@ -33,6 +33,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.ionar.salhack.events.player.EventPlayerTravel;
 import me.ionar.salhack.events.player.EventPlayerUpdate;
 import me.ionar.salhack.main.SalHack;
+import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.MathUtil;
@@ -71,6 +72,7 @@ public final class ElytraFlyModule extends Module
     private Timer AccelerationResetTimer = new Timer();
     private Timer InstantFlyTimer = new Timer();
     private boolean SendMessage = false;
+    private FlightModule Flight = null;
 
     private enum Mode
     {
@@ -89,6 +91,8 @@ public final class ElytraFlyModule extends Module
     public void onEnable()
     {
         super.onEnable();
+        
+        Flight = (FlightModule)ModuleManager.Get().GetMod(FlightModule.class);
         
         ElytraSlot = -1;
         
@@ -152,7 +156,7 @@ public final class ElytraFlyModule extends Module
     @EventHandler
     private Listener<EventPlayerTravel> OnTravel = new Listener<>(p_Event ->
     {
-        if (mc.player == null)
+        if (mc.player == null || Flight.isEnabled()) ///< Ignore if Flight is on: ex flat flying
             return;
 
         /// Player must be wearing an elytra.
