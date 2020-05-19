@@ -29,7 +29,7 @@ public class ArrayListComponent extends HudComponentItem
     {
         super("ArrayList", 0, 0);
         SetHidden(false);
-        Clamped = true;
+        ClampLevel = 1;
     }
 
     private HashMap<Module, String> m_StaticModuleNames = new HashMap<Module, String>();
@@ -180,27 +180,40 @@ public class ArrayListComponent extends HudComponentItem
             }
         }
         
-        if (Clamped)
+        if (ClampLevel > 0)
         { 
             ScaledResolution l_Res = new ScaledResolution(mc);
             
             switch (Side)
             {
-                case 0: 
+                case 0:
                     SetX(l_Res.getScaledWidth()-maxWidth+8.0f);
-                    SetY(1);
+                    
+                    if (ClampLevel == 2)
+                        SetY(Math.max(GetY(), 1));
+                    else
+                        SetY(1);
                     break;
                 case 1: 
                     SetX(l_Res.getScaledWidth()-maxWidth+8.0f);
-                    SetY(l_Res.getScaledHeight()+yOffset);
+                    if (ClampLevel == 2)
+                        SetY(Math.min(GetY(), l_Res.getScaledHeight()+yOffset));
+                    else
+                        SetY(l_Res.getScaledHeight()+yOffset);
                     break;
                 case 2: 
                     SetX(1);
-                    SetY(l_Res.getScaledHeight()+yOffset);
+                    if (ClampLevel == 2)
+                        SetY(Math.min(GetY(), l_Res.getScaledHeight()+yOffset));
+                    else
+                        SetY(l_Res.getScaledHeight()+yOffset);
                     break;
                 case 3: 
                     SetX(1);
-                    SetY(1);
+                    if (ClampLevel == 2)
+                        SetY(Math.max(GetY(), 1));
+                    else
+                        SetY(1);
                     break;
             }
         }

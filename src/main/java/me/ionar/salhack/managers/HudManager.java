@@ -153,7 +153,7 @@ public class HudManager
             map.put("visible", !p_Item.IsHidden() ? "true" : "false");
             map.put("PositionX", String.valueOf(p_Item.GetX()));
             map.put("PositionY", String.valueOf(p_Item.GetY()));
-            map.put("Clamped", p_Item.IsClamped() ? "true" : "false");
+            map.put("ClampLevel", String.valueOf(p_Item.GetClampLevel()));
             map.put("ClampPositionX", String.valueOf(p_Item.GetX()));
             map.put("ClampPositionY", String.valueOf(p_Item.GetY()));
             map.put("Side", String.valueOf(p_Item.GetSide()));
