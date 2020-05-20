@@ -27,6 +27,7 @@ public class CommandManager
         Commands.add(new ToggleCommand());
         Commands.add(new BindCommand());
         Commands.add(new UnbindCommand());
+        Commands.add(new ResetGUICommand());
         
         ModuleManager.Get().GetModuleList().forEach(p_Mod ->
         {

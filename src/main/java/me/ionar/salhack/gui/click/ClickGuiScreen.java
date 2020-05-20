@@ -248,4 +248,9 @@ public class ClickGuiScreen extends SalGuiScreen
     {
         return ClickGuiMod.AllowOverflow.getValue();
     }
+
+    public void ResetToDefaults()
+    {
+        MenuComponents.forEach(comp -> comp.Default());
+    }
 }

@@ -23,6 +23,8 @@ public class MenuComponent
     private String DisplayName;
     private ArrayList<ComponentItem> Items = new ArrayList<ComponentItem>();
     
+    private float DefaultX;
+    private float DefaultY;
     private float X;
     private float Y;
     private float Height;
@@ -44,6 +46,8 @@ public class MenuComponent
     public MenuComponent(String p_DisplayName, float p_X, float p_Y, float p_Height, float p_Width, String p_Image, ColorsModule p_Colors, ClickGuiModule p_ClickGui)
     {
         DisplayName = p_DisplayName;
+        DefaultX = p_X;
+        DefaultY = p_Y;
         X = p_X;
         Y = p_Y;
         Height = p_Height;
@@ -440,5 +444,17 @@ public class MenuComponent
     public int GetTextColor()
     {
     	return (Colors.Red.getValue() << 16) & 0x00FF0000 | (Colors.Green.getValue() << 8) & 0x0000FF00 | Colors.Blue.getValue() & 0x000000FF;
+    }
+
+    public void Default()
+    {
+        X = DefaultX;
+        Y = DefaultY;
+        
+        Items.forEach(comp ->
+        {
+            if (comp.HasState(ComponentItem.Extended))
+                comp.RemoveState(ComponentItem.Extended);
+        });
     }
 }
