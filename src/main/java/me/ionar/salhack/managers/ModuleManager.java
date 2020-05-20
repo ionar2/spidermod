@@ -94,6 +94,7 @@ public class ModuleManager
         Add(new HotbarCacheModule());
         Add(new MiddleClickFriendsModule());
         Add(new RetardChatModule());
+        Add(new StashLoggerModule());
         Add(new StopWatchModule());
         Add(new TotemPopNotifierModule());
         Add(new VisualRangeModule());

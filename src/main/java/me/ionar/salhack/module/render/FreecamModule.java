@@ -47,6 +47,8 @@ public class FreecamModule extends Module
         if (mc.world == null)
             return;
         
+        riding = null;
+        
         if (mc.player.getRidingEntity() != null)
         {
             this.riding = mc.player.getRidingEntity();
@@ -76,6 +78,7 @@ public class FreecamModule extends Module
             if (this.riding != null)
             {
                 mc.player.startRiding(this.riding, true);
+                riding = null;
             }
             if (this.Camera != null)
             {
@@ -88,9 +91,7 @@ public class FreecamModule extends Module
             mc.player.rotationYaw = this.yaw;
             mc.player.rotationPitch = this.pitch;
             mc.player.noClip = false;
-            mc.player.motionX = 0;
-            mc.player.motionY = 0;
-            mc.player.motionZ = 0;
+            mc.player.setVelocity(0, 0, 0);
         }
     }
 
