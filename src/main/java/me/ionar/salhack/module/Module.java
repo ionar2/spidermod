@@ -315,7 +315,7 @@ public class Module implements Listenable
             
             if (!ModuleManager.Get().IgnoreStrictKeybinds())
             {
-                if (p_KeyCode.contains("SHIFT") || p_KeyCode.contains("CONTROL") || p_KeyCode.contains("SHIFT"))
+                if (p_KeyCode.contains("SHIFT") || p_KeyCode.contains("CONTROL") || p_KeyCode.contains("MENU"))
                     return key.equals(p_KeyCode);
                 
                 return false;
