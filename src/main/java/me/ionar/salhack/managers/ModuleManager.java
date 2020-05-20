@@ -153,6 +153,7 @@ public class ModuleManager
         Add(new AutoNameTagModule());
         Add(new AutoToolModule());
         Add(new AutoWitherModule());
+        Add(new EnderChestFarmer());
         Add(new FastPlaceModule());
         Add(new LawnmowerModule());
         Add(new NoGlitchBlocksModule());
