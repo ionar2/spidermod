@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import com.google.gson.Gson;
@@ -18,6 +19,7 @@ import com.google.gson.GsonBuilder;
 import me.ionar.salhack.gui.SalGuiScreen;
 import me.ionar.salhack.gui.click.component.*;
 import me.ionar.salhack.gui.click.component.menus.mods.MenuComponentModList;
+import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.managers.ImageManager;
 import me.ionar.salhack.module.Module.ModuleType;
 import me.ionar.salhack.module.ui.ClickGuiModule;
@@ -33,6 +35,8 @@ public class ClickGuiScreen extends SalGuiScreen
     private ArrayList<MenuComponent> MenuComponents = new ArrayList<MenuComponent>();
     private SalDynamicTexture Watermark = ImageManager.Get().GetDynamicTexture("SalHackWatermark");
     private SalDynamicTexture BlueBlur = ImageManager.Get().GetDynamicTexture("BlueBlur");
+    
+    private float OffsetY = 0;
 
     public ClickGuiScreen(ClickGuiModule p_Mod, ColorsModule p_Colors)
     {
@@ -104,7 +108,7 @@ public class ClickGuiScreen extends SalGuiScreen
     {
         for (MenuComponent l_Menu : MenuComponents)
         {
-            if (l_Menu.MouseClicked(mouseX, mouseY, mouseButton))
+            if (l_Menu.MouseClicked(mouseX, mouseY, mouseButton, OffsetY))
                 break;
         }
 
@@ -163,11 +167,11 @@ public class ClickGuiScreen extends SalGuiScreen
         RenderHelper.disableStandardItemLighting();
 
         MenuComponent l_LastHovered = null;
-
+        
         for (MenuComponent l_Menu : MenuComponents)
-            if (l_Menu.Render(mouseX, mouseY, true, AllowsOverflow()))
+            if (l_Menu.Render(mouseX, mouseY, true, AllowsOverflow(), OffsetY))
                 l_LastHovered = l_Menu;
-
+        
         if (l_LastHovered != null)
         {
             /// Add to the back of the list for rendering
@@ -179,6 +183,19 @@ public class ClickGuiScreen extends SalGuiScreen
 
         GlStateManager.enableRescaleNormal();
         GlStateManager.popMatrix();
+        
+        int l_Scrolling = Mouse.getEventDWheel();
+        
+        /// up
+        if (l_Scrolling > 0)
+        {
+            OffsetY = Math.max(0, OffsetY-1);
+        }
+        /// down
+        else if (l_Scrolling < 0)
+        {
+            OffsetY = Math.min(100, OffsetY + 1);
+        }
     }
 
     @Override

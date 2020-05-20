@@ -69,7 +69,7 @@ public class MenuComponent
     final float BorderLength = 15.0f;
     final float Padding = 3;
     
-    public boolean Render(int p_MouseX, int p_MouseY, boolean p_CanHover, boolean p_AllowsOverflow)
+    public boolean Render(int p_MouseX, int p_MouseY, boolean p_CanHover, boolean p_AllowsOverflow, float p_OffsetY)
     {
         if (Dragging)
         {
@@ -94,7 +94,7 @@ public class MenuComponent
         }
 
         for (ComponentItem l_Item : Items)
-            l_Item.OnMouseMove(p_MouseX, p_MouseY, GetX(), GetY());
+            l_Item.OnMouseMove(p_MouseX, p_MouseY, GetX(), GetY()-p_OffsetY);
         
         if (IsMinimizing)
         {
@@ -128,10 +128,10 @@ public class MenuComponent
             }
         }
         
-        RenderUtil.drawGradientRect(GetX(), GetY()+17, GetX()+GetWidth(), GetY()+GetHeight(), 0x992A2A2A, 0x992A2A2A);
+        RenderUtil.drawGradientRect(GetX(), GetY()+17-p_OffsetY, GetX()+GetWidth(), GetY()+GetHeight(), 0x992A2A2A, 0x992A2A2A);
 
-        RenderUtil.drawRect(GetX(), GetY(), GetX() + GetWidth(), GetY() + 17, 0x99000000); /// top
-        FontManager.Get().TwCenMtStd28.drawStringWithShadow(GetDisplayName(), GetX() + 2, GetY() + 1, GetTextColor());
+        RenderUtil.drawRect(GetX(), GetY()-p_OffsetY, GetX() + GetWidth(), GetY() + 17-p_OffsetY, 0x99000000); /// top
+        FontManager.Get().TwCenMtStd28.drawStringWithShadow(GetDisplayName(), GetX() + 2, GetY() + 1-p_OffsetY, GetTextColor());
 
         
         if (BarTexture != null)
@@ -147,7 +147,7 @@ public class MenuComponent
             GlStateManager.color(Colors.ImageRed.getValue(), Colors.ImageGreen.getValue(), Colors.ImageBlue.getValue(), Colors.ImageAlpha.getValue());
             GlStateManager.enableTexture2D();
             //   public static void drawTexture(float x, float y, float width, float height, float u, float v, float t, float s)
-            RenderUtil.drawTexture(l_X, GetY()+3, BarTexture.GetWidth()/3, BarTexture.GetHeight()/3, 0, 0, 1, 1);
+            RenderUtil.drawTexture(l_X, GetY()+3-p_OffsetY, BarTexture.GetWidth()/3, BarTexture.GetHeight()/3, 0, 0, 1, 1);
             
             /*
             
@@ -176,7 +176,7 @@ public class MenuComponent
         
         if (!Minimized)
         {
-            float l_Y = GetY() + 5;
+            float l_Y = GetY() + 5-p_OffsetY;
             
             HoveredItem = null;
             
@@ -222,7 +222,7 @@ public class MenuComponent
             RenderUtil.DrawPolygon(p_MouseX, p_MouseY, MousePlayAnim, 360, 0x99FFFFFF);
         }
         
-        return p_CanHover && p_MouseX > GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY > GetY() && p_MouseY < GetY()+GetHeight();
+        return p_CanHover && p_MouseX > GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY > GetY()-p_OffsetY && p_MouseY < GetY()+GetHeight()-p_OffsetY;
     }
     
     public float DisplayComponentItem(ComponentItem p_Item, float p_Y, int p_MouseX, int p_MouseY, boolean p_CanHover, boolean p_DisplayExtendedLine, final float p_MaxY)
@@ -297,9 +297,9 @@ public class MenuComponent
         return p_Y;
     }
 
-    public boolean MouseClicked(int p_MouseX, int p_MouseY, int p_MouseButton)
+    public boolean MouseClicked(int p_MouseX, int p_MouseY, int p_MouseButton, float offsetY)
     {
-        if (p_MouseX > GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY > GetY() && p_MouseY < GetY()+BorderLength)
+        if (p_MouseX > GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY > GetY()-offsetY && p_MouseY < GetY()+BorderLength-offsetY)
         {
             /// Dragging (Top border)
             if (p_MouseButton == 0)
