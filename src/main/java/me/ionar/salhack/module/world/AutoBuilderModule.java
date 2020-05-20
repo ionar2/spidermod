@@ -1,814 +1,574 @@
+// 
+// Decompiled by Procyon v0.5.36
+// 
+
 package me.ionar.salhack.module.world;
 
-import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
-import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH_HINT;
-import static org.lwjgl.opengl.GL11.GL_NICEST;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glHint;
-import static org.lwjgl.opengl.GL11.glLineWidth;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import me.ionar.salhack.events.MinecraftEvent.Era;
-import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
-import me.ionar.salhack.events.player.EventPlayerUpdate;
-import me.ionar.salhack.events.render.EventRenderLayers;
-import me.ionar.salhack.events.render.RenderEvent;
-import me.ionar.salhack.main.SalHack;
-import me.ionar.salhack.module.Module;
-import me.ionar.salhack.module.Value;
-import me.ionar.salhack.util.BlockInteractionHelper;
-import me.ionar.salhack.util.BlockInteractionHelper.PlaceResult;
-import me.ionar.salhack.util.BlockInteractionHelper.ValidResult;
-import me.zero.alpine.fork.listener.EventHandler;
-import me.zero.alpine.fork.listener.Listener;
-import me.ionar.salhack.util.MathUtil;
-import me.ionar.salhack.util.Pair;
-import me.ionar.salhack.util.Timer;
-import me.ionar.salhack.util.entity.PlayerUtil;
-import me.ionar.salhack.util.render.RenderUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockObsidian;
-import net.minecraft.block.BlockSlab;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.culling.ICamera;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketEntityAction;
-import net.minecraft.network.play.client.CPacketPlayer;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import java.util.Iterator;
+import me.ionar.salhack.util.Pair;
+import me.ionar.salhack.util.render.RenderUtil;
+import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.network.play.client.CPacketPlayer;
+import me.ionar.salhack.util.entity.PlayerUtil;
+import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.init.Items;
+import net.minecraft.block.Block;
+import me.ionar.salhack.util.BlockInteractionHelper;
+import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockSlab;
+import net.minecraft.entity.Entity;
+import me.ionar.salhack.util.MathUtil;
+import me.ionar.salhack.events.MinecraftEvent;
+import java.util.function.Predicate;
+import net.minecraft.client.renderer.culling.Frustum;
+import me.ionar.salhack.events.render.RenderEvent;
+import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
+import me.zero.alpine.listener.EventHandler;
+import me.ionar.salhack.events.render.EventRenderLayers;
+import me.zero.alpine.listener.Listener;
 import net.minecraft.util.math.BlockPos;
+import java.util.ArrayList;
+import me.ionar.salhack.util.Timer;
+import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.util.math.Vec3d;
+import me.ionar.salhack.module.Value;
+import me.ionar.salhack.module.Module;
 
 public class AutoBuilderModule extends Module
 {
-    public final Value<Modes> Mode = new Value<Modes>("Mode", new String[] {""}, "Mode", Modes.Highway);
-    public final Value<BuildingModes> BuildingMode = new Value<BuildingModes>("BuildingMode", new String[] {""}, "Dynamic will update source block while walking, static keeps same position and resets on toggle", BuildingModes.Dynamic);
-    public final Value<Integer> BlocksPerTick = new Value<Integer>("BlocksPerTick", new String[] {"BPT"}, "Blocks per tick", 4, 1, 10, 1);
-    public final Value<Float> Delay = new Value<Float>("Delay", new String[] {"Delay"}, "Delay of the place", 0f, 0.0f, 1.0f, 0.1f);
-    public final Value<Boolean> Visualize = new Value<Boolean>("Visualize", new String[] {"Render"}, "Visualizes where blocks are to be placed", true);
-    
-    public enum Modes
-    {
-        Highway,
-        Swastika,
-        HighwayTunnel,
-        Portal,
-        Flat,
-        Tower,
-        Cover,
-        Wall,
-    }
-    
-    public enum BuildingModes
-    {
-        Dynamic,
-        Static,
-    }
-
-    public AutoBuilderModule()
-    {
-        super("AutoBuilder", new String[]
-        { "AutoSwastika" }, "Builds cool things at your facing block", "NONE", 0x96DB24, ModuleType.WORLD);
-    }
-    
-    private Vec3d Center = Vec3d.ZERO;
-    private ICamera camera = new Frustum();
-    private Timer timer = new Timer();
-    private Timer NetherPortalTimer = new Timer();
-    private BlockPos SourceBlock = null;
-
-    @Override
-    public void onEnable()
-    {
-        super.onEnable();
-        
-        if (mc.player == null)
-        {
-            toggle();
-            return;
-        }
-        
-        timer.reset();
-        SourceBlock = null;
-        BlockArray.clear();
-    }
-    
-    private float PitchHead = 0.0f;
-    private boolean SentPacket = false;
-
-    ArrayList<BlockPos> BlockArray = new ArrayList<BlockPos>();
-    
-    @Override
-    public String getMetaData()
-    {
-        return Mode.getValue().toString() + " - " + BuildingMode.getValue().toString();
-    }
-
+    public final Value<Modes> Mode;
+    public final Value<Boolean> rotate;
+    public final Value<Integer> BlocksPerTick;
+    public final Value<Float> Delay;
+    private Vec3d Center;
+    private ICamera camera;
+    private Timer timer;
+    private float PitchHead;
+    private boolean SentPacket;
+    ArrayList<BlockPos> l_Array;
     @EventHandler
-    private Listener<EventRenderLayers> OnRender = new Listener<>(p_Event ->
-    {
-        if (p_Event.getEntityLivingBase() == mc.player)
-            p_Event.SetHeadPitch(PitchHead == -420.0f ? mc.player.rotationPitch : PitchHead);
-    });
-
+    private Listener<EventRenderLayers> OnRender;
     @EventHandler
-    private Listener<EventPlayerMotionUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
-    {
-        if (p_Event.getEra() != Era.PRE)
+    private Listener<EventPlayerMotionUpdate> OnPlayerUpdate;
+    @EventHandler
+    private Listener<RenderEvent> OnRenderEvent;
+    
+    public AutoBuilderModule() {
+        super("AutoBuilder", new String[] { "AutoSwastika" }, "Builds cool things at your facing block", "H", 9886500, ModuleType.WORLD);
+        this.Mode = new Value<Modes>("Mode", new String[] { "" }, "Mode", Modes.Highway);
+        this.rotate = new Value<Boolean>("Rotate", new String[] { "rotate" }, "Rotate", true);
+        this.BlocksPerTick = new Value<Integer>("BlocksPerTick", new String[] { "BPT" }, "Blocks per tick", 4, 1, 10, 1);
+        this.Delay = new Value<Float>("Delay", new String[] { "Delay" }, "Delay of the place", 0.0f, 0.0f, 1.0f, 0.1f);
+        this.Center = Vec3d.ZERO;
+        this.camera = (ICamera)new Frustum();
+        this.timer = new Timer();
+        this.PitchHead = 0.0f;
+        this.SentPacket = false;
+        this.l_Array = new ArrayList<BlockPos>();
+        this.OnRender = new Listener<EventRenderLayers>(p_Event -> {
+            if (p_Event.getEntityLivingBase() == this.mc.player) {
+                p_Event.SetHeadPitch((this.PitchHead == -420.0f) ? this.mc.player.rotationPitch : this.PitchHead);
+            }
             return;
-        
-        if (!timer.passed(Delay.getValue() * 1000f))
-            return;
-        
-        timer.reset();
-        
-        final Vec3d pos = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
-
-        BlockPos orignPos = new BlockPos(pos.x, pos.y+0.5f, pos.z);
-
+        }, (Predicate<EventRenderLayers>[])new Predicate[0]);
+        Vec3d pos;
+        BlockPos orignPos;
+        BlockPos interpPos;
+        Pair<Integer, Block> l_Pair;
+        int slot;
+        double l_Offset;
+        int l_X;
+        int l_Y;
+        int l_X2;
+        int l_Y2;
+        int l_Tries;
+        BlockPos l_Pos;
+        boolean l_NeedPlace;
+        float[] rotations;
         int lastSlot;
-        Pair<Integer, Block> l_Pair = findStackHotbar();
-        
-        int slot = -1;
-        double l_Offset = pos.y - orignPos.getY();
-        
-        if (l_Pair != null)
-        {
-            slot = l_Pair.getFirst();
-            
-            if (l_Pair.getSecond() instanceof BlockSlab)
-            {
-                if (l_Offset == 0.5f)
-                {
-                    orignPos = new BlockPos(pos.x, pos.y+0.5f, pos.z);
-                }
-            }
-        }
-        
-        if (BuildingMode.getValue() == BuildingModes.Dynamic)
-            BlockArray.clear();
-        
-        if (BlockArray.isEmpty())
-            FillBlockArrayAsNeeded(pos, orignPos, l_Pair);
-        
-        boolean l_NeedPlace = false;
-
-        float[] rotations = null;
-        
-        if (slot != -1)
-        {
-            if ((mc.player.onGround))
-            {
-                lastSlot = mc.player.inventory.currentItem;
-                mc.player.inventory.currentItem = slot;
-                mc.playerController.updateController();
-                
-                int l_BlocksPerTick = BlocksPerTick.getValue();
-
-                for (BlockPos l_Pos : BlockArray)
-                {
-                    /*ValidResult l_Result = BlockInteractionHelper.valid(l_Pos);
-                    
-                    if (l_Result == ValidResult.AlreadyBlockThere && !mc.world.getBlockState(l_Pos).getMaterial().isReplaceable())
-                        continue;
-                    
-                    if (l_Result == ValidResult.NoNeighbors)
-                        continue;*/
-                    
-                    PlaceResult l_Place = BlockInteractionHelper.place (l_Pos, 5.0f, false, l_Offset == -0.5f);
-                    
-                    if (l_Place != PlaceResult.Placed)
-                        continue;
-                    
-                    l_NeedPlace = true;
-                    rotations = BlockInteractionHelper.getLegitRotations(new Vec3d(l_Pos.getX(), l_Pos.getY(), l_Pos.getZ()));
-                    if (--l_BlocksPerTick <= 0)
-                        break;
-                }
-
-                if (!slotEqualsBlock(lastSlot, l_Pair.getSecond()))
-                {
-                    mc.player.inventory.currentItem = lastSlot;
-                }
-                mc.playerController.updateController();
-            }
-        }
-        
-        if (!l_NeedPlace && Mode.getValue() == Modes.Portal)
-        {
-            if (mc.world.getBlockState(BlockArray.get(0).up()).getBlock() == Blocks.PORTAL || !VerifyPortalFrame(BlockArray))
+        int l_BlocksPerTick;
+        final Iterator<BlockPos> iterator;
+        BlockPos l_Pos2;
+        BlockInteractionHelper.PlaceResult l_Place;
+        int l_I;
+        ItemStack l_Stack;
+        boolean l_IsSprinting;
+        boolean l_IsSneaking;
+        float l_Pitch;
+        float l_Yaw;
+        AxisAlignedBB axisalignedbb;
+        double l_PosXDifference;
+        double l_PosYDifference;
+        double l_PosZDifference;
+        double l_YawDifference;
+        double l_RotationDifference;
+        EntityPlayerSP player;
+        boolean l_MovedXYZ;
+        boolean l_MovedRotation;
+        this.OnPlayerUpdate = new Listener<EventPlayerMotionUpdate>(p_Event -> {
+            if (p_Event.getEra() != MinecraftEvent.Era.PRE) {
                 return;
-            
-            if (mc.player.getHeldItemMainhand().getItem() != Items.FLINT_AND_STEEL)
-            {
-                for (int l_I = 0; l_I < 9; ++l_I)
-                {
-                    ItemStack l_Stack = mc.player.inventory.getStackInSlot(l_I);
-                    if (l_Stack.isEmpty())
-                        continue;
-                    
-                    if (l_Stack.getItem() == Items.FLINT_AND_STEEL)
-                    {
-                        mc.player.inventory.currentItem = l_I;
-                        mc.playerController.updateController();
-                        NetherPortalTimer.reset();
+            }
+            else if (!this.timer.passed(this.Delay.getValue() * 1000.0f)) {
+                return;
+            }
+            else {
+                this.timer.reset();
+                pos = MathUtil.interpolateEntity((Entity)this.mc.player, this.mc.getRenderPartialTicks());
+                orignPos = new BlockPos(pos.x, pos.y + 0.5, pos.z);
+                interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
+                this.l_Array.clear();
+                l_Pair = this.findStackHotbar();
+                slot = -1;
+                l_Offset = pos.y - orignPos.getY();
+                if (l_Pair != null) {
+                    slot = l_Pair.getFirst();
+                    if (l_Pair.getSecond() instanceof BlockSlab && l_Offset == 0.5) {
+                        orignPos = new BlockPos(pos.x, pos.y + 0.5, pos.z);
+                        interpPos = new BlockPos(pos.x, pos.y + 1.0, pos.z).north().north();
+                    }
+                }
+                switch (this.Mode.getValue()) {
+                    case WallNorth: {
+                        this.l_Array.add(orignPos.north().north().east().east());
+                        this.l_Array.add(orignPos.north().north().east());
+                        this.l_Array.add(orignPos.north().north());
+                        this.l_Array.add(orignPos.north().north().west());
+                        this.l_Array.add(orignPos.north().north().west().west());
+                        this.l_Array.add(orignPos.north().north().west().west().west());
+                        this.l_Array.add(orignPos.up().north().north().east().east());
+                        this.l_Array.add(orignPos.up().north().north().east());
+                        this.l_Array.add(orignPos.up().north().north());
+                        this.l_Array.add(orignPos.up().north().north().west());
+                        this.l_Array.add(orignPos.up().north().north().west().west());
+                        this.l_Array.add(orignPos.up().north().north().west().west().west());
+                        this.l_Array.add(orignPos.up().up().north().north().east().east());
+                        this.l_Array.add(orignPos.up().up().north().north().east());
+                        this.l_Array.add(orignPos.up().up().north().north());
+                        this.l_Array.add(orignPos.up().up().north().north().west());
+                        this.l_Array.add(orignPos.up().up().north().north().west().west());
+                        this.l_Array.add(orignPos.up().up().north().north().west().west().west());
+                        break;
+                    }
+                    case WallSouth: {
+                        this.l_Array.add(orignPos.south().south().west().west());
+                        this.l_Array.add(orignPos.south().south().west());
+                        this.l_Array.add(orignPos.south().south());
+                        this.l_Array.add(orignPos.south().south().east());
+                        this.l_Array.add(orignPos.south().south().east().east());
+                        this.l_Array.add(orignPos.south().south().east().east().east());
+                        this.l_Array.add(orignPos.up().south().south().west().west());
+                        this.l_Array.add(orignPos.up().south().south().west());
+                        this.l_Array.add(orignPos.up().south().south());
+                        this.l_Array.add(orignPos.up().south().south().east());
+                        this.l_Array.add(orignPos.up().south().south().east().east());
+                        this.l_Array.add(orignPos.up().south().south().east().east().east());
+                        this.l_Array.add(orignPos.up().up().south().south().west().west());
+                        this.l_Array.add(orignPos.up().up().south().south().west());
+                        this.l_Array.add(orignPos.up().up().south().south());
+                        this.l_Array.add(orignPos.up().up().south().south().east());
+                        this.l_Array.add(orignPos.up().up().south().south().east().east());
+                        this.l_Array.add(orignPos.up().up().south().south().east().east().east());
+                        break;
+                    }
+                    case WallEast: {
+                        this.l_Array.add(orignPos.east().east().south().south());
+                        this.l_Array.add(orignPos.east().east().south());
+                        this.l_Array.add(orignPos.east().east());
+                        this.l_Array.add(orignPos.east().east().north());
+                        this.l_Array.add(orignPos.east().east().north().north());
+                        this.l_Array.add(orignPos.east().east().north().north().north());
+                        this.l_Array.add(orignPos.up().east().east().south().south());
+                        this.l_Array.add(orignPos.up().east().east().south());
+                        this.l_Array.add(orignPos.up().east().east());
+                        this.l_Array.add(orignPos.up().east().east().north());
+                        this.l_Array.add(orignPos.up().east().east().north().north());
+                        this.l_Array.add(orignPos.up().east().east().north().north().north());
+                        this.l_Array.add(orignPos.up().up().east().east().south().south());
+                        this.l_Array.add(orignPos.up().up().east().east().south());
+                        this.l_Array.add(orignPos.up().up().east().east());
+                        this.l_Array.add(orignPos.up().up().east().east().north());
+                        this.l_Array.add(orignPos.up().up().east().east().north().north());
+                        this.l_Array.add(orignPos.up().up().east().east().north().north().north());
+                        break;
+                    }
+                    case WallWest: {
+                        this.l_Array.add(orignPos.west().west().north().north());
+                        this.l_Array.add(orignPos.west().west().north());
+                        this.l_Array.add(orignPos.west().west());
+                        this.l_Array.add(orignPos.west().west().south());
+                        this.l_Array.add(orignPos.west().west().south().south());
+                        this.l_Array.add(orignPos.west().west().south().south().south());
+                        this.l_Array.add(orignPos.up().west().west().north().north());
+                        this.l_Array.add(orignPos.up().west().west().north());
+                        this.l_Array.add(orignPos.up().west().west());
+                        this.l_Array.add(orignPos.up().west().west().south());
+                        this.l_Array.add(orignPos.up().west().west().south().south());
+                        this.l_Array.add(orignPos.up().west().west().south().south().south());
+                        this.l_Array.add(orignPos.up().up().west().west().north().north());
+                        this.l_Array.add(orignPos.up().up().west().west().north());
+                        this.l_Array.add(orignPos.up().up().west().west());
+                        this.l_Array.add(orignPos.up().up().west().west().south());
+                        this.l_Array.add(orignPos.up().up().west().west().south().south());
+                        this.l_Array.add(orignPos.up().up().west().west().south().south().south());
+                        break;
+                    }
+                    case Highway: {
+                        this.l_Array.add(orignPos.down());
+                        this.l_Array.add(orignPos.down().north());
+                        this.l_Array.add(orignPos.down().north().east());
+                        this.l_Array.add(orignPos.down().north().west());
+                        this.l_Array.add(orignPos.down().north().east().east());
+                        this.l_Array.add(orignPos.down().north().west().west());
+                        this.l_Array.add(orignPos.down().north().east().east().east());
+                        this.l_Array.add(orignPos.down().north().west().west().west());
+                        this.l_Array.add(orignPos.down().north().east().east().east().up());
+                        this.l_Array.add(orignPos.down().north().west().west().west().up());
+                        break;
+                    }
+                    case HighwayTunnel: {
+                        this.l_Array.add(orignPos.down());
+                        this.l_Array.add(orignPos.down().north());
+                        this.l_Array.add(orignPos.down().north().east());
+                        this.l_Array.add(orignPos.down().north().west());
+                        this.l_Array.add(orignPos.down().north().east().east());
+                        this.l_Array.add(orignPos.down().north().west().west());
+                        this.l_Array.add(orignPos.down().north().east().east().east());
+                        this.l_Array.add(orignPos.down().north().west().west().west());
+                        this.l_Array.add(orignPos.down().north().east().east().east().up());
+                        this.l_Array.add(orignPos.down().north().west().west().west().up());
+                        this.l_Array.add(orignPos.down().north().east().east().east().up().up());
+                        this.l_Array.add(orignPos.down().north().west().west().west().up().up());
+                        this.l_Array.add(orignPos.down().north().east().east().east().up().up().up());
+                        this.l_Array.add(orignPos.down().north().west().west().west().up().up().up());
+                        this.l_Array.add(orignPos.down().north().east().east().east().up().up().up().up());
+                        this.l_Array.add(orignPos.down().north().west().west().west().up().up().up().up());
+                        this.l_Array.add(orignPos.down().north().east().east().east().up().up().up().up().west());
+                        this.l_Array.add(orignPos.down().north().west().west().west().up().up().up().up().east());
+                        this.l_Array.add(orignPos.down().north().east().east().east().up().up().up().up().west().west());
+                        this.l_Array.add(orignPos.down().north().west().west().west().up().up().up().up().east().east());
+                        this.l_Array.add(orignPos.down().north().east().east().east().up().up().up().up().west().west().west());
+                        this.l_Array.add(orignPos.down().north().west().west().west().up().up().up().up().east().east().east());
+                        break;
+                    }
+                    case Swastika: {
+                        this.l_Array.add(interpPos);
+                        this.l_Array.add(interpPos.west());
+                        this.l_Array.add(interpPos.west().west());
+                        this.l_Array.add(interpPos.up());
+                        this.l_Array.add(interpPos.up().up());
+                        this.l_Array.add(interpPos.up().up().west());
+                        this.l_Array.add(interpPos.up().up().west().west());
+                        this.l_Array.add(interpPos.up().up().west().west().up());
+                        this.l_Array.add(interpPos.up().up().west().west().up().up());
+                        this.l_Array.add(interpPos.up().up().east());
+                        this.l_Array.add(interpPos.up().up().east().east());
+                        this.l_Array.add(interpPos.up().up().east().east().down());
+                        this.l_Array.add(interpPos.up().up().east().east().down().down());
+                        this.l_Array.add(interpPos.up().up().up());
+                        this.l_Array.add(interpPos.up().up().up().up());
+                        this.l_Array.add(interpPos.up().up().up().up().east());
+                        this.l_Array.add(interpPos.up().up().up().up().east().east());
+                        break;
+                    }
+                    case Portal: {
+                        this.l_Array.add(interpPos.east());
+                        this.l_Array.add(interpPos.east().east());
+                        this.l_Array.add(interpPos);
+                        this.l_Array.add(interpPos.east().east().up());
+                        this.l_Array.add(interpPos.east().east().up().up());
+                        this.l_Array.add(interpPos.east().east().up().up().up());
+                        this.l_Array.add(interpPos.east().east().up().up().up().up());
+                        this.l_Array.add(interpPos.east().east().up().up().up().up().west());
+                        this.l_Array.add(interpPos.east().east().up().up().up().up().west().west());
+                        this.l_Array.add(interpPos.east().east().up().up().up().up().west().west().west());
+                        this.l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down());
+                        this.l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down());
+                        this.l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down());
+                        this.l_Array.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down().down());
+                        break;
+                    }
+                    case Flat: {
+                        for (l_X = -3; l_X < 3; ++l_X) {
+                            for (l_Y = -3; l_Y < 3; ++l_Y) {
+                                this.l_Array.add(orignPos.down().add(l_X, 0, l_Y));
+                            }
+                        }
+                        break;
+                    }
+                    case Cover: {
+                        if (l_Pair == null) {
+                            return;
+                        }
+                        else {
+                            for (l_X2 = -3; l_X2 < 3; ++l_X2) {
+                                for (l_Y2 = -3; l_Y2 < 3; ++l_Y2) {
+                                    l_Tries = 5;
+                                    l_Pos = orignPos.down().add(l_X2, 0, l_Y2);
+                                    if (this.mc.world.getBlockState(l_Pos).getBlock() != l_Pair.getSecond() && this.mc.world.getBlockState(l_Pos.down()).getBlock() != Blocks.AIR) {
+                                        if (this.mc.world.getBlockState(l_Pos.down()).getBlock() != l_Pair.getSecond()) {
+                                            while (this.mc.world.getBlockState(l_Pos).getBlock() != Blocks.AIR) {
+                                                if (this.mc.world.getBlockState(l_Pos).getBlock() == l_Pair.getSecond()) {
+                                                    break;
+                                                }
+                                                else {
+                                                    l_Pos = l_Pos.up();
+                                                    if (--l_Tries <= 0) {
+                                                        break;
+                                                    }
+                                                    else {
+                                                        continue;
+                                                    }
+                                                }
+                                            }
+                                            this.l_Array.add(l_Pos);
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        break;
+                    }
+                    case Tower: {
+                        this.l_Array.add(orignPos.up());
+                        this.l_Array.add(orignPos);
+                        this.l_Array.add(orignPos.down());
                         break;
                     }
                 }
-            }
-            
-            if (!NetherPortalTimer.passed(500))
-            {
-                if (SentPacket)
-                {
-                    mc.player.swingArm(EnumHand.MAIN_HAND);
-                    mc.getConnection().sendPacket(new CPacketPlayerTryUseItemOnBlock(BlockArray.get(0), EnumFacing.UP, EnumHand.MAIN_HAND, 0f, 0f, 0f));
+                l_NeedPlace = false;
+                rotations = null;
+                if (slot != -1 && this.mc.player.onGround) {
+                    lastSlot = this.mc.player.inventory.currentItem;
+                    this.mc.player.inventory.currentItem = slot;
+                    this.mc.playerController.updateController();
+                    l_BlocksPerTick = this.BlocksPerTick.getValue();
+                    this.l_Array.iterator();
+                    while (iterator.hasNext()) {
+                        l_Pos2 = iterator.next();
+                        l_Place = BlockInteractionHelper.place(l_Pos2, 5.0f, false, l_Offset == -0.5);
+                        if (l_Place != BlockInteractionHelper.PlaceResult.Placed) {
+                            continue;
+                        }
+                        else {
+                            l_NeedPlace = true;
+                            rotations = BlockInteractionHelper.getLegitRotations(new Vec3d((double)l_Pos2.getX(), (double)l_Pos2.getY(), (double)l_Pos2.getZ()));
+                            if (--l_BlocksPerTick <= 0) {
+                                break;
+                            }
+                            else {
+                                continue;
+                            }
+                        }
+                    }
+                    if (!this.slotEqualsBlock(lastSlot, l_Pair.getSecond())) {
+                        this.mc.player.inventory.currentItem = lastSlot;
+                    }
+                    this.mc.playerController.updateController();
                 }
-                
-                rotations = BlockInteractionHelper.getLegitRotations(new Vec3d(BlockArray.get(0).getX(), BlockArray.get(0).getY()+0.5f, BlockArray.get(0).getZ()));
-                l_NeedPlace = true;
+                if (!l_NeedPlace && this.Mode.getValue() == Modes.Portal) {
+                    if (this.mc.world.getBlockState(this.l_Array.get(0).up()).getBlock() == Blocks.PORTAL) {
+                        return;
+                    }
+                    else {
+                        for (l_I = 0; l_I < 9; ++l_I) {
+                            l_Stack = this.mc.player.inventory.getStackInSlot(l_I);
+                            if (!l_Stack.isEmpty()) {
+                                if (l_Stack.getItem() == Items.FLINT_AND_STEEL) {
+                                    this.mc.player.inventory.currentItem = l_I;
+                                    this.mc.playerController.updateController();
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.SentPacket) {
+                            this.mc.getConnection().sendPacket((Packet)new CPacketPlayerTryUseItemOnBlock((BlockPos)this.l_Array.get(0), EnumFacing.UP, EnumHand.MAIN_HAND, 0.0f, 0.0f, 0.0f));
+                        }
+                        rotations = BlockInteractionHelper.getLegitRotations(new Vec3d((double)this.l_Array.get(0).getX(), (double)this.l_Array.get(0).getY(), (double)this.l_Array.get(0).getZ()));
+                        l_NeedPlace = true;
+                    }
+                }
+                if (!this.rotate.getValue() || !l_NeedPlace || rotations == null) {
+                    this.PitchHead = -420.0f;
+                    this.SentPacket = false;
+                    return;
+                }
+                else {
+                    p_Event.cancel();
+                    l_IsSprinting = this.mc.player.isSprinting();
+                    if (l_IsSprinting != this.mc.player.serverSprintState) {
+                        if (l_IsSprinting) {
+                            this.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)this.mc.player, CPacketEntityAction.Action.START_SPRINTING));
+                        }
+                        else {
+                            this.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)this.mc.player, CPacketEntityAction.Action.STOP_SPRINTING));
+                        }
+                        this.mc.player.serverSprintState = l_IsSprinting;
+                    }
+                    l_IsSneaking = this.mc.player.isSneaking();
+                    if (l_IsSneaking != this.mc.player.serverSneakState) {
+                        if (l_IsSneaking) {
+                            this.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)this.mc.player, CPacketEntityAction.Action.START_SNEAKING));
+                        }
+                        else {
+                            this.mc.player.connection.sendPacket((Packet)new CPacketEntityAction((Entity)this.mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
+                        }
+                        this.mc.player.serverSneakState = l_IsSneaking;
+                    }
+                    if (PlayerUtil.isCurrentViewEntity()) {
+                        l_Pitch = rotations[1];
+                        l_Yaw = rotations[0];
+                        this.mc.player.rotationYawHead = l_Yaw;
+                        this.PitchHead = l_Pitch;
+                        axisalignedbb = this.mc.player.getEntityBoundingBox();
+                        l_PosXDifference = this.mc.player.posX - this.mc.player.lastReportedPosX;
+                        l_PosYDifference = axisalignedbb.minY - this.mc.player.lastReportedPosY;
+                        l_PosZDifference = this.mc.player.posZ - this.mc.player.lastReportedPosZ;
+                        l_YawDifference = l_Yaw - this.mc.player.lastReportedYaw;
+                        l_RotationDifference = l_Pitch - this.mc.player.lastReportedPitch;
+                        player = this.mc.player;
+                        ++player.positionUpdateTicks;
+                        l_MovedXYZ = (l_PosXDifference * l_PosXDifference + l_PosYDifference * l_PosYDifference + l_PosZDifference * l_PosZDifference > 9.0E-4 || this.mc.player.positionUpdateTicks >= 20);
+                        l_MovedRotation = (l_YawDifference != 0.0 || l_RotationDifference != 0.0);
+                        if (this.mc.player.isRiding()) {
+                            this.mc.player.connection.sendPacket((Packet)new CPacketPlayer.PositionRotation(this.mc.player.motionX, -999.0, this.mc.player.motionZ, l_Yaw, l_Pitch, this.mc.player.onGround));
+                            l_MovedXYZ = false;
+                        }
+                        else if (l_MovedXYZ && l_MovedRotation) {
+                            this.mc.player.connection.sendPacket((Packet)new CPacketPlayer.PositionRotation(this.mc.player.posX, axisalignedbb.minY, this.mc.player.posZ, l_Yaw, l_Pitch, this.mc.player.onGround));
+                        }
+                        else if (l_MovedXYZ) {
+                            this.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Position(this.mc.player.posX, axisalignedbb.minY, this.mc.player.posZ, this.mc.player.onGround));
+                        }
+                        else if (l_MovedRotation) {
+                            this.mc.player.connection.sendPacket((Packet)new CPacketPlayer.Rotation(l_Yaw, l_Pitch, this.mc.player.onGround));
+                        }
+                        else if (this.mc.player.prevOnGround != this.mc.player.onGround) {
+                            this.mc.player.connection.sendPacket((Packet)new CPacketPlayer(this.mc.player.onGround));
+                        }
+                        if (l_MovedXYZ) {
+                            this.mc.player.lastReportedPosX = this.mc.player.posX;
+                            this.mc.player.lastReportedPosY = axisalignedbb.minY;
+                            this.mc.player.lastReportedPosZ = this.mc.player.posZ;
+                            this.mc.player.positionUpdateTicks = 0;
+                        }
+                        if (l_MovedRotation) {
+                            this.mc.player.lastReportedYaw = l_Yaw;
+                            this.mc.player.lastReportedPitch = l_Pitch;
+                        }
+                        this.SentPacket = true;
+                        this.mc.player.prevOnGround = this.mc.player.onGround;
+                        this.mc.player.autoJumpEnabled = this.mc.player.mc.gameSettings.autoJump;
+                    }
+                    return;
+                }
             }
-            else
-                return;
-        }
-        else if (l_NeedPlace && Mode.getValue() == Modes.Portal)
-            NetherPortalTimer.reset();
-        
-        if (!l_NeedPlace || rotations == null)
-        {
-            PitchHead = -420.0f;
-            SentPacket = false;
+        }, (Predicate<EventPlayerMotionUpdate>[])new Predicate[0]);
+        final Iterator l_Itr;
+        BlockPos l_Pos3;
+        AxisAlignedBB bb;
+        double dist;
+        float alpha;
+        int l_Color;
+        this.OnRenderEvent = new Listener<RenderEvent>(p_Event -> {
+            l_Itr = this.l_Array.iterator();
+            while (l_Itr.hasNext()) {
+                l_Pos3 = l_Itr.next();
+                bb = new AxisAlignedBB(l_Pos3.getX() - this.mc.getRenderManager().viewerPosX, l_Pos3.getY() - this.mc.getRenderManager().viewerPosY, l_Pos3.getZ() - this.mc.getRenderManager().viewerPosZ, l_Pos3.getX() + 1 - this.mc.getRenderManager().viewerPosX, l_Pos3.getY() + 1 - this.mc.getRenderManager().viewerPosY, l_Pos3.getZ() + 1 - this.mc.getRenderManager().viewerPosZ);
+                this.camera.setPosition(this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().posY, this.mc.getRenderViewEntity().posZ);
+                if (this.camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + this.mc.getRenderManager().viewerPosX, bb.minY + this.mc.getRenderManager().viewerPosY, bb.minZ + this.mc.getRenderManager().viewerPosZ, bb.maxX + this.mc.getRenderManager().viewerPosX, bb.maxY + this.mc.getRenderManager().viewerPosY, bb.maxZ + this.mc.getRenderManager().viewerPosZ))) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.enableBlend();
+                    GlStateManager.disableDepth();
+                    GlStateManager.tryBlendFuncSeparate(770, 771, 0, 1);
+                    GlStateManager.disableTexture2D();
+                    GlStateManager.depthMask(false);
+                    GL11.glEnable(2848);
+                    GL11.glHint(3154, 4354);
+                    GL11.glLineWidth(1.5f);
+                    dist = this.mc.player.getDistance((double)(l_Pos3.getX() + 0.5f), (double)(l_Pos3.getY() + 0.5f), (double)(l_Pos3.getZ() + 0.5f)) * 0.75;
+                    alpha = MathUtil.clamp((float)(dist * 255.0 / 5.0 / 255.0), 0.0f, 0.3f);
+                    l_Color = 268500991;
+                    RenderUtil.drawBoundingBox(bb, 1.0f, l_Color);
+                    RenderUtil.drawFilledBox(bb, l_Color);
+                    GL11.glDisable(2848);
+                    GlStateManager.depthMask(true);
+                    GlStateManager.enableDepth();
+                    GlStateManager.enableTexture2D();
+                    GlStateManager.disableBlend();
+                    GlStateManager.popMatrix();
+                }
+            }
+        }, (Predicate<RenderEvent>[])new Predicate[0]);
+    }
+    
+    @Override
+    public void onEnable() {
+        super.onEnable();
+        if (this.mc.player == null) {
+            this.toggle();
             return;
         }
-        
-        p_Event.cancel();
-        
-        /// @todo: clean this up
-
-        boolean l_IsSprinting = mc.player.isSprinting();
-
-        if (l_IsSprinting != mc.player.serverSprintState)
-        {
-            if (l_IsSprinting)
-            {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SPRINTING));
-            }
-            else
-            {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SPRINTING));
-            }
-
-            mc.player.serverSprintState = l_IsSprinting;
-        }
-
-        boolean l_IsSneaking = mc.player.isSneaking();
-
-        if (l_IsSneaking != mc.player.serverSneakState)
-        {
-            if (l_IsSneaking)
-            {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-            else
-            {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-
-            mc.player.serverSneakState = l_IsSneaking;
-        }
-
-        if (PlayerUtil.isCurrentViewEntity())
-        {
-            float l_Pitch = rotations[1];
-            float l_Yaw = rotations[0];
-            
-            mc.player.rotationYawHead = l_Yaw;
-            PitchHead = l_Pitch;
-            
-            AxisAlignedBB axisalignedbb = mc.player.getEntityBoundingBox();
-            double l_PosXDifference = mc.player.posX - mc.player.lastReportedPosX;
-            double l_PosYDifference = axisalignedbb.minY - mc.player.lastReportedPosY;
-            double l_PosZDifference = mc.player.posZ - mc.player.lastReportedPosZ;
-            double l_YawDifference = (double)(l_Yaw - mc.player.lastReportedYaw);
-            double l_RotationDifference = (double)(l_Pitch - mc.player.lastReportedPitch);
-            ++mc.player.positionUpdateTicks;
-            boolean l_MovedXYZ = l_PosXDifference * l_PosXDifference + l_PosYDifference * l_PosYDifference + l_PosZDifference * l_PosZDifference > 9.0E-4D || mc.player.positionUpdateTicks >= 20;
-            boolean l_MovedRotation = l_YawDifference != 0.0D || l_RotationDifference != 0.0D;
-
-            if (mc.player.isRiding())
-            {
-                mc.player.connection.sendPacket(new CPacketPlayer.PositionRotation(mc.player.motionX, -999.0D, mc.player.motionZ, l_Yaw, l_Pitch, mc.player.onGround));
-                l_MovedXYZ = false;
-            }
-            else if (l_MovedXYZ && l_MovedRotation)
-            {
-                mc.player.connection.sendPacket(new CPacketPlayer.PositionRotation(mc.player.posX, axisalignedbb.minY, mc.player.posZ, l_Yaw, l_Pitch, mc.player.onGround));
-            }
-            else if (l_MovedXYZ)
-            {
-                mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, axisalignedbb.minY, mc.player.posZ, mc.player.onGround));
-            }
-            else if (l_MovedRotation)
-            {
-                mc.player.connection.sendPacket(new CPacketPlayer.Rotation(l_Yaw, l_Pitch, mc.player.onGround));
-            }
-            else if (mc.player.prevOnGround != mc.player.onGround)
-            {
-                mc.player.connection.sendPacket(new CPacketPlayer(mc.player.onGround));
-            }
-
-            if (l_MovedXYZ)
-            {
-                mc.player.lastReportedPosX = mc.player.posX;
-                mc.player.lastReportedPosY = axisalignedbb.minY;
-                mc.player.lastReportedPosZ = mc.player.posZ;
-                mc.player.positionUpdateTicks = 0;
-            }
-
-            if (l_MovedRotation)
-            {
-                mc.player.lastReportedYaw = l_Yaw;
-                mc.player.lastReportedPitch = l_Pitch;
-            }
-
-            SentPacket = true;
-            mc.player.prevOnGround = mc.player.onGround;
-            mc.player.autoJumpEnabled = mc.player.mc.gameSettings.autoJump;
-        }
-    });
+        this.timer.reset();
+    }
     
+    @Override
+    public String getMetaData() {
+        return this.Mode.getValue().toString();
+    }
     
-    @EventHandler
-    private Listener<RenderEvent> OnRenderEvent = new Listener<>(p_Event ->
-    {
-        if (!Visualize.getValue())
-            return;
-        
-        Iterator l_Itr = BlockArray.iterator();
-
-        while (l_Itr.hasNext()) 
-        {
-            BlockPos l_Pos = (BlockPos) l_Itr.next();
-            
-            IBlockState l_State = mc.world.getBlockState(l_Pos);
-            
-            if (l_State != null && l_State.getBlock() != Blocks.AIR)
-                continue;
-            
-            final AxisAlignedBB bb = new AxisAlignedBB(l_Pos.getX() - mc.getRenderManager().viewerPosX,
-                    l_Pos.getY() - mc.getRenderManager().viewerPosY, l_Pos.getZ() - mc.getRenderManager().viewerPosZ,
-                    l_Pos.getX() + 1 - mc.getRenderManager().viewerPosX,
-                    l_Pos.getY() + (1) - mc.getRenderManager().viewerPosY,
-                    l_Pos.getZ() + 1 - mc.getRenderManager().viewerPosZ);
-    
-            camera.setPosition(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().posY,
-                    mc.getRenderViewEntity().posZ);
-    
-            if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + mc.getRenderManager().viewerPosX,
-                    bb.minY + mc.getRenderManager().viewerPosY, bb.minZ + mc.getRenderManager().viewerPosZ,
-                    bb.maxX + mc.getRenderManager().viewerPosX, bb.maxY + mc.getRenderManager().viewerPosY,
-                    bb.maxZ + mc.getRenderManager().viewerPosZ)))
-            {
-                GlStateManager.pushMatrix();
-                GlStateManager.enableBlend();
-                GlStateManager.disableDepth();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 0, 1);
-                GlStateManager.disableTexture2D();
-                GlStateManager.depthMask(false);
-                glEnable(GL_LINE_SMOOTH);
-                glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-                glLineWidth(1.5f);
-    
-                final double dist = mc.player.getDistance(l_Pos.getX() + 0.5f, l_Pos.getY() + 0.5f, l_Pos.getZ() + 0.5f)
-                        * 0.75f;
-    
-                float alpha = MathUtil.clamp((float) (dist * 255.0f / 5.0f / 255.0f), 0.0f, 0.3f);
-
-                //  public static void drawBoundingBox(AxisAlignedBB bb, float width, int color)
-                
-                
-                int l_Color = 0x9000FFFF;
-                
-                RenderUtil.drawBoundingBox(bb, 1.0f, l_Color);
-                RenderUtil.drawFilledBox(bb, l_Color);
-                glDisable(GL_LINE_SMOOTH);
-                GlStateManager.depthMask(true);
-                GlStateManager.enableDepth();
-                GlStateManager.enableTexture2D();
-                GlStateManager.disableBlend();
-                GlStateManager.popMatrix();
-            }
-        }
-    });
-    
-    private boolean slotEqualsBlock(int slot, Block type)
-    {
-        if (mc.player.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
-        {
-            final ItemBlock block = (ItemBlock) mc.player.inventory.getStackInSlot(slot).getItem();
+    private boolean slotEqualsBlock(final int slot, final Block type) {
+        if (this.mc.player.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock) {
+            final ItemBlock block = (ItemBlock)this.mc.player.inventory.getStackInSlot(slot).getItem();
             return block.getBlock() == type;
         }
-
         return false;
     }
-
-    private void FillBlockArrayAsNeeded(final Vec3d pos, final BlockPos orignPos, final Pair<Integer, Block> p_Pair)
-    {
-        BlockPos interpPos = null;
-        
-        switch (Mode.getValue())
-        {
-            case Highway:
-                switch (PlayerUtil.GetFacing())
-                {
-                    case East:
-                        BlockArray.add(orignPos.down());
-                        BlockArray.add(orignPos.down().east());
-                        BlockArray.add(orignPos.down().east().north());
-                        BlockArray.add(orignPos.down().east().south());
-                        BlockArray.add(orignPos.down().east().north().north());
-                        BlockArray.add(orignPos.down().east().south().south());
-                        BlockArray.add(orignPos.down().east().north().north().north());
-                        BlockArray.add(orignPos.down().east().south().south().south());
-                        BlockArray.add(orignPos.down().east().north().north().north().up());
-                        BlockArray.add(orignPos.down().east().south().south().south().up());
-                        break;
-                    case North:
-                        BlockArray.add(orignPos.down());
-                        BlockArray.add(orignPos.down().north());
-                        BlockArray.add(orignPos.down().north().east());
-                        BlockArray.add(orignPos.down().north().west());
-                        BlockArray.add(orignPos.down().north().east().east());
-                        BlockArray.add(orignPos.down().north().west().west());
-                        BlockArray.add(orignPos.down().north().east().east().east());
-                        BlockArray.add(orignPos.down().north().west().west().west());
-                        BlockArray.add(orignPos.down().north().east().east().east().up());
-                        BlockArray.add(orignPos.down().north().west().west().west().up());
-                        break;
-                    case South:
-                        BlockArray.add(orignPos.down());
-                        BlockArray.add(orignPos.down().south());
-                        BlockArray.add(orignPos.down().south().east());
-                        BlockArray.add(orignPos.down().south().west());
-                        BlockArray.add(orignPos.down().south().east().east());
-                        BlockArray.add(orignPos.down().south().west().west());
-                        BlockArray.add(orignPos.down().south().east().east().east());
-                        BlockArray.add(orignPos.down().south().west().west().west());
-                        BlockArray.add(orignPos.down().south().east().east().east().up());
-                        BlockArray.add(orignPos.down().south().west().west().west().up());
-                        break;
-                    case West:
-                        BlockArray.add(orignPos.down());
-                        BlockArray.add(orignPos.down().west());
-                        BlockArray.add(orignPos.down().west().north());
-                        BlockArray.add(orignPos.down().west().south());
-                        BlockArray.add(orignPos.down().west().north().north());
-                        BlockArray.add(orignPos.down().west().south().south());
-                        BlockArray.add(orignPos.down().west().north().north().north());
-                        BlockArray.add(orignPos.down().west().south().south().south());
-                        BlockArray.add(orignPos.down().west().north().north().north().up());
-                        BlockArray.add(orignPos.down().west().south().south().south().up());
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case HighwayTunnel:
-                BlockArray.add(orignPos.down());
-                BlockArray.add(orignPos.down().north());
-                BlockArray.add(orignPos.down().north().east());
-                BlockArray.add(orignPos.down().north().west());
-                BlockArray.add(orignPos.down().north().east().east());
-                BlockArray.add(orignPos.down().north().west().west());
-                BlockArray.add(orignPos.down().north().east().east().east());
-                BlockArray.add(orignPos.down().north().west().west().west());
-                BlockArray.add(orignPos.down().north().east().east().east().up());
-                BlockArray.add(orignPos.down().north().west().west().west().up());
-                BlockArray.add(orignPos.down().north().east().east().east().up().up());
-                BlockArray.add(orignPos.down().north().west().west().west().up().up());
-                BlockArray.add(orignPos.down().north().east().east().east().up().up().up());
-                BlockArray.add(orignPos.down().north().west().west().west().up().up().up());
-                BlockArray.add(orignPos.down().north().east().east().east().up().up().up().up());
-                BlockArray.add(orignPos.down().north().west().west().west().up().up().up().up());
-                BlockArray.add(orignPos.down().north().east().east().east().up().up().up().up().west());
-                BlockArray.add(orignPos.down().north().west().west().west().up().up().up().up().east());
-                BlockArray.add(orignPos.down().north().east().east().east().up().up().up().up().west().west());
-                BlockArray.add(orignPos.down().north().west().west().west().up().up().up().up().east().east());
-                BlockArray.add(orignPos.down().north().east().east().east().up().up().up().up().west().west().west());
-                BlockArray.add(orignPos.down().north().west().west().west().up().up().up().up().east().east().east());
-                break;
-            case Swastika:
-                switch (PlayerUtil.GetFacing())
-                {
-                    case East:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).east().east();
-                        BlockArray.add(interpPos);
-                        BlockArray.add(interpPos.north());
-                        BlockArray.add(interpPos.north().north());
-                        BlockArray.add(interpPos.up());
-                        BlockArray.add(interpPos.up().up());
-                        BlockArray.add(interpPos.up().up().north());
-                        BlockArray.add(interpPos.up().up().north().north());
-                        BlockArray.add(interpPos.up().up().north().north().up());
-                        BlockArray.add(interpPos.up().up().north().north().up().up());
-                        BlockArray.add(interpPos.up().up().south());
-                        BlockArray.add(interpPos.up().up().south().south());
-                        BlockArray.add(interpPos.up().up().south().south().down());
-                        BlockArray.add(interpPos.up().up().south().south().down().down());
-                        BlockArray.add(interpPos.up().up().up());
-                        BlockArray.add(interpPos.up().up().up().up());
-                        BlockArray.add(interpPos.up().up().up().up().south());
-                        BlockArray.add(interpPos.up().up().up().up().south().south());
-                        break;
-                    case North:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
-                        BlockArray.add(interpPos);
-                        BlockArray.add(interpPos.west());
-                        BlockArray.add(interpPos.west().west());
-                        BlockArray.add(interpPos.up());
-                        BlockArray.add(interpPos.up().up());
-                        BlockArray.add(interpPos.up().up().west());
-                        BlockArray.add(interpPos.up().up().west().west());
-                        BlockArray.add(interpPos.up().up().west().west().up());
-                        BlockArray.add(interpPos.up().up().west().west().up().up());
-                        BlockArray.add(interpPos.up().up().east());
-                        BlockArray.add(interpPos.up().up().east().east());
-                        BlockArray.add(interpPos.up().up().east().east().down());
-                        BlockArray.add(interpPos.up().up().east().east().down().down());
-                        BlockArray.add(interpPos.up().up().up());
-                        BlockArray.add(interpPos.up().up().up().up());
-                        BlockArray.add(interpPos.up().up().up().up().east());
-                        BlockArray.add(interpPos.up().up().up().up().east().east());
-                        break;
-                    case South:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).south().south();
-                        BlockArray.add(interpPos);
-                        BlockArray.add(interpPos.east());
-                        BlockArray.add(interpPos.east().east());
-                        BlockArray.add(interpPos.up());
-                        BlockArray.add(interpPos.up().up());
-                        BlockArray.add(interpPos.up().up().east());
-                        BlockArray.add(interpPos.up().up().east().east());
-                        BlockArray.add(interpPos.up().up().east().east().up());
-                        BlockArray.add(interpPos.up().up().east().east().up().up());
-                        BlockArray.add(interpPos.up().up().west());
-                        BlockArray.add(interpPos.up().up().west().west());
-                        BlockArray.add(interpPos.up().up().west().west().down());
-                        BlockArray.add(interpPos.up().up().west().west().down().down());
-                        BlockArray.add(interpPos.up().up().up());
-                        BlockArray.add(interpPos.up().up().up().up());
-                        BlockArray.add(interpPos.up().up().up().up().west());
-                        BlockArray.add(interpPos.up().up().up().up().west().west());
-                        break;
-                    case West:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).west().west();
-                        BlockArray.add(interpPos);
-                        BlockArray.add(interpPos.south());
-                        BlockArray.add(interpPos.south().south());
-                        BlockArray.add(interpPos.up());
-                        BlockArray.add(interpPos.up().up());
-                        BlockArray.add(interpPos.up().up().south());
-                        BlockArray.add(interpPos.up().up().south().south());
-                        BlockArray.add(interpPos.up().up().south().south().up());
-                        BlockArray.add(interpPos.up().up().south().south().up().up());
-                        BlockArray.add(interpPos.up().up().north());
-                        BlockArray.add(interpPos.up().up().north().north());
-                        BlockArray.add(interpPos.up().up().north().north().down());
-                        BlockArray.add(interpPos.up().up().north().north().down().down());
-                        BlockArray.add(interpPos.up().up().up());
-                        BlockArray.add(interpPos.up().up().up().up());
-                        BlockArray.add(interpPos.up().up().up().up().north());
-                        BlockArray.add(interpPos.up().up().up().up().north().north());
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case Portal:
-
-                switch (PlayerUtil.GetFacing())
-                {
-                    case East:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).east().east();
-                        BlockArray.add(interpPos.south());
-                        BlockArray.add(interpPos.south().south());
-                        BlockArray.add(interpPos);
-                        BlockArray.add(interpPos.south().south().up());
-                        BlockArray.add(interpPos.south().south().up().up());
-                        BlockArray.add(interpPos.south().south().up().up().up());
-                        BlockArray.add(interpPos.south().south().up().up().up().up());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down().down());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down().down());
-                        break;
-                    case North:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
-                        BlockArray.add(interpPos.east());
-                        BlockArray.add(interpPos.east().east());
-                        BlockArray.add(interpPos);
-                        BlockArray.add(interpPos.east().east().up());
-                        BlockArray.add(interpPos.east().east().up().up());
-                        BlockArray.add(interpPos.east().east().up().up().up());
-                        BlockArray.add(interpPos.east().east().up().up().up().up());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west().down());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west().down().down());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down().down());
-                        break;
-                    case South:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).south().south();
-                        BlockArray.add(interpPos.east());
-                        BlockArray.add(interpPos.east().east());
-                        BlockArray.add(interpPos);
-                        BlockArray.add(interpPos.east().east().up());
-                        BlockArray.add(interpPos.east().east().up().up());
-                        BlockArray.add(interpPos.east().east().up().up().up());
-                        BlockArray.add(interpPos.east().east().up().up().up().up());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west().down());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west().down().down());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down());
-                        BlockArray.add(interpPos.east().east().up().up().up().up().west().west().west().down().down().down().down());
-                        break;
-                    case West:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).west().west();
-                        BlockArray.add(interpPos.south());
-                        BlockArray.add(interpPos.south().south());
-                        BlockArray.add(interpPos);
-                        BlockArray.add(interpPos.south().south().up());
-                        BlockArray.add(interpPos.south().south().up().up());
-                        BlockArray.add(interpPos.south().south().up().up().up());
-                        BlockArray.add(interpPos.south().south().up().up().up().up());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down().down());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down());
-                        BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down().down());
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case Flat:
-                
-                for (int l_X = -3; l_X <= 3; ++l_X)
-                    for (int l_Y = -3; l_Y <= 3; ++l_Y)
-                    {
-                        BlockArray.add(orignPos.down().add(l_X, 0, l_Y));
-                    }
-                
-                break;
-            case Cover:
-                if (p_Pair == null)
-                    return;
-                
-                for (int l_X = -3; l_X < 3; ++l_X)
-                    for (int l_Y = -3; l_Y < 3; ++l_Y)
-                    {
-                        int l_Tries = 5;
-                        BlockPos l_Pos = orignPos.down().add(l_X, 0, l_Y);
-                        
-                        if (mc.world.getBlockState(l_Pos).getBlock() == p_Pair.getSecond() || mc.world.getBlockState(l_Pos.down()).getBlock() == Blocks.AIR || mc.world.getBlockState(l_Pos.down()).getBlock() == p_Pair.getSecond())
-                            continue;
-                        
-                        while (mc.world.getBlockState(l_Pos).getBlock() != Blocks.AIR && mc.world.getBlockState(l_Pos).getBlock() != Blocks.FIRE)
-                        {
-                            if (mc.world.getBlockState(l_Pos).getBlock() == p_Pair.getSecond())
-                                break;
-                            
-                            l_Pos = l_Pos.up();
-                            
-                            if (--l_Tries <= 0)
-                                break;
-                        }
-                        
-                        BlockArray.add(l_Pos);
-                    }
-                break;
-            case Tower:
-                BlockArray.add(orignPos.up());
-                BlockArray.add(orignPos);
-                BlockArray.add(orignPos.down());
-                break;
-            case Wall:
-
-                switch (PlayerUtil.GetFacing())
-                {
-                    case East:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).east().east();
-                        
-                        for (int l_X = -3; l_X <= 3; ++l_X)
-                        {
-                            for (int l_Y = -3; l_Y <= 3; ++l_Y)
-                            {
-                                BlockArray.add(interpPos.add(0, l_Y, l_X));
-                            }
-                        }
-                        break;
-                    case North:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
-                        
-                        for (int l_X = -3; l_X <= 3; ++l_X)
-                        {
-                            for (int l_Y = -3; l_Y <= 3; ++l_Y)
-                            {
-                                BlockArray.add(interpPos.add(l_X, l_Y, 0));
-                            }
-                        }
-                        break;
-                    case South:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).south().south();
-                        
-                        for (int l_X = -3; l_X <= 3; ++l_X)
-                        {
-                            for (int l_Y = -3; l_Y <= 3; ++l_Y)
-                            {
-                                BlockArray.add(interpPos.add(l_X, l_Y, 0));
-                            }
-                        }
-                        break;
-                    case West:
-                        interpPos = new BlockPos(pos.x, pos.y, pos.z).west().west();
-                        
-                        for (int l_X = -3; l_X <= 3; ++l_X)
-                        {
-                            for (int l_Y = -3; l_Y <= 3; ++l_Y)
-                            {
-                                BlockArray.add(interpPos.add(0, l_Y, l_X));
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
-            
+    
+    private Pair<Integer, Block> findStackHotbar() {
+        if (this.mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock) {
+            return new Pair<Integer, Block>(this.mc.player.inventory.currentItem, ((ItemBlock)this.mc.player.getHeldItemMainhand().getItem()).getBlock());
         }
-    }
-
-    private Pair<Integer, Block> findStackHotbar()
-    {
-        if (mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock)
-            return new Pair<Integer, Block>(mc.player.inventory.currentItem, ((ItemBlock)mc.player.getHeldItemMainhand().getItem()).getBlock());
-        
-        for (int i = 0; i < 9; i++)
-        {
+        for (int i = 0; i < 9; ++i) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
-            if (stack.getItem() instanceof ItemBlock)
-            {
-                final ItemBlock block = (ItemBlock) stack.getItem();
-                
+            if (stack.getItem() instanceof ItemBlock) {
+                final ItemBlock block = (ItemBlock)stack.getItem();
                 return new Pair<Integer, Block>(i, block.getBlock());
             }
         }
         return null;
     }
-
-    public Vec3d GetCenter(double posX, double posY, double posZ)
-    {
-        double x = Math.floor(posX) + 0.5D;
-        double y = Math.floor(posY);
-        double z = Math.floor(posZ) + 0.5D ;
-        
+    
+    public Vec3d GetCenter(final double posX, final double posY, final double posZ) {
+        final double x = Math.floor(posX) + 0.5;
+        final double y = Math.floor(posY);
+        final double z = Math.floor(posZ) + 0.5;
         return new Vec3d(x, y, z);
     }
-
-    /// Verifies the array is all obsidian
-    private boolean VerifyPortalFrame(ArrayList<BlockPos> p_Blocks)
+    
+    public enum Modes
     {
-        for (BlockPos l_Pos : p_Blocks)
-        {
-            IBlockState l_State = mc.world.getBlockState(l_Pos);
-            
-            if (l_State == null || !(l_State.getBlock() instanceof BlockObsidian))
-                return false;
-        }
-        
-        return true;
+        Highway, 
+        Swastika, 
+        HighwayTunnel, 
+        Portal, 
+        Flat, 
+        Tower, 
+        Cover, 
+        WallNorth, 
+        WallSouth, 
+        WallEast, 
+        WallWest;
     }
 }
