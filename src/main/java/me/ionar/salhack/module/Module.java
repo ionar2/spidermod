@@ -314,7 +314,12 @@ public class Module implements Listenable
             }
             
             if (!ModuleManager.Get().IgnoreStrictKeybinds())
+            {
+                if (p_KeyCode.contains("SHIFT") || p_KeyCode.contains("CONTROL") || p_KeyCode.contains("SHIFT"))
+                    return key.equals(p_KeyCode);
+                
                 return false;
+            }
         }
         
         return key.equals(p_KeyCode);
