@@ -1,9 +1,11 @@
 package me.ionar.salhack.module.movement;
 
 import me.ionar.salhack.events.player.EventPlayerUpdate;
+import me.ionar.salhack.events.player.EventPlayerUpdateMoveState;
 import me.ionar.salhack.module.Module;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
+import net.minecraft.util.MovementInputFromOptions;
 
 public final class AutoWalkModule extends Module
 {
@@ -14,15 +16,15 @@ public final class AutoWalkModule extends Module
     }
 
     @EventHandler
-    private Listener<EventPlayerUpdate> OnUpdate = new Listener<>(p_Event ->
+    private Listener<EventPlayerUpdateMoveState> OnUpdate = new Listener<>(p_Event ->
     {
-        mc.gameSettings.keyBindForward.pressed = true;
+        mc.player.movementInput.moveForward++;
     });
     
     @Override
-    public void onEnable()
+    public void onDisable()
     {
-        super.onEnable();
+        super.onDisable();
         
         mc.gameSettings.keyBindForward.pressed = false;
     }
