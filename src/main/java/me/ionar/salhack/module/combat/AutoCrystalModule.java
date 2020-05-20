@@ -286,13 +286,27 @@ public class AutoCrystalModule extends Module
       //              return;
             }
             
-            if (PlaceMode.getValue() != PlaceModes.None)
-                HandlePlaceCrystal(null);
+            try
+            {
+                if (PlaceMode.getValue() != PlaceModes.None)
+                    HandlePlaceCrystal(null);
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
         else
         {
-            if (!HandleBreakCrystals(l_Crystal, null))
-                HandlePlaceCrystal(null);
+            try
+            {
+                if (!HandleBreakCrystals(l_Crystal, null))
+                    HandlePlaceCrystal(null);
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
     });
 
@@ -344,10 +358,17 @@ public class AutoCrystalModule extends Module
             
             if (PlaceMode.getValue() != PlaceModes.None)
             {
-                final BlockPos l_Pos = HandlePlaceCrystal(p_Event);
-                
-                if (!l_Result && l_Pos != BlockPos.ORIGIN)
-                    l_Result = true;
+                try
+                {
+                    final BlockPos l_Pos = HandlePlaceCrystal(p_Event);
+                    
+                    if (!l_Result && l_Pos != BlockPos.ORIGIN)
+                        l_Result = true;
+                }
+                catch (Exception e)
+                {
+                    
+                }
             }
             
             if (l_Result)
@@ -357,10 +378,17 @@ public class AutoCrystalModule extends Module
         {
             if (!HandleBreakCrystals(l_Crystal, p_Event))
             {
-                final BlockPos l_Pos = HandlePlaceCrystal(p_Event);
-                
-                if (l_Pos != BlockPos.ORIGIN)
-                    m_WaitTicks = Ticks.getValue();
+                try
+                {
+                    final BlockPos l_Pos = HandlePlaceCrystal(p_Event);
+                    
+                    if (l_Pos != BlockPos.ORIGIN)
+                        m_WaitTicks = Ticks.getValue();
+                }
+                catch (Exception e)
+                {
+                    
+                }
             }
         }
     });
@@ -560,7 +588,7 @@ public class AutoCrystalModule extends Module
         m_Target = GetNearTarget(mc.player);
     }
     
-    private BlockPos HandlePlaceCrystal(@Nullable EventPlayerMotionUpdate p_Event)
+    private BlockPos HandlePlaceCrystal(@Nullable EventPlayerMotionUpdate p_Event) throws Exception
     {
         if (OnlyPlaceWithCrystal.getValue())
         {
@@ -571,7 +599,6 @@ public class AutoCrystalModule extends Module
         
         List<BlockPos> l_AvailableBlockPositions = CrystalUtils.findCrystalBlocks(mc.player, PlaceDistance.getValue());
 
-        
         switch (PlaceMode.getValue())
         {
             case Nearest:
