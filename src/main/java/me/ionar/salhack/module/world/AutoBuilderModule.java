@@ -69,6 +69,7 @@ public class AutoBuilderModule extends Module
         Tower,
         Cover,
         Wall,
+        HighwayWall,
     }
     
     public enum BuildingModes
@@ -756,6 +757,57 @@ public class AutoBuilderModule extends Module
                         for (int l_X = -3; l_X <= 3; ++l_X)
                         {
                             for (int l_Y = -3; l_Y <= 3; ++l_Y)
+                            {
+                                BlockArray.add(interpPos.add(0, l_Y, l_X));
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case HighwayWall:
+                switch (PlayerUtil.GetFacing())
+                {
+                    case East:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).east().east();
+                        
+                        for (int l_X = -2; l_X <= 3; ++l_X)
+                        {
+                            for (int l_Y = 0; l_Y < 3; ++l_Y)
+                            {
+                                BlockArray.add(interpPos.add(0, l_Y, l_X));
+                            }
+                        }
+                        break;
+                    case North:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
+                        
+                        for (int l_X = -2; l_X <= 3; ++l_X)
+                        {
+                            for (int l_Y = 0; l_Y < 3; ++l_Y)
+                            {
+                                BlockArray.add(interpPos.add(l_X, l_Y, 0));
+                            }
+                        }
+                        break;
+                    case South:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).south().south();
+                        
+                        for (int l_X = -2; l_X <= 3; ++l_X)
+                        {
+                            for (int l_Y = 0; l_Y < 3; ++l_Y)
+                            {
+                                BlockArray.add(interpPos.add(l_X, l_Y, 0));
+                            }
+                        }
+                        break;
+                    case West:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).west().west();
+                        
+                        for (int l_X = -2; l_X <= 3; ++l_X)
+                        {
+                            for (int l_Y = 0; l_Y < 3; ++l_Y)
                             {
                                 BlockArray.add(interpPos.add(0, l_Y, l_X));
                             }
