@@ -51,4 +51,9 @@ public class DirectoryManager
     {
         return SalHack.GetDirectoryManager();
     }
+
+    public String GetCurrentDirectory() throws IOException
+    {
+        return new java.io.File(".").getCanonicalPath();
+    }
 }
