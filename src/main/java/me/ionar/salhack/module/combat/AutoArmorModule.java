@@ -1,6 +1,7 @@
 package me.ionar.salhack.module.combat;
 
 import me.ionar.salhack.events.player.EventPlayerUpdate;
+import me.ionar.salhack.gui.hud.components.ArmorComponent;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
@@ -26,6 +27,7 @@ public final class AutoArmorModule extends Module
     public final Value<Boolean> curse = new Value<Boolean>("Curse", new String[]
     { "Curses" }, "Prevents you from equipping armor with cursed enchantments.", false);
     public final Value<Boolean> PreferElytra = new Value<Boolean>("Elytra", new String[] {"Wings"}, "Prefers elytra over chestplate if available", false);
+    public final Value<Boolean> ElytraReplace = new Value<Boolean>("ElytraReplace", new String[] {"ElytraReplace"}, "Attempts to replace your broken elytra", false);
 
     private Timer timer = new Timer();
 
@@ -84,6 +86,36 @@ public final class AutoArmorModule extends Module
         SwitchItemIfNeed(mc.player.inventoryContainer.getSlot(6).getStack(), EntityEquipmentSlot.CHEST, 6);
         SwitchItemIfNeed(mc.player.inventoryContainer.getSlot(7).getStack(), EntityEquipmentSlot.LEGS, 7);
         SwitchItemIfNeed(mc.player.inventoryContainer.getSlot(8).getStack(), EntityEquipmentSlot.FEET, 8);
+        
+        if (ElytraReplace.getValue() && !mc.player.inventoryContainer.getSlot(6).getStack().isEmpty())
+        {
+            ItemStack stack = mc.player.inventoryContainer.getSlot(6).getStack();
+            
+            if (stack.getItem() instanceof ItemElytra)
+            {
+                if (!ItemElytra.isUsable(stack) && ArmorComponent.GetPctFromStack(stack) < 3)
+                {
+                    for (int i = 0; i < mc.player.inventoryContainer.getInventory().size(); ++i)
+                    {
+                        /// @see: https://wiki.vg/Inventory, 0 is crafting slot, and 5,6,7,8 are Armor slots
+                        if (i == 0 || i == 5 || i == 6 || i == 7 || i == 8)
+                            continue;
+                        
+                        ItemStack s = mc.player.inventoryContainer.getInventory().get(i);
+                        if (s != null && s.getItem() != Items.AIR)
+                        {
+                            if (s.getItem() instanceof ItemElytra && ItemElytra.isUsable(s))
+                            {
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, 0, ClickType.PICKUP, mc.player);
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.PICKUP, mc.player);
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, 0, ClickType.PICKUP, mc.player);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     });
 
     private int findArmorSlot(EntityEquipmentSlot type)
@@ -116,7 +148,7 @@ public final class AutoArmorModule extends Module
                         }
                     }
                 }
-                else if (type == EntityEquipmentSlot.CHEST && PreferElytra.getValue() && s.getItem() instanceof ItemElytra)
+                else if (type == EntityEquipmentSlot.CHEST && PreferElytra.getValue() && s.getItem() instanceof ItemElytra && ArmorComponent.GetPctFromStack(s) > 3)
                     return i;
             }
         }
