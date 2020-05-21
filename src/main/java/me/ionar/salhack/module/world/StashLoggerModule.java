@@ -1,4 +1,4 @@
-package me.ionar.salhack.module.misc;
+package me.ionar.salhack.module.world;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class StashLoggerModule extends Module
 
     public StashLoggerModule()
     {
-        super("StashLogger", new String[] {"SL"}, "Logs chests, chested donkeys, etc on chunk loads", "NONE", -1, ModuleType.MISC);
+        super("StashLogger", new String[] {"SL"}, "Logs chests, chested donkeys, etc on chunk loads", "NONE", -1, ModuleType.WORLD);
     }
     
     private String WriterName = null;

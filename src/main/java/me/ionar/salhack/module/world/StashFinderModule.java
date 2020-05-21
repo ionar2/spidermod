@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.ionar.salhack.events.player.EventPlayerUpdate;
 import me.ionar.salhack.events.render.RenderEvent;
+import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.entity.EntityUtil;
@@ -29,8 +30,10 @@ import static org.lwjgl.opengl.GL11.glLineWidth;
 public class StashFinderModule extends Module
 {
     public final Value<Integer> Curve = new Value<Integer>("Curve", new String[] {"Curves"}, "Curves to use for hilbert curve, more = bigger path", 5, 1, 5, 1);
-    public static final Value<Boolean> Render = new Value<Boolean>("Visualizer", new String[] {"Render"}, "Renders the path", true);
-
+    public final Value<Boolean> Render = new Value<Boolean>("Visualizer", new String[] {"Render"}, "Renders the path", true);
+    public final Value<Boolean> Loop = new Value<Boolean>("Loop", new String[] {"Loop"}, "Loops after a finish", false);
+    public final Value<Boolean> ToggleLog = new Value<Boolean>("ToggleStashLogger", new String[] {"ToggleLog"}, "Automatically toggles on StashLogger if not already enabled", true);
+    
     public StashFinderModule()
     {
         super("StashFinder", new String[]
@@ -62,6 +65,14 @@ public class StashFinderModule extends Module
             WaypointPath.add(new BlockPos((int)mc.player.posX + p.x * 16 * 8, 165, (int)mc.player.posZ + p.y * 16 * 8)));
         
         SendMessage("Turn on AutoWalk and StashLogger to begin!");
+        
+        if (ToggleLog.getValue())
+        {
+            final Module mod = ModuleManager.Get().GetMod(StashLoggerModule.class);
+            
+            if (!mod.isEnabled())
+                mod.toggle();
+        }
     }
     
     @EventHandler
@@ -85,6 +96,18 @@ public class StashFinderModule extends Module
                 WaypointPath.remove(first);
                 //SendMessage(String.format("Removed the point at %s remaining size: %s", first.toString(), WaypointPath.size()));
             }
+        }
+        else if (Loop.getValue())
+        {
+            int order = Curve.getValue();
+            
+            int n = (1 << order);
+            List<Point> points = getPointsForCurve(n);
+            
+            WaypointPath.clear();
+            
+            points.forEach(p ->
+                WaypointPath.add(new BlockPos((int)mc.player.posX + p.x * 16 * 8, 165, (int)mc.player.posZ + p.y * 16 * 8)));
         }
     });
     
