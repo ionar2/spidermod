@@ -161,6 +161,7 @@ public class ModuleManager
         Add(new NoWeatherModule());
         Add(new ScaffoldModule());
         Add(new SpeedyGonzales());
+        Add(new StashFinderModule());
         Add(new TimerModule());
         Add(new TorchAnnihilatorModule());
         

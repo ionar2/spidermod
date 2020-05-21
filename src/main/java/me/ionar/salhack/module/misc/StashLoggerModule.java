@@ -60,7 +60,7 @@ public class StashLoggerModule extends Module
             
             try
             {
-                WriterName = DirectoryManager.Get().GetCurrentDirectory() + "/SalHack/StashFinder/" + file;
+                WriterName = DirectoryManager.Get().GetCurrentDirectory() + "/SalHack/StashFinder/" + file + ".txt";
             } catch (IOException e)
             {
                 e.printStackTrace();

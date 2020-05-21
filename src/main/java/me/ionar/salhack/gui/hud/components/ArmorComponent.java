@@ -140,7 +140,7 @@ public class ArmorComponent extends HudComponentItem
         GlStateManager.popMatrix();
     }
     
-    private float GetPctFromStack(ItemStack p_Stack)
+    public static float GetPctFromStack(ItemStack p_Stack)
     {
         float l_ArmorPct = ((float)(p_Stack.getMaxDamage()-p_Stack.getItemDamage()) /  (float)p_Stack.getMaxDamage())*100.0f;
         float l_ArmorBarPct = Math.min(l_ArmorPct, 100.0f);
