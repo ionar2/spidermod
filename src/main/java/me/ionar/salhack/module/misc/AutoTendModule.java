@@ -7,6 +7,7 @@ import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.BlockInteractionHelper;
+import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.util.entity.EntityUtil;
 import me.ionar.salhack.util.entity.PlayerUtil;
 import me.zero.alpine.fork.listener.EventHandler;
@@ -34,6 +35,8 @@ public class AutoTendModule extends Module
 
     public final Value<Modes> Mode = new Value<Modes>("ReplantMode", new String[] {"Replant"}, "What crop to plant at empty plowed places", Modes.Wheat);
 
+    public final Value<Float> Delay = new Value<Float>("Delay", new String[] {"D"}, "Delay to harvest/replant", 1.0f, 0.0f, 1.0f, 0.1f);
+    
     private enum Modes
     {
         Beetrot,
@@ -48,6 +51,7 @@ public class AutoTendModule extends Module
     }
 
     private AutoBonemealModule Bonemeal;
+    private Timer timer = new Timer();
 
     @Override
     public void onEnable()
@@ -67,6 +71,11 @@ public class AutoTendModule extends Module
 
         if (Harvest.getValue())
         {
+            if (!timer.passed(Delay.getValue() * 1000))
+                return;
+            
+            timer.reset();
+            
             BlockPos l_ClosestPos = BlockInteractionHelper.getSphere(PlayerUtil.GetLocalPlayerPosFloored(), Radius.getValue(), Radius.getValue(), false, true, 0).stream()
                                     .filter(p_Pos -> IsHarvestBlock(p_Pos))
                                     .min(Comparator.comparing(p_Pos -> EntityUtil.GetDistanceOfEntityToBlock(mc.player, p_Pos)))
@@ -94,6 +103,11 @@ public class AutoTendModule extends Module
 
         if (Replant.getValue() && HasSeeds())
         {
+            if (!timer.passed(Delay.getValue() * 1000))
+                return;
+            
+            timer.reset();
+            
             BlockPos l_ClosestPos = BlockInteractionHelper.getSphere(PlayerUtil.GetLocalPlayerPosFloored(), Radius.getValue(), Radius.getValue(), false, true, 0).stream()
                                     .filter(p_Pos -> IsReplantBlock(p_Pos))
                                     .min(Comparator.comparing(p_Pos -> EntityUtil.GetDistanceOfEntityToBlock(mc.player, p_Pos)))
