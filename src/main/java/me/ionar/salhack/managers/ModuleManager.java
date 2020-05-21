@@ -90,6 +90,7 @@ public class ModuleManager
         Add(new ChatNotifierModule());
         Add(new ChestStealerModule());
         Add(new ChestSwapModule());
+        Add(new FakePlayer());
         Add(new FriendsModule());
         Add(new GlobalLocationModule());
         Add(new HotbarCacheModule());
