@@ -29,6 +29,7 @@
     "MixinGuiBossOverlay",
     "MixinChunkRenderContainer",
     "MixinRenderChunk",
-    "MixinGuiDisconnected"
+    "MixinGuiDisconnected",
+    "MixinRenderManager"
   ]
 }

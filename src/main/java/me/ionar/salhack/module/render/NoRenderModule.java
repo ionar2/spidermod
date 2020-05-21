@@ -1,23 +1,27 @@
 package me.ionar.salhack.module.render;
 
+import java.util.Iterator;
+
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
-import me.ionar.salhack.events.particles.EventParticleEmitParticleAtEntity;
 import me.ionar.salhack.events.player.EventPlayerIsPotionActive;
-import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
+import me.ionar.salhack.events.player.EventPlayerUpdate;
 import me.ionar.salhack.events.render.EventRenderArmorLayer;
 import me.ionar.salhack.events.render.EventRenderBossHealth;
+import me.ionar.salhack.events.render.EventRenderEntity;
 import me.ionar.salhack.events.render.EventRenderHurtCameraEffect;
 import me.ionar.salhack.events.render.EventRenderMap;
 import me.ionar.salhack.events.render.EventRenderSign;
 import me.ionar.salhack.events.render.EventRenderUpdateLightmap;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
+import me.ionar.salhack.util.Timer;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.play.server.SPacketEntityStatus;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 
@@ -47,6 +51,44 @@ public class NoRenderModule extends Module
     {
         super("NoRender", new String[] {"NR"}, "Doesn't render certain things, if enabled", "NONE", -1, ModuleType.RENDER);
     }
+    
+    private Timer timer = new Timer();
+    
+    @EventHandler
+    private Listener<EventRenderEntity> OnRenderEntity = new Listener<>(event ->
+    {
+        if (event.GetEntity() instanceof EntityItem && NoItems.getValue() == NoItemsMode.Hide)
+            event.cancel();
+    });
+    
+    @EventHandler
+    private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(event ->
+    {
+        switch (NoItems.getValue())
+        {
+            case Remove:
+                if (!timer.passed(5000))
+                    return;
+                
+                timer.reset();
+                
+                Iterator<Entity> itr = mc.world.loadedEntityList.iterator();
+                
+                while (itr.hasNext())
+                {
+                    Entity entity = itr.next();
+                    
+                    if (entity != null)
+                    {
+                        if (entity instanceof EntityItem)
+                            mc.world.removeEntity(entity);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    });
 
     @EventHandler
     private Listener<EventRenderHurtCameraEffect> OnHurtCameraEffect = new Listener<>(p_Event ->
