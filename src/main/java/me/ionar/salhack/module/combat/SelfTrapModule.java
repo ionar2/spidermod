@@ -36,7 +36,6 @@ public class SelfTrapModule extends Module
     
     private BlockPos TrapPos = null;
 
-
     @Override
     public void toggleNoSave()
     {
