@@ -11,8 +11,11 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
 
+import me.ionar.salhack.managers.DirectoryManager;
+
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,18 +83,20 @@ public class SalFontRenderer
         if (name == "VerdanaBold")
             return getFontFromInput("/assets/salhack/fonts/verdanabold.ttf");
         
-        /// default
-        return getFontFromInput("/assets/salhack/fonts/tcm.TTF");
+        // Attempt to find custom fonts
+        return Font.createFont(Font.TRUETYPE_FONT, new File(DirectoryManager.Get().GetCurrentDirectory() + "\\SalHack\\Fonts\\" + name + ".ttf"));
     }
     
     static Font font = null;
 
     public static Font getFontFromInput(String path) throws IOException, FontFormatException
     {
-        if (font != null)
-            return font;
+        Font newFont = Font.createFont(Font.TRUETYPE_FONT, SalFontRenderer.class.getResourceAsStream(path));
         
-        return font = Font.createFont(Font.TRUETYPE_FONT, SalFontRenderer.class.getResourceAsStream(path));
+        if (newFont != null)
+            font = newFont;
+        
+        return font;
     }
 
     public void drawStringScaled(String text, int givenX, int givenY, int color, double givenScale)

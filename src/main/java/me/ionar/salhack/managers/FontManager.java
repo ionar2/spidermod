@@ -25,6 +25,12 @@ public class FontManager
             FontRenderers[l_I] = new SalFontRenderer("Tw Cen MT", l_I);
     }
     
+    public void LoadCustomFont(String customFont)
+    {
+        for (int l_I = 0; l_I < FontRenderers.length; ++l_I)
+            FontRenderers[l_I] = new SalFontRenderer(customFont, l_I);
+    }
+    
     public SalFontRenderer GetFontBySize(int p_Size)
     {
         if (p_Size > FontRenderers.length)

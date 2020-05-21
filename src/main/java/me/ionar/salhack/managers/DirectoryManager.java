@@ -32,6 +32,7 @@ public class DirectoryManager
             CreateDirectory("SalHack/LogoutSpots");
             CreateDirectory("SalHack/DeathSpots");
             CreateDirectory("SalHack/Waypoints");
+            CreateDirectory("SalHack/Fonts");
         }
         catch (IOException e)
         {
