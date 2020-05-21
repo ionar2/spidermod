@@ -45,27 +45,24 @@ public class VoidESPModule extends Module
         if (mc.player == null)
             return;
         
-        new Thread(() -> 
+        VoidBlocks.clear();
+        
+        final Vec3i playerPos = new Vec3i(mc.player.posX, mc.player.posY, mc.player.posZ);
+        
+        for (int x = playerPos.getX() - Radius.getValue(); x < playerPos.getX() + Radius.getValue(); x++)
         {
-            VoidBlocks.clear();
-            
-            final Vec3i playerPos = new Vec3i(mc.player.posX, mc.player.posY, mc.player.posZ);
-            
-            for (int x = playerPos.getX() - Radius.getValue(); x < playerPos.getX() + Radius.getValue(); x++)
+            for (int z = playerPos.getZ() - Radius.getValue(); z < playerPos.getZ() + Radius.getValue(); z++)
             {
-                for (int z = playerPos.getZ() - Radius.getValue(); z < playerPos.getZ() + Radius.getValue(); z++)
+                for (int y = playerPos.getY() + Radius.getValue(); y > playerPos.getY() - Radius.getValue(); y--)
                 {
-                    for (int y = playerPos.getY() + Radius.getValue(); y > playerPos.getY() - Radius.getValue(); y--)
-                    {
-                        final BlockPos blockPos = new BlockPos(x, y, z);
-                        final IBlockState blockState = mc.world.getBlockState(blockPos);
-                        
-                        if (IsVoidHole(blockPos, blockState))
-                            VoidBlocks.add(blockPos);
-                    }
+                    final BlockPos blockPos = new BlockPos(x, y, z);
+                    final IBlockState blockState = mc.world.getBlockState(blockPos);
+                    
+                    if (IsVoidHole(blockPos, blockState))
+                        VoidBlocks.add(blockPos);
                 }
             }
-        }).start();
+        }
     });
 
     @EventHandler

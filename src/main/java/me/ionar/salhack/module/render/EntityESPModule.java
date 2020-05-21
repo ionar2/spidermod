@@ -85,15 +85,6 @@ public class EntityESPModule extends Module
     }
 
     private ICamera camera = new Frustum();
-    
-    @EventHandler
-    private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
-    {
-        new Thread(() -> 
-        {
-            
-        }).start();
-    });
 
     @EventHandler
     private Listener<RenderEvent> OnRenderEvent = new Listener<>(p_Event ->

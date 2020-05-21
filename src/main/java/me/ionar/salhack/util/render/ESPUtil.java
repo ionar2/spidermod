@@ -302,45 +302,5 @@ public class ESPUtil
     
     public static void RenderOutline(RenderEvent p_Event, BlockPos p_Pos, float red, float green, float blue, float alpha)
     {
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.glLineWidth(2.5F);
-        GlStateManager.disableTexture2D();
-        GlStateManager.depthMask(false);
-        GlStateManager.enableDepth();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(3, DefaultVertexFormats.POSITION_COLOR);
-
-        double d3 = Wrapper.GetMC().player.lastTickPosX + (Wrapper.GetMC().player.posX - Wrapper.GetMC().player.lastTickPosX) * (double)p_Event.getPartialTicks();
-        double d4 = Wrapper.GetMC().player.lastTickPosY + (Wrapper.GetMC().player.posY - Wrapper.GetMC().player.lastTickPosY) * (double)p_Event.getPartialTicks();
-        double d5 = Wrapper.GetMC().player.lastTickPosZ + (Wrapper.GetMC().player.posZ - Wrapper.GetMC().player.lastTickPosZ) * (double)p_Event.getPartialTicks();
-        AxisAlignedBB bb = Wrapper.GetMC().world.getBlockState(p_Pos).getSelectedBoundingBox(Wrapper.GetMC().world, p_Pos).grow(0.0020000000949949026D).offset(-d3, -d4, -d5);
-
-        buffer.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, 0.0F).endVertex();
-        buffer.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, 0.0F).endVertex();
-        buffer.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, 0.0F).endVertex();
-        buffer.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, 0.0F).endVertex();
-        buffer.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
-        buffer.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, 0.0F).endVertex();
-        tessellator.draw();
-
-        GlStateManager.disableDepth();
-        GlStateManager.depthMask(true);
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
     }
 }

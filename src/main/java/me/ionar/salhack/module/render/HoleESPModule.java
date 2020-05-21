@@ -47,7 +47,7 @@ public class HoleESPModule extends Module
 
     public HoleESPModule()
     {
-        super("HoleESP", new String[] {""}, "Highlights different kind of storages", "NONE", -1, ModuleType.RENDER);
+        super("HoleESP", new String[] {""}, "Highlights holes for crystal pvp", "NONE", -1, ModuleType.RENDER);
     }
 
     public final List<Hole> holes = new ArrayList<>();
@@ -56,54 +56,50 @@ public class HoleESPModule extends Module
     @EventHandler
     private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
-        new Thread(() -> 
+        this.holes.clear();
+
+        final Vec3i playerPos = new Vec3i(mc.player.posX, mc.player.posY, mc.player.posZ);
+
+        for (int x = playerPos.getX() - Radius.getValue(); x < playerPos.getX() + Radius.getValue(); x++)
         {
-            this.holes.clear();
-
-            final Vec3i playerPos = new Vec3i(mc.player.posX, mc.player.posY, mc.player.posZ);
-    
-            for (int x = playerPos.getX() - Radius.getValue(); x < playerPos.getX() + Radius.getValue(); x++)
+            for (int z = playerPos.getZ() - Radius.getValue(); z < playerPos.getZ() + Radius.getValue(); z++)
             {
-                for (int z = playerPos.getZ() - Radius.getValue(); z < playerPos.getZ() + Radius.getValue(); z++)
+                for (int y = playerPos.getY() + Radius.getValue(); y > playerPos.getY() - Radius.getValue(); y--)
                 {
-                    for (int y = playerPos.getY() + Radius.getValue(); y > playerPos.getY() - Radius.getValue(); y--)
+                    if (HoleMode.getValue() != HoleModes.None)
                     {
-                        if (HoleMode.getValue() != HoleModes.None)
+                        final BlockPos blockPos = new BlockPos(x, y, z);
+
+                        if (IgnoreOwnHole.getValue() && mc.player.getDistanceSq(blockPos) <= 1)
+                            continue;
+
+                        final IBlockState blockState = mc.world.getBlockState(blockPos);
+    
+                        HoleTypes l_Type = isBlockValid(blockState, blockPos);
+    
+                        if (l_Type != HoleTypes.None)
                         {
-                            final BlockPos blockPos = new BlockPos(x, y, z);
-
-                            if (IgnoreOwnHole.getValue() && mc.player.getDistanceSq(blockPos) <= 1)
-                                continue;
-
-                            final IBlockState blockState = mc.world.getBlockState(blockPos);
-        
-                            HoleTypes l_Type = isBlockValid(blockState, blockPos);
-        
-                            if (l_Type != HoleTypes.None)
+                            final IBlockState downBlockState = mc.world.getBlockState(blockPos.down());
+                            if (downBlockState.getBlock() == Blocks.AIR)
                             {
-                                final IBlockState downBlockState = mc.world.getBlockState(blockPos.down());
-                                if (downBlockState.getBlock() == Blocks.AIR)
+                                final BlockPos downPos = blockPos.down();
+    
+                                l_Type = isBlockValid(downBlockState, blockPos);
+    
+                                if (l_Type != HoleTypes.None)
                                 {
-                                    final BlockPos downPos = blockPos.down();
-        
-                                    l_Type = isBlockValid(downBlockState, blockPos);
-        
-                                    if (l_Type != HoleTypes.None)
-                                    {
-                                        this.holes.add(new Hole(downPos.getX(), downPos.getY(), downPos.getZ(), downPos, l_Type, true));
-                                    }
+                                    this.holes.add(new Hole(downPos.getX(), downPos.getY(), downPos.getZ(), downPos, l_Type, true));
                                 }
-                                else
-                                {
-                                    this.holes.add(new Hole(blockPos.getX(), blockPos.getY(), blockPos.getZ(), blockPos, l_Type));
-                                }
+                            }
+                            else
+                            {
+                                this.holes.add(new Hole(blockPos.getX(), blockPos.getY(), blockPos.getZ(), blockPos, l_Type));
                             }
                         }
                     }
                 }
             }
-            
-        }).start();
+        }
     });
 
     @EventHandler
