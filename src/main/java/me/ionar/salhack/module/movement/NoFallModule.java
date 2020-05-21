@@ -32,6 +32,7 @@ public final class NoFallModule extends Module
 
     private enum Mode
     {
+        None,
         Packet,
         Anti,
         Bucket,
