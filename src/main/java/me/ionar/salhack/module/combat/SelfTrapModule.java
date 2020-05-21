@@ -24,6 +24,8 @@ public class SelfTrapModule extends Module
 {
     public final Value<Boolean> HoleCheck = new Value<Boolean>("HoleCheck", new String[]
     { "HC" }, "Only functions if you're in a hole", true);
+    public final Value<Boolean> disable = new Value<Boolean>("Toggles", new String[]
+    { "Toggles", "Disables" }, "Will toggle off after a place", false);
 
     public SelfTrapModule()
     {
@@ -54,7 +56,13 @@ public class SelfTrapModule extends Module
         TrapPos = new BlockPos(pos.x, pos.y, pos.z).up().up();
 
         if (IsSelfTrapped())
+        {
+            if (disable.getValue())
+            {
+                toggle();
+            }
             return;
+        }
         
         int lastSlot;
         final int slot = findStackHotbar(Blocks.OBSIDIAN);
