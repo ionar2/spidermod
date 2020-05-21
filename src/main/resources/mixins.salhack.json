@@ -28,6 +28,7 @@
     "MixinVisGraph",
     "MixinGuiBossOverlay",
     "MixinChunkRenderContainer",
-    "MixinRenderChunk"
+    "MixinRenderChunk",
+    "MixinGuiDisconnected"
   ]
 }
