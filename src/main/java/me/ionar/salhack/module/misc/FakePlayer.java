@@ -9,8 +9,6 @@ import java.util.UUID;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
 
 import org.apache.commons.io.IOUtils;
 
@@ -20,7 +18,9 @@ public class FakePlayer extends Module {
                 { "Fake" }, "Summons a fake player", "NONE", 0xDADB25, ModuleType.MISC);
     }
 
-    public final Value<String> name = new Value<>("Name", new String[] {"name"}, "Name of the fake player", "IHackedXVIDEOs");
+    public static final Value<String> name = new Value<>("Name", new String[] {"name"}, "Name of the fake player", "jared2013");
+
+    private EntityOtherPlayerMP fakePlayer;
 
     @Override
     public void onEnable() {
@@ -28,14 +28,12 @@ public class FakePlayer extends Module {
         if (mc.world == null)
             return;
 
-        String uuid = getUuid(name.getValue());
-        EntityOtherPlayerMP fakePlayer;
 
         //If get uuid from mojang don't work we use another uuid
         try{
-            fakePlayer = new EntityOtherPlayerMP(mc.world, new GameProfile(UUID.fromString(uuid), name.getValue()));
+            fakePlayer = new EntityOtherPlayerMP(mc.world, new GameProfile(UUID.fromString(getUuid(name.getValue())), name.getValue()));
         }catch (Exception e){
-            fakePlayer = new EntityOtherPlayerMP(mc.world, new GameProfile(UUID.fromString("a79203a2-2067-45cf-bd83-f1b3e67ba25a"), name.getValue()));
+            fakePlayer = new EntityOtherPlayerMP(mc.world, new GameProfile(UUID.fromString("70ee432d-0a96-4137-a2c0-37cc9df67f03"), name.getValue()));
             SendMessage("Failed to load uuid, setting another one.");
         }
         SendMessage(String.format("%s has been spawned.", name.getValue()));
@@ -52,8 +50,13 @@ public class FakePlayer extends Module {
         mc.world.removeEntityFromWorld(-100);
     }
 
+    @Override
+    public void toggleNoSave(){
+
+    }
+
     //Getting uuid from a name
-    public String getUuid(String name) {
+    public static String getUuid(String name) {
         JsonParser parser = new JsonParser();
         String url = "https://api.mojang.com/users/profiles/minecraft/" + name;
         try {
