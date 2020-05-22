@@ -6,7 +6,6 @@ import net.minecraft.util.EnumFacing;
 import org.lwjgl.input.Keyboard;
 import me.ionar.salhack.events.client.EventClientTick;
 import me.ionar.salhack.events.network.EventNetworkPostPacketEvent;
-import me.ionar.salhack.events.player.EventPlayerIsKeyPressed;
 import me.ionar.salhack.events.player.EventPlayerUpdateMoveState;
 import me.ionar.salhack.gui.SalGuiScreen;
 import me.ionar.salhack.module.Module;
@@ -48,9 +47,9 @@ public final class NoSlowModule extends Module
     }
 
     @EventHandler
-    private Listener<EventPlayerIsKeyPressed> OnIsKeyPressed = new Listener<>(p_Event ->
+    private Listener<EventPlayerUpdateMoveState> OnIsKeyPressed = new Listener<>(event ->
     {
-        if (InventoryMove.getValue())
+        if (InventoryMove.getValue() && mc.currentScreen != null)
         {
             if (OnlyOnCustom.getValue())
             {
@@ -79,26 +78,55 @@ public final class NoSlowModule extends Module
                 }
             }
 
-            KeyBinding[] moveKeys = new KeyBinding[]
-            { mc.gameSettings.keyBindForward, mc.gameSettings.keyBindBack, mc.gameSettings.keyBindLeft, mc.gameSettings.keyBindRight, mc.gameSettings.keyBindJump, mc.gameSettings.keyBindSprint,
-                    mc.gameSettings.keyBindSneak };
-            if (mc.currentScreen != null)// && !(mc.currentScreen instanceof GuiAnvil))
+            mc.player.movementInput.moveStrafe = 0.0F;
+            mc.player.movementInput.moveForward = 0.0F;
+            
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode()));
+            if (Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode()))
             {
-                for (KeyBinding bind : moveKeys)
-                {
-                    KeyBinding.setKeyBindState(bind.getKeyCode(), Keyboard.isKeyDown(bind.getKeyCode()));
-
-                    if (p_Event.Keybind == bind)
-                    {
-                        if (Keyboard.isKeyDown(bind.getKeyCode()))
-                        {
-                            p_Event.IsKeyPressed = Keyboard.isKeyDown(bind.getKeyCode());
-                            p_Event.cancel();
-                            break;
-                        }
-                    }
-                }
+                ++mc.player.movementInput.moveForward;
+                mc.player.movementInput.forwardKeyDown = true;
             }
+            else
+            {
+                mc.player.movementInput.forwardKeyDown = false;
+            }
+
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode()));
+            if (Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode()))
+            {
+                --mc.player.movementInput.moveForward;
+                mc.player.movementInput.backKeyDown = true;
+            }
+            else
+            {
+                mc.player.movementInput.backKeyDown = false;
+            }
+
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindLeft.getKeyCode()));
+            if (Keyboard.isKeyDown(mc.gameSettings.keyBindLeft.getKeyCode()))
+            {
+                ++mc.player.movementInput.moveStrafe;
+                mc.player.movementInput.leftKeyDown = true;
+            }
+            else
+            {
+                mc.player.movementInput.leftKeyDown = false;
+            }
+
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindRight.getKeyCode()));
+            if (Keyboard.isKeyDown(mc.gameSettings.keyBindRight.getKeyCode()))
+            {
+                --mc.player.movementInput.moveStrafe;
+                mc.player.movementInput.rightKeyDown = true;
+            }
+            else
+            {
+                mc.player.movementInput.rightKeyDown = false;
+            }
+
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode()));
+            mc.player.movementInput.jump = Keyboard.isKeyDown(mc.gameSettings.keyBindJump.getKeyCode());
         }
     });
 
@@ -116,7 +144,7 @@ public final class NoSlowModule extends Module
             }
         }
 
-        if (this.ice.getValue())
+        if (ice.getValue())
         {
             if (mc.player.getRidingEntity() != null)
             {
