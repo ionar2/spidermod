@@ -2,6 +2,8 @@ package me.ionar.salhack.util.entity;
 
 import java.awt.Point;
 
+import javax.annotation.Nullable;
+
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.ionar.salhack.util.MathUtil;
@@ -279,5 +281,15 @@ public class EntityUtil
     public static boolean IsVehicle(Entity entity)
     {
         return entity instanceof EntityBoat || entity instanceof EntityMinecart;
+    }
+
+    public static BlockPos GetPositionVectorBlockPos(Entity entity, @Nullable BlockPos toAdd)
+    {
+        final Vec3d v = entity.getPositionVector();
+        
+        if (toAdd == null)
+            return new BlockPos(v.x, v.y, v.z);
+        
+        return new BlockPos(v.x, v.y, v.z).add(toAdd);
     }
 }

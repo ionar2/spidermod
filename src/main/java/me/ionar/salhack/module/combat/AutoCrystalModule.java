@@ -129,6 +129,7 @@ public class AutoCrystalModule extends Module
     private AutoMendArmorModule AutoMend = null;
     private SelfTrapModule SelfTrap = null;
     private HoleFillerModule HoleFiller = null;
+    private AutoCityModule AutoCity = null;
     
     @Override
     public void SendMessage(String p_Msg)
@@ -151,6 +152,7 @@ public class AutoCrystalModule extends Module
         AutoMend = (AutoMendArmorModule)ModuleManager.Get().GetMod(AutoMendArmorModule.class);
         SelfTrap = (SelfTrapModule)ModuleManager.Get().GetMod(SelfTrapModule.class);
         HoleFiller = (HoleFillerModule)ModuleManager.Get().GetMod(HoleFillerModule.class);
+        AutoCity = (AutoCityModule)ModuleManager.Get().GetMod(AutoCityModule.class);
         
       //  if (!Holes.isEnabled())
        //     Holes.toggle();
@@ -1092,6 +1094,9 @@ public class AutoCrystalModule extends Module
             return true;
 
         if (PauseIfHittingBlock.getValue() && mc.playerController.isHittingBlock && mc.player.getHeldItemMainhand().getItem() instanceof ItemTool)
+            return true;
+        
+        if (AutoCity.isEnabled())
             return true;
         
         return false;

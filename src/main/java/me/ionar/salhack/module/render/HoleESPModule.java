@@ -1,8 +1,6 @@
 package me.ionar.salhack.module.render;
 
-import static me.ionar.salhack.util.render.ESPUtil.IsVoidHole;
-import static me.ionar.salhack.util.render.ESPUtil.Render;
-import static me.ionar.salhack.util.render.ESPUtil.isBlockValid;
+import static me.ionar.salhack.util.render.ESPUtil.*;
 
 import java.util.ArrayList;
 import java.util.List;

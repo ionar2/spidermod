@@ -44,6 +44,7 @@ public class ModuleManager
         Add(new AntiCityBossModule());
         Add(new Auto32kModule());
         Add(new AutoArmorModule());
+        Add(new AutoCityModule());
         Add(new AutoCrystalModule());
         Add(new AutoTotemModule());
         Add(new AutoTrap());
@@ -95,7 +96,6 @@ public class ModuleManager
         Add(new HotbarCacheModule());
         Add(new MiddleClickFriendsModule());
         Add(new RetardChatModule());
-        Add(new StashLoggerModule());
         Add(new StopWatchModule());
         Add(new TotemPopNotifierModule());
         Add(new VisualRangeModule());
@@ -125,6 +125,7 @@ public class ModuleManager
         Add(new BreakHighlightModule());
         Add(new BrightnessModule());
         Add(new ChunkAnimator());
+        Add(new CityESPModule());
         Add(new ContainerPreviewModule());
         Add(new EntityESPModule());
         Add(new FarmESPModule());
@@ -162,13 +163,14 @@ public class ModuleManager
         Add(new ScaffoldModule());
         Add(new SpeedyGonzales());
         Add(new StashFinderModule());
+        Add(new StashLoggerModule());
         Add(new TimerModule());
         Add(new TorchAnnihilatorModule());
         
         /// Schematica
         Add(new PrinterModule());
         Add(new PrinterBypassModule());
-
+        
         Mods.sort((p_Mod1, p_Mod2) -> p_Mod1.getDisplayName().compareTo(p_Mod2.getDisplayName()));
 
         Mods.forEach(p_Mod ->
