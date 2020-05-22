@@ -4,32 +4,39 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
+import me.ionar.salhack.module.combat.KillAuraModule;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 
 import org.apache.commons.io.IOUtils;
 
 public class FakePlayer extends Module {
+
+    public static final Value<String> name = new Value<>("Name", new String[] {"name"}, "Name of the fake player", "jared2013");
+
     public FakePlayer() {
         super("FakePlayer", new String[]
                 { "Fake" }, "Summons a fake player", "NONE", 0xDADB25, ModuleType.MISC);
     }
-
-    public static final Value<String> name = new Value<>("Name", new String[] {"name"}, "Name of the fake player", "jared2013");
 
     private EntityOtherPlayerMP fakePlayer;
 
     @Override
     public void onEnable() {
         super.onEnable();
-        if (mc.world == null)
+        fakePlayer = null;
+
+        if (mc.world == null) {
+            ModuleManager.Get().GetMod(FakePlayer.class).toggle();
             return;
+        }
 
-
-        //If get uuid from mojang don't work we use another uuid
+        //If getting uuid from mojang doesn't work we use another uuid
         try{
             fakePlayer = new EntityOtherPlayerMP(mc.world, new GameProfile(UUID.fromString(getUuid(name.getValue())), name.getValue()));
         }catch (Exception e){
@@ -60,8 +67,7 @@ public class FakePlayer extends Module {
         JsonParser parser = new JsonParser();
         String url = "https://api.mojang.com/users/profiles/minecraft/" + name;
         try {
-            @SuppressWarnings("deprecation")
-            String UUIDJson = IOUtils.toString(new URL(url));
+            String UUIDJson = IOUtils.toString(new URL(url), StandardCharsets.UTF_8);
             if(UUIDJson.isEmpty()) return "invalid name";
             JsonObject UUIDObject = (JsonObject) parser.parse(UUIDJson);
             return reformatUuid(UUIDObject.get("id").toString());
