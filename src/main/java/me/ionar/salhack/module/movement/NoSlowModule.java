@@ -61,20 +61,20 @@ public final class NoSlowModule extends Module
             {
                 if (Keyboard.isKeyDown(200))
                 {
-                    SalGuiScreen.UpdateRotationPitch(-2.0f);
+                    SalGuiScreen.UpdateRotationPitch(-5.0f);
                 }
                 if (Keyboard.isKeyDown(208))
                 {
-                    SalGuiScreen.UpdateRotationPitch(2.0f);
+                    SalGuiScreen.UpdateRotationPitch(5.0f);
                 }
                 if (Keyboard.isKeyDown(205))
                 {
-                    SalGuiScreen.UpdateRotationYaw(2.0f);
+                    SalGuiScreen.UpdateRotationYaw(5.0f);
                 }
 
                 if (Keyboard.isKeyDown(203))
                 {
-                    SalGuiScreen.UpdateRotationYaw(-2.0f);
+                    SalGuiScreen.UpdateRotationYaw(-5.0f);
                 }
             }
 
