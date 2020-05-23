@@ -12,6 +12,7 @@ public final class ClickGuiModule extends Module
     public final Value<Boolean> Watermark = new Value<Boolean>("Watermark", new String[]
     { "Watermark" }, "Displays the watermark on the GUI", true);
     public final Value<Boolean> HoverDescriptions = new Value<Boolean>("HoverDescriptions", new String[] {"HD"}, "Displays hover descriptions over values and modules", true);
+    public final Value<Boolean> Snowing = new Value<Boolean>("Snowing", new String[] {"SN"}, "Play a snowing animation in ClickGUI", true);
 
     public ClickGuiScreen m_ClickGui;
 

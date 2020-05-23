@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -19,6 +20,7 @@ import com.google.gson.GsonBuilder;
 import me.ionar.salhack.gui.SalGuiScreen;
 import me.ionar.salhack.gui.click.component.*;
 import me.ionar.salhack.gui.click.component.menus.mods.MenuComponentModList;
+import me.ionar.salhack.gui.click.effects.Snow;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.managers.ImageManager;
 import me.ionar.salhack.module.Module.ModuleType;
@@ -35,6 +37,7 @@ public class ClickGuiScreen extends SalGuiScreen
     private ArrayList<MenuComponent> MenuComponents = new ArrayList<MenuComponent>();
     private SalDynamicTexture Watermark = ImageManager.Get().GetDynamicTexture("SalHackWatermark");
     private SalDynamicTexture BlueBlur = ImageManager.Get().GetDynamicTexture("BlueBlur");
+    private ArrayList<Snow> _snowList = new ArrayList<Snow>();
     
     private float OffsetY = 0;
 
@@ -93,6 +96,17 @@ public class ClickGuiScreen extends SalGuiScreen
 
             }
         }
+        
+        Random random = new Random();
+        
+        for (int i = 0; i < 100; ++i)
+        {
+            for (int y = 0; y < 3; ++y)
+            {
+                Snow snow = new Snow(25 * i, y * -50, random.nextInt(3) + 1, random.nextInt(2)+1);
+                _snowList.add(snow);
+            }
+        }
     }
 
     private ClickGuiModule ClickGuiMod;
@@ -142,12 +156,17 @@ public class ClickGuiScreen extends SalGuiScreen
     {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
+        final ScaledResolution res = new ScaledResolution(mc);
+        
+        if (!_snowList.isEmpty() && ClickGuiMod.Snowing.getValue())
+        {
+            _snowList.forEach(snow -> snow.Update(res));
+        }
+
         if (Watermark != null && ClickGuiMod.Watermark.getValue())
         {
             GlStateManager.pushMatrix();
             RenderHelper.enableGUIStandardItemLighting();
-
-            ScaledResolution l_Res = new ScaledResolution(mc);
 
             mc.renderEngine.bindTexture(Watermark.GetResourceLocation());
             GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
@@ -155,7 +174,7 @@ public class ClickGuiScreen extends SalGuiScreen
 
             GlStateManager.enableTexture2D();
             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-            RenderUtil.drawTexture(0, l_Res.getScaledHeight() - Watermark.GetHeight() - 5, Watermark.GetWidth() / 2,
+            RenderUtil.drawTexture(0, res.getScaledHeight() - Watermark.GetHeight() - 5, Watermark.GetWidth() / 2,
                     Watermark.GetHeight() / 2, 0, 0, 1, 1);
 
             GlStateManager.popMatrix();
