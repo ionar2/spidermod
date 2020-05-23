@@ -55,6 +55,19 @@ public class SalFontRenderer
         catch (FontFormatException | IOException | SlickException e)
         {
             e.printStackTrace();
+            
+            prevScaleFactor = resolution.getScaleFactor();
+            try
+            {
+                unicodeFont = new UnicodeFont(getFontByName("Tw Cen MT").deriveFont(fontSize * prevScaleFactor / 2));
+                unicodeFont.addAsciiGlyphs();
+                unicodeFont.getEffects().add(new ColorEffect(java.awt.Color.WHITE));
+                unicodeFont.loadGlyphs();
+            } catch (Exception e1)
+            {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
         }
 
         this.antiAliasingFactor = resolution.getScaleFactor();
