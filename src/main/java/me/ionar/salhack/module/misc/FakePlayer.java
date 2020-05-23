@@ -7,10 +7,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
-import me.ionar.salhack.module.combat.KillAuraModule;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 
 import org.apache.commons.io.IOUtils;
@@ -32,7 +30,7 @@ public class FakePlayer extends Module {
         fakePlayer = null;
 
         if (mc.world == null) {
-            ModuleManager.Get().GetMod(FakePlayer.class).toggle();
+            this.toggle();
             return;
         }
 
