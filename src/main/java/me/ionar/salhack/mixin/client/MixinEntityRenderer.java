@@ -10,6 +10,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ import me.ionar.salhack.events.render.EventRenderGetEntitiesINAABBexcluding;
 import me.ionar.salhack.events.render.EventRenderGetFOVModifier;
 import me.ionar.salhack.events.render.EventRenderHand;
 import me.ionar.salhack.events.render.EventRenderHurtCameraEffect;
+import me.ionar.salhack.events.render.EventRenderOrientCamera;
 import me.ionar.salhack.events.render.EventRenderSetupFog;
 import me.ionar.salhack.events.render.EventRenderUpdateLightmap;
 import me.ionar.salhack.events.render.RenderEvent;
@@ -94,5 +97,16 @@ public class MixinEntityRenderer
     {
         RenderUtil.updateModelViewProjectionMatrix();
         SalHackMod.EVENT_BUS.post(new RenderEvent(partialTicks));
+    }
+
+    @Redirect(method = "orientCamera", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/WorldClient;rayTraceBlocks(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/RayTraceResult;"), expect = 0)
+    private RayTraceResult rayTraceBlocks(WorldClient worldClient, Vec3d start, Vec3d end)
+    {
+        EventRenderOrientCamera event = new EventRenderOrientCamera();
+        SalHackMod.EVENT_BUS.post(event);
+        if (event.isCancelled())
+            return null;
+        else
+            return worldClient.rayTraceBlocks(start, end);
     }
 }

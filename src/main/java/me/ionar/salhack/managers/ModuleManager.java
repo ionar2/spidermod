@@ -140,6 +140,7 @@ public class ModuleManager
         Add(new StorageESPModule());
         Add(new TracersModule());
         Add(new TrajectoriesModule());
+        Add(new ViewClipModule());
         Add(new VoidESPModule());
 
         /// UI
