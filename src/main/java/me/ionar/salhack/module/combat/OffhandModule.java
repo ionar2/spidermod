@@ -45,7 +45,7 @@ public final class OffhandModule extends Module
         
         if (mc.player.getHeldItemOffhand().getItem() != l_Item)
         {
-            int l_Slot = PlayerUtil.GetItemSlot(l_Item);
+            int l_Slot = PlayerUtil.GetRecursiveItemSlot(l_Item);
             
             if (l_Slot != -1)
             {

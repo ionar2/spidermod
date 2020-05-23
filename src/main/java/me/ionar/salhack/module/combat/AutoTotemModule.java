@@ -65,7 +65,7 @@ public final class AutoTotemModule extends Module
         
         if (mc.player.getHeldItemOffhand().getItem() != l_Item)
         {
-            int l_Slot = PlayerUtil.GetItemSlot(l_Item);
+            int l_Slot = PlayerUtil.GetRecursiveItemSlot(l_Item);
             
             Item l_Fallback = GetItemFromModeVal(FallbackMode.getValue());
             
@@ -73,7 +73,7 @@ public final class AutoTotemModule extends Module
             
             if (l_Slot == -1 && l_Item != l_Fallback && mc.player.getHeldItemOffhand().getItem() != l_Fallback)
             {
-                l_Slot = PlayerUtil.GetItemSlot(l_Fallback);
+                l_Slot = PlayerUtil.GetRecursiveItemSlot(l_Fallback);
                 l_Display = GetItemNameFromModeVal(FallbackMode.getValue());
                 
                 /// still -1...
@@ -83,7 +83,7 @@ public final class AutoTotemModule extends Module
                     
                     if (l_Item != l_Fallback && mc.player.getHeldItemOffhand().getItem() != l_Fallback)
                     {
-                        l_Slot = PlayerUtil.GetItemSlot(l_Fallback);
+                        l_Slot = PlayerUtil.GetRecursiveItemSlot(l_Fallback);
                         l_Display = "Emergency Totem";
                     }
                 }

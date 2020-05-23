@@ -46,6 +46,29 @@ public class PlayerUtil
         return -1;
     }
 
+    public static int GetRecursiveItemSlot(Item input)
+    {
+        if (mc.player == null)
+            return 0;
+
+        for (int i = mc.player.inventoryContainer.getInventory().size() - 1; i > 0; --i)
+        {
+            if (i == 0 || i == 5 || i == 6 || i == 7 || i == 8)
+                continue;
+
+            ItemStack s = mc.player.inventoryContainer.getInventory().get(i);
+            
+            if (s.isEmpty())
+                continue;
+            
+            if (s.getItem() == input)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
     public static int GetItemSlotNotHotbar(Item input)
     {
         if (mc.player == null)
