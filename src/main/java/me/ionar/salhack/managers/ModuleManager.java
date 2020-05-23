@@ -1,5 +1,6 @@
 package me.ionar.salhack.managers;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,6 +20,7 @@ import me.ionar.salhack.module.render.*;
 import me.ionar.salhack.module.schematica.*;
 import me.ionar.salhack.module.ui.*;
 import me.ionar.salhack.module.world.*;
+import me.ionar.salhack.util.ReflectionUtil;
 import me.ionar.salhack.util.render.RenderUtil;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -174,6 +176,8 @@ public class ModuleManager
         Add(new PrinterModule());
         Add(new PrinterBypassModule());
         
+        LoadExternalModules();
+        
         Mods.sort((p_Mod1, p_Mod2) -> p_Mod1.getDisplayName().compareTo(p_Mod2.getDisplayName()));
 
         Mods.forEach(p_Mod ->
@@ -313,5 +317,37 @@ public class ModuleManager
             return true;
         
         return false;
+    }
+    
+    public void LoadExternalModules()
+    {
+        // from seppuku
+        try
+        {
+            final File dir = new File("SalHack/CustomMods");
+            
+            for (Class newClass : ReflectionUtil.getClassesEx(dir.getPath()))
+            {
+                if (newClass == null)
+                    continue;
+                
+                // if we have found a class and the class inherits "Module"
+                if (Module.class.isAssignableFrom(newClass))
+                {
+                    //create a new instance of the class
+                    final Module module = (Module) newClass.newInstance();
+
+                    if (module != null)
+                    {
+                        // initialize the modules
+                        Add(module);
+                    }
+                }
+                
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

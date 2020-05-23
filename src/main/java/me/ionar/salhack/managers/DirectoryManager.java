@@ -33,6 +33,7 @@ public class DirectoryManager
             CreateDirectory("SalHack/DeathSpots");
             CreateDirectory("SalHack/Waypoints");
             CreateDirectory("SalHack/Fonts");
+            CreateDirectory("SalHack/CustomMods");
         }
         catch (IOException e)
         {
