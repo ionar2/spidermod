@@ -9,6 +9,7 @@ import me.ionar.salhack.managers.CapeManager;
 import me.ionar.salhack.managers.CommandManager;
 import me.ionar.salhack.managers.DirectoryManager;
 import me.ionar.salhack.managers.DiscordManager;
+import me.ionar.salhack.managers.EntityManager;
 import me.ionar.salhack.managers.FontManager;
 import me.ionar.salhack.managers.FriendManager;
 import me.ionar.salhack.managers.HudManager;
@@ -16,6 +17,7 @@ import me.ionar.salhack.managers.ImageManager;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.managers.NotificationManager;
 import me.ionar.salhack.managers.TickRateManager;
+import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.waypoints.WaypointManager;
 import net.minecraft.util.Session;
 import net.minecraft.util.text.TextComponentString;
@@ -34,7 +36,9 @@ public class SalHack
     private static NotificationManager m_NotificationManager = new NotificationManager();
     private static WaypointManager m_WaypointManager = new WaypointManager();
     private static CapeManager m_CapeManager = new CapeManager();
+    private static EntityManager m_EntityManager = new EntityManager();
     private static AlwaysEnabledModule m_AlwaysEnabledMod;
+    private static Timer SalTimer = new Timer();
 
     public static void Init()
     {
@@ -60,7 +64,12 @@ public class SalHack
             {
                 try
                 {
-                    SalHackMod.EVENT_BUS.post(new EventSalHackTick());
+                    if (SalTimer.passed(50))
+                    {
+                        SalTimer.reset();
+                        //SalHackMod.EVENT_BUS.post(new EventSalHackTick());
+                        m_EntityManager.Update();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -136,5 +145,10 @@ public class SalHack
     public static CapeManager GetCapeManager()
     {
         return m_CapeManager;
+    }
+
+    public static EntityManager GetEntityManager()
+    {
+        return m_EntityManager;
     }
 }

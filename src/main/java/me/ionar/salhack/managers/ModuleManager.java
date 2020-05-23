@@ -46,6 +46,7 @@ public class ModuleManager
         Add(new AutoArmorModule());
         Add(new AutoCityModule());
         Add(new AutoCrystalModule());
+        Add(new AutoCrystalRewrite());
         Add(new AutoTotemModule());
         Add(new AutoTrap());
         Add(new AutoTrapFeet());
