@@ -28,10 +28,6 @@ import net.minecraft.world.World;
 
 public class CrystalUtils
 {
-    /// From Kami the functions, because making them on our own is waste of time if
-    /// this already exists
-    /// all these funcs must be static
-
     public static boolean CanPlaceCrystalIfObbyWasAtPos(final BlockPos pos)
     {
         final Minecraft mc = Wrapper.GetMC();
@@ -92,15 +88,18 @@ public class CrystalUtils
             int p_InterlopedAmount)
     {
         /// hack
-        if (entity == Minecraft.getMinecraft().player)
+        if (entity == Wrapper.GetPlayer())
         {
-            if (Minecraft.getMinecraft().player.capabilities.isCreativeMode)
+            if (Wrapper.GetPlayer().capabilities.isCreativeMode)
                 return 0.0f;
         }
 
         float doubleExplosionSize = 12.0F;
 
         double l_Distance = entity.getDistance(posX, posY, posZ);
+        
+        if (l_Distance > doubleExplosionSize)
+            return 0f;
 
         if (p_InterlopedAmount > 0)
         {
