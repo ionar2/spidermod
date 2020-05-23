@@ -79,7 +79,7 @@ public class SpeedModule extends Module
             if (AutoSprint.getValue())
                 mc.player.setSprinting(true);
             
-            if (mc.player.onGround)
+            if (mc.player.onGround && Mode.getValue() == Modes.Strafe)
             {
                 if (AutoJump.getValue())
                     mc.player.motionY = 0.405f;
@@ -87,6 +87,16 @@ public class SpeedModule extends Module
                 final float yaw = GetRotationYawForCalc();
                 mc.player.motionX -= MathHelper.sin(yaw) * 0.2f;
                 mc.player.motionZ += MathHelper.cos(yaw) * 0.2f;                
+            }
+            else if (mc.player.onGround && Mode.getValue() == Modes.OnGround)
+            {
+                final float yaw = GetRotationYawForCalc();
+                mc.player.motionX -= MathHelper.sin(yaw) * 0.2f;
+                mc.player.motionZ += MathHelper.cos(yaw) * 0.2f;
+                mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY+0.4, mc.player.posZ, false));
+                /*
+                mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, true));
+                mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY+0.4, mc.player.posZ, true));*/
             }
         }
         
@@ -124,13 +134,14 @@ public class SpeedModule extends Module
     @EventHandler
     private Listener<EventPlayerJump> OnPlayerJump = new Listener<>(p_Event ->
     {
-        p_Event.cancel();
+        if (Mode.getValue() == Modes.Strafe)
+            p_Event.cancel();
     });
     
     @EventHandler
     private Listener<EventPlayerMove> OnPlayerMove = new Listener<>(p_Event ->
     {
-        if (p_Event.getEra() != Era.PRE)
+        if (p_Event.getEra() != Era.PRE || Mode.getValue() == Modes.OnGround)
             return;
         
         if (mc.player.isInWater() || mc.player.isInLava())

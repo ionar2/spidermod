@@ -30,6 +30,7 @@ import java.util.List;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
+import me.ionar.salhack.events.network.EventNetworkPacketEvent;
 import me.ionar.salhack.events.player.EventPlayerTravel;
 import me.ionar.salhack.events.player.EventPlayerUpdate;
 import me.ionar.salhack.main.SalHack;
@@ -66,7 +67,8 @@ public final class ElytraFlyModule extends Module
     public final Value<Boolean> InstantFly = new Value<Boolean>("InstantFly", new String[]
     { "IF" }, "Sends the fall flying packet when your off ground", true);
     public final Value<Boolean> EquipElytra = new Value<Boolean>("EquipElytra", new String[] {"EE"}, "Equips your elytra when enabled if you're not already wearing one", false);
-
+    public final Value<Boolean> PitchSpoof = new Value<Boolean>("PitchSpoof", new String[] {"PS"}, "Spoofs your pitch for hauses new patch", false);
+    
     private Timer PacketTimer = new Timer();
     private Timer AccelerationTimer = new Timer();
     private Timer AccelerationResetTimer = new Timer();
@@ -211,12 +213,11 @@ public final class ElytraFlyModule extends Module
             return;
         }
 
-        boolean l_IsMoveKeyDown = mc.gameSettings.keyBindForward.isKeyDown() || mc.gameSettings.keyBindLeft.isKeyDown() || mc.gameSettings.keyBindRight.isKeyDown()
-                || mc.gameSettings.keyBindBack.isKeyDown();
+        boolean l_IsMoveKeyDown = mc.player.movementInput.moveForward > 0 || mc.player.movementInput.moveStrafe > 0;
 
         boolean l_CancelInWater = !mc.player.isInWater() && !mc.player.isInLava() && CancelInWater.getValue();
         
-        if (mc.gameSettings.keyBindJump.isKeyDown())
+        if (mc.player.movementInput.jump)
         {
             p_Travel.cancel();
             Accelerate();
@@ -246,7 +247,7 @@ public final class ElytraFlyModule extends Module
 
     public void HandleImmediateModeElytra(EventPlayerTravel p_Travel)
     {
-        if (mc.gameSettings.keyBindJump.isKeyDown())
+        if (mc.player.movementInput.jump)
         {
             double l_MotionSq = Math.sqrt(mc.player.motionX * mc.player.motionX + mc.player.motionZ * mc.player.motionZ);
             
@@ -280,7 +281,7 @@ public final class ElytraFlyModule extends Module
             mc.player.motionZ = dir[1];
         }
 
-        if (mc.gameSettings.keyBindSneak.isKeyDown())
+        if (mc.player.movementInput.sneak)
             mc.player.motionY = -DownSpeed.getValue();
         
         mc.player.prevLimbSwingAmount = 0;
@@ -314,7 +315,7 @@ public final class ElytraFlyModule extends Module
             mc.player.motionZ = 0;
         }
 
-        if (mc.gameSettings.keyBindSneak.isKeyDown())
+        if (mc.player.movementInput.sneak)
             mc.player.motionY = -DownSpeed.getValue();
 
         mc.player.prevLimbSwingAmount = 0;
@@ -349,11 +350,26 @@ public final class ElytraFlyModule extends Module
         mc.player.limbSwing = 0;
         p_Event.cancel();
     }
-    
-    public void SetupStashFinder()
+
+    @EventHandler
+    private Listener<EventNetworkPacketEvent> PacketEvent = new Listener<>(p_Event ->
     {
-        SalHack.SendMessage(ChatFormatting.AQUA + "[ElytraFly]: " + ChatFormatting.LIGHT_PURPLE + " Preparing ElytraFly for stash finder");
-        mode.setValue(Mode.Normal);
-        speed.setValue(1.8f);
-    }
+        if (p_Event.getPacket() instanceof CPacketPlayer && PitchSpoof.getValue())
+        {
+            if (!mc.player.isElytraFlying())
+                return;
+            
+            if (p_Event.getPacket() instanceof CPacketPlayer.PositionRotation && PitchSpoof.getValue())
+            {
+                CPacketPlayer.PositionRotation rotation = (CPacketPlayer.PositionRotation) p_Event.getPacket();
+                
+                mc.getConnection().sendPacket(new CPacketPlayer.Position(rotation.x, rotation.y, rotation.z, rotation.onGround));
+                p_Event.cancel();
+            }
+            else if (p_Event.getPacket() instanceof CPacketPlayer.Rotation && PitchSpoof.getValue())
+            {
+                p_Event.cancel();
+            }
+        }
+    });
 }
