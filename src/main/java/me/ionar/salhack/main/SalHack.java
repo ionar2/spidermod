@@ -1,10 +1,6 @@
 package me.ionar.salhack.main;
 
-import com.google.gson.Gson;
-
 import me.ionar.salhack.SalHackMod;
-import me.ionar.salhack.events.client.EventSalHackTick;
-import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.managers.CapeManager;
 import me.ionar.salhack.managers.CommandManager;
 import me.ionar.salhack.managers.DirectoryManager;
@@ -19,7 +15,6 @@ import me.ionar.salhack.managers.NotificationManager;
 import me.ionar.salhack.managers.TickRateManager;
 import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.waypoints.WaypointManager;
-import net.minecraft.util.Session;
 import net.minecraft.util.text.TextComponentString;
 
 public class SalHack

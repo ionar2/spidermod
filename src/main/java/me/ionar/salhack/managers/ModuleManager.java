@@ -141,7 +141,6 @@ public class ModuleManager
         Add(new TracersModule());
         Add(new TrajectoriesModule());
         Add(new VoidESPModule());
-        Add(new VulnerabilityESPModule());
 
         /// UI
         Add(new ColorsModule());
