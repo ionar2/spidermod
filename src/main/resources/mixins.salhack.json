@@ -30,6 +30,8 @@
     "MixinChunkRenderContainer",
     "MixinRenderChunk",
     "MixinGuiDisconnected",
-    "MixinRenderManager"
+    "MixinRenderManager",
+    "MixinEntityPig",
+    "MixinEntityLlama"
   ]
 }
