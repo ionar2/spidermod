@@ -32,6 +32,7 @@ import me.ionar.salhack.events.render.EventRenderHand;
 import me.ionar.salhack.events.render.EventRenderHurtCameraEffect;
 import me.ionar.salhack.events.render.EventRenderSetupFog;
 import me.ionar.salhack.events.render.EventRenderUpdateLightmap;
+import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.util.render.RenderUtil;
 
 @Mixin(EntityRenderer.class)
@@ -92,5 +93,6 @@ public class MixinEntityRenderer
     private void renderWorldPassPost(int pass, float partialTicks, long finishTimeNano, CallbackInfo callbackInfo)
     {
         RenderUtil.updateModelViewProjectionMatrix();
+        SalHackMod.EVENT_BUS.post(new RenderEvent(partialTicks));
     }
 }

@@ -9,7 +9,6 @@ import me.ionar.salhack.events.render.EventRenderGetFOVModifier;
 import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.util.entity.EntityUtil;
-import me.ionar.salhack.util.render.CustomTessellator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -42,38 +41,6 @@ public class ForgeEventProcessor
             return;
 
         SalHackMod.EVENT_BUS.post(new EventClientTick());
-    }
-
-    @SubscribeEvent
-    public void onWorldRender(RenderWorldLastEvent event)
-    {
-        if (event.isCanceled())
-            return;
-
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableDepth();
-
-        GlStateManager.glLineWidth(1f);
-        Vec3d renderPos = EntityUtil.getInterpolatedPos(Wrapper.GetPlayer(), event.getPartialTicks());
-
-        RenderEvent l_Event = new RenderEvent(CustomTessellator.INSTANCE, renderPos);
-        l_Event.resetTranslation();
-
-        SalHackMod.EVENT_BUS.post(l_Event);
-
-        GlStateManager.glLineWidth(1f);
-
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableDepth();
-        GlStateManager.enableCull();
-        CustomTessellator.releaseGL();
     }
 
     @SubscribeEvent
