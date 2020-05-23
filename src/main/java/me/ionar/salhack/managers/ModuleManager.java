@@ -138,6 +138,7 @@ public class ModuleManager
         Add(new NoRenderModule());
         Add(new ShulkerPreviewModule());
         Add(new StorageESPModule());
+        Add(new TracersModule());
         Add(new TrajectoriesModule());
         Add(new VoidESPModule());
         Add(new VulnerabilityESPModule());
