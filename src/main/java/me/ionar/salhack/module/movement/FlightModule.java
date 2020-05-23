@@ -63,10 +63,10 @@ public final class FlightModule extends Module
                 mc.player.motionZ = dir[1];
             }
 
-            if (mc.gameSettings.keyBindJump.isKeyDown())
+            if (mc.player.movementInput.jump && !mc.player.isElytraFlying())
                 mc.player.motionY = Speed.getValue();
 
-            if (mc.gameSettings.keyBindSneak.isKeyDown())
+            if (mc.player.movementInput.sneak)
                 mc.player.motionY = -Speed.getValue();
 
             if (Glide.getValue() && (GlideWhileMoving.getValue() ? (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) : true))
