@@ -15,6 +15,7 @@ import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockFarmland;
+import net.minecraft.block.BlockReed;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -32,7 +33,7 @@ public class AutoTendModule extends Module
 
     public final Value<Modes> Mode = new Value<Modes>("ReplantMode", new String[] {"Replant"}, "What crop to plant at empty plowed places", Modes.Wheat);
 
-    public final Value<Float> Delay = new Value<Float>("Delay", new String[] {"D"}, "Delay to harvest/replant", 1.0f, 0.0f, 1.0f, 0.1f);
+    public final Value<Float> Delay = new Value<Float>("Delay", new String[] {"D"}, "Delay to harvest/replant", 1.0f, 0.0f, 10.0f, 0.1f);
     
     private enum Modes
     {
@@ -68,7 +69,7 @@ public class AutoTendModule extends Module
 
         if (Harvest.getValue())
         {
-            if (!timer.passed(Delay.getValue() * 1000))
+            if (!timer.passed(Delay.getValue() * 100))
                 return;
             
             timer.reset();
@@ -100,7 +101,7 @@ public class AutoTendModule extends Module
 
         if (Replant.getValue() && HasSeeds())
         {
-            if (!timer.passed(Delay.getValue() * 1000))
+            if (!timer.passed(Delay.getValue() * 100))
                 return;
             
             timer.reset();
@@ -142,6 +143,11 @@ public class AutoTendModule extends Module
             BlockCrops l_Crop = (BlockCrops)l_State.getBlock();
 
             if (l_Crop.isMaxAge(l_State))
+                return true;
+        }
+        else if (l_State.getBlock() instanceof BlockReed)
+        {
+            if (mc.world.getBlockState(p_Pos.down()).getBlock() == Blocks.REEDS)
                 return true;
         }
 
