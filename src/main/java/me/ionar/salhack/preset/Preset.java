@@ -61,8 +61,6 @@ public class Preset
     // this will load the settings for presets, and modules settings
     public void load(File directory)
     {
-        System.out.println("SalHack/Presets/" + directory.getName() + "/" + directory.getName() + ".json");
-        
         File exists = new File("SalHack/Presets/" + directory.getName() + "/" + directory.getName() + ".json");
         if (!exists.exists())
             return;
@@ -104,8 +102,6 @@ public class Preset
                     try 
                     {
                         Gson gson = new Gson();
-                        
-                        System.out.println(path.getFileName().toString());
 
                         Reader reader = Files.newBufferedReader(Paths.get("SalHack/Presets/" + directory.getName() + "/Modules/" + path.getFileName().toString()));
 
@@ -155,7 +151,6 @@ public class Preset
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
@@ -184,7 +179,6 @@ public class Preset
         }
         catch (IOException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
