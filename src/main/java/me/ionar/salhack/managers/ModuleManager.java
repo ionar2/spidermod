@@ -166,6 +166,7 @@ public class ModuleManager
         Add(new LawnmowerModule());
         Add(new NoGlitchBlocksModule());
         Add(new NoWeatherModule());
+        Add(new NukerModule());
         Add(new ScaffoldModule());
         Add(new SpeedyGonzales());
         Add(new StashFinderModule());

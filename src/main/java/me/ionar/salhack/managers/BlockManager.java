@@ -9,6 +9,8 @@ import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
 public class BlockManager
 {
@@ -43,14 +45,14 @@ public class BlockManager
                 || blockState.getBlock() instanceof BlockLiquid;
     }
     
-    public static boolean Update()
+    public static boolean Update(float range, boolean rayTrace)
     {
         if (_currBlock == null)
             return false;
         
         IBlockState state = mc.world.getBlockState(_currBlock);
         
-        if (IsDoneBreaking(state) || mc.player.getDistanceSq(_currBlock) > 10)
+        if (IsDoneBreaking(state) || mc.player.getDistanceSq(_currBlock) > Math.pow(range, range))
         {
             _currBlock = null;
             return false;
@@ -59,15 +61,29 @@ public class BlockManager
         // CPacketAnimation
         mc.player.swingArm(EnumHand.MAIN_HAND);
         
+        EnumFacing facing = EnumFacing.UP;
+        
+        if (rayTrace)
+        {
+            RayTraceResult result = mc.world.rayTraceBlocks(
+                    new Vec3d(mc.player.posX, mc.player.posY + mc.player.getEyeHeight(), mc.player.posZ),
+                    new Vec3d(_currBlock.getX() + 0.5, _currBlock.getY() - 0.5,
+                            _currBlock.getZ() + 0.5));
+            
+            if (result != null && result.sideHit != null)
+                facing = result.sideHit;
+        }
+        
         if (!_started)
         {
             _started = true;
             // Start Break
-            mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, _currBlock, EnumFacing.UP));
+            
+            mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, _currBlock, facing));
         }
         else
         {
-            mc.playerController.onPlayerDamageBlock(_currBlock, EnumFacing.UP);
+            mc.playerController.onPlayerDamageBlock(_currBlock, facing);
         }
         
         return true;

@@ -136,6 +136,6 @@ public class AutoCityModule extends Module
 
         PlayerUtil.PacketFacePitchAndYaw((float)rotations[1], (float)rotations[0]);
         
-        BlockManager.Update();
+        BlockManager.Update(3, false);
     });
 }
