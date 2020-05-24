@@ -12,7 +12,6 @@ public class Snow
     private int _y;
     private int _fallingSpeed;
     private int _size;
-    private boolean flag = false;
     
     public Snow(int x, int y, int fallingSpeed, int size)
     {
@@ -47,8 +46,6 @@ public class Snow
         RenderUtil.drawRect(getX(), getY(), getX()+_size, getY()+_size, 0x99C9C5C5);
         
         setY(getY() + _fallingSpeed);
-        
-        flag = !flag;
         
         if (getY() > res.getScaledHeight() + 10 || getY() < -10)
         {
