@@ -12,6 +12,7 @@ import me.ionar.salhack.managers.HudManager;
 import me.ionar.salhack.managers.ImageManager;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.managers.NotificationManager;
+import me.ionar.salhack.managers.PresetsManager;
 import me.ionar.salhack.managers.TickRateManager;
 import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.waypoints.WaypointManager;
@@ -33,6 +34,7 @@ public class SalHack
     private static CapeManager m_CapeManager = new CapeManager();
     private static EntityManager m_EntityManager = new EntityManager();
     private static AlwaysEnabledModule m_AlwaysEnabledMod;
+    private static PresetsManager m_PresetsManager = new PresetsManager();
     private static Timer SalTimer = new Timer();
 
     public static void Init()
@@ -42,6 +44,7 @@ public class SalHack
 
         /// load before mods
         m_FontManager.Load();
+        m_PresetsManager.LoadPresets(); // must be before module init 
         m_ModuleManager.Init();
         m_HudManager.Init();
         m_CommandManager.InitalizeCommands();
@@ -145,5 +148,10 @@ public class SalHack
     public static EntityManager GetEntityManager()
     {
         return m_EntityManager;
+    }
+
+    public static PresetsManager GetPresetsManager()
+    {
+        return m_PresetsManager;
     }
 }

@@ -34,6 +34,9 @@ public class DirectoryManager
             CreateDirectory("SalHack/Waypoints");
             CreateDirectory("SalHack/Fonts");
             CreateDirectory("SalHack/CustomMods");
+            CreateDirectory("SalHack/Presets");
+            CreateDirectory("SalHack/Presets/Default");
+            CreateDirectory("SalHack/Presets/Default/Modules");
         }
         catch (IOException e)
         {

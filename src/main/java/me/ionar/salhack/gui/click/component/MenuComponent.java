@@ -21,7 +21,7 @@ import net.minecraft.client.renderer.RenderHelper;
 public class MenuComponent
 {
     private String DisplayName;
-    private ArrayList<ComponentItem> Items = new ArrayList<ComponentItem>();
+    protected ArrayList<ComponentItem> Items = new ArrayList<ComponentItem>();
     
     private float DefaultX;
     private float DefaultY;

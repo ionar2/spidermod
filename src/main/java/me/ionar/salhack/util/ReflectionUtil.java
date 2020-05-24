@@ -39,7 +39,7 @@ public final class ReflectionUtil
                     {
                         final ZipEntry entry = (ZipEntry) list.nextElement();
 
-                        if (entry.getName().contains(".class"))
+                        if (entry.getName().contains(".class") && !entry.getName().contains(".classpath"))
                         {
                             classes.add(classLoader.loadClass(
                                     entry.getName().substring(0, entry.getName().length() - 6).replace('/', '.')));

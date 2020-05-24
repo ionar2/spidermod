@@ -20,9 +20,11 @@ import com.google.gson.GsonBuilder;
 import me.ionar.salhack.gui.SalGuiScreen;
 import me.ionar.salhack.gui.click.component.*;
 import me.ionar.salhack.gui.click.component.menus.mods.MenuComponentModList;
+import me.ionar.salhack.gui.click.component.menus.mods.MenuComponentPresetsList;
 import me.ionar.salhack.gui.click.effects.Snow;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.managers.ImageManager;
+import me.ionar.salhack.managers.PresetsManager;
 import me.ionar.salhack.module.Module.ModuleType;
 import me.ionar.salhack.module.ui.ClickGuiModule;
 import me.ionar.salhack.module.ui.ColorsModule;
@@ -54,9 +56,14 @@ public class ClickGuiScreen extends SalGuiScreen
         MenuComponents.add(new MenuComponentModList("UI", ModuleType.UI, 560, 3, "mouse", p_Colors, p_Mod));
         MenuComponents.add(new MenuComponentModList("World", ModuleType.WORLD, 670, 3, "blockimg", p_Colors, p_Mod));
      //   MenuComponents.add(new MenuComponentModList("Bot", ModuleType.BOT, 780, 3, "robotimg", p_Colors));
-        MenuComponents
-                .add(new MenuComponentModList("Schematica", ModuleType.SCHEMATICA, 10, 203, "robotimg", p_Colors, p_Mod));
+        MenuComponents.add(new MenuComponentModList("Schematica", ModuleType.SCHEMATICA, 10, 203, "robotimg", p_Colors, p_Mod));
+        
+        MenuComponentPresetsList presetList = null;
+        
+        MenuComponents.add(presetList = new MenuComponentPresetsList("Presets", ModuleType.SCHEMATICA, 120, 203, "robotimg", p_Colors, p_Mod));
 
+        PresetsManager.Get().InitalizeGUIComponent(presetList);
+        
         ClickGuiMod = p_Mod;
 
         /// Load settings

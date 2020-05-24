@@ -20,6 +20,7 @@ import me.ionar.salhack.module.render.*;
 import me.ionar.salhack.module.schematica.*;
 import me.ionar.salhack.module.ui.*;
 import me.ionar.salhack.module.world.*;
+import me.ionar.salhack.preset.Preset;
 import me.ionar.salhack.util.ReflectionUtil;
 import me.ionar.salhack.util.render.RenderUtil;
 import net.minecraft.client.gui.GuiScreen;
@@ -180,9 +181,16 @@ public class ModuleManager
         
         Mods.sort((p_Mod1, p_Mod2) -> p_Mod1.getDisplayName().compareTo(p_Mod2.getDisplayName()));
 
-        Mods.forEach(p_Mod ->
+        final Preset preset = PresetsManager.Get().getActivePreset();
+        
+        Mods.forEach(mod ->
         {
-            p_Mod.LoadSettings();
+            preset.initValuesForMod(mod);
+        });
+        
+        Mods.forEach(mod ->
+        {
+            mod.init();
         });
     }
 

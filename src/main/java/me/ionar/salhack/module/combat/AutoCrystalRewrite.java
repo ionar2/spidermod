@@ -21,7 +21,7 @@ import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.module.misc.AutoMendArmorModule;
 import me.ionar.salhack.util.CrystalUtils;
-import me.ionar.salhack.util.Timer;
+import me.ionar.salhack.util.Timer; 
 import me.ionar.salhack.util.entity.EntityUtil;
 import me.ionar.salhack.util.entity.PlayerUtil;
 import me.ionar.salhack.util.render.RenderUtil;
@@ -90,12 +90,10 @@ public class AutoCrystalRewrite extends Module
     private SelfTrapModule _selfTrap = null;
     private HoleFillerModule _holeFiller = null;
     private AutoCityModule _autoCity = null;
-
+    
     @Override
-    public void LoadSettings()
+    public void init()
     {
-        super.LoadSettings();
-        
         Mod = this;
         
         // initalize the mods as needed

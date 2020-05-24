@@ -29,6 +29,7 @@ public class CommandManager
         Commands.add(new UnbindCommand());
         Commands.add(new ResetGUICommand());
         Commands.add(new FontCommand());
+        Commands.add(new PresetsCommand());
         
         ModuleManager.Get().GetModuleList().forEach(p_Mod ->
         {
