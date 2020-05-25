@@ -48,10 +48,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class AutoCrystalRewrite extends Module
 {
-    public static final Value<Float> PlaceDelay = new Value<Float>("PlaceDelay", new String[] {"PD"}, "Placement delay of placing crystals", 0f, 0f, 1000f, 100f);
-    public static final Value<Float> DestroyDelay = new Value<Float>("DestroyDelay", new String[] {"DD"}, "Delay for destroying crystals", 0f, 0f, 1000f, 100f);
-    public static final Value<Boolean> Multiplace = new Value<Boolean>("Multiplace", new String[] {"MP"}, "If disabled, destroys all crystals in range before placing", false);
-    
+    public static final Value<BreakModes> BreakMode = new Value<BreakModes>("BreakMode", new String[] {"BM"}, "Mode of breaking to use", BreakModes.Always);
     public static final Value<Float> PlaceRadius = new Value<Float>("PlaceRadius", new String[] {""}, "Radius for placing", 4.0f, 0.0f, 5.0f, 0.5f);
     public static final Value<Float> BreakRadius = new Value<Float>("BreakRadius", new String[] {""}, "Radius for BreakRadius", 4.0f, 0.0f, 5.0f, 0.5f);
     public static final Value<Float> WallsRange = new Value<Float>("WallsRange", new String[] {""}, "Max distance through walls", 3.5f, 0.0f, 5.0f, 0.5f);
@@ -62,12 +59,20 @@ public class AutoCrystalRewrite extends Module
     public static final Value<Boolean> AutoSwitch = new Value<Boolean>("AutoSwitch", new String[] {""}, "Automatically switches to crystals in your hotbar", true);
     public static final Value<Boolean> PauseIfHittingBlock = new Value<Boolean>("PauseIfHittingBlock", new String[] {""}, "Pauses when your hitting a block with a pickaxe", false);
     public static final Value<Boolean> PauseWhileEating = new Value<Boolean>("PauseWhileEating", new String[] {"PauseWhileEating"}, "Pause while eating", false);
-    
+    public static final Value<Boolean> NoSuicide = new Value<Boolean>("NoSuicide", new String[] {"NS"}, "Doesn't commit suicide/pop if you are going to take fatal damage from self placed crystal", true);
+     
     public static final Value<Boolean> Render = new Value<Boolean>("Render", new String[] {"Render"}, "Allows for rendering of block placements", true);
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
     public static final Value<Integer> Green = new Value<Integer>("Green", new String[] {"Green"}, "Green for rendering", 0xFF, 0, 255, 5);
     public static final Value<Integer> Blue = new Value<Integer>("Blue", new String[] {"Blue"}, "Blue for rendering", 0xF3, 0, 255, 5);
     public static final Value<Integer> Alpha = new Value<Integer>("Alpha", new String[] {"Alpha"}, "Alpha for rendering", 0x99, 0, 255, 5);
+    
+    public enum BreakModes
+    {
+        Always,
+        Smart,
+        OnlyOwn
+    }
     
     public AutoCrystalRewrite()
     {
@@ -75,8 +80,6 @@ public class AutoCrystalRewrite extends Module
     }
     
     private static AutoCrystalRewrite Mod = null;
-    public static Timer _placeTimer = new Timer();
-    public static Timer _destroyTimer = new Timer();
     public static Timer _removeVisualTimer = new Timer();
     private Timer _rotationResetTimer = new Timer();
     public static List<BlockPos> _placedCrystals = new CopyOnWriteArrayList<>();
@@ -115,10 +118,6 @@ public class AutoCrystalRewrite extends Module
     public void onEnable()
     {
         super.onEnable();
-        
-        // reset our timers in case we need to toggle on/off really quick
-        _placeTimer.reset();
-        _destroyTimer.reset();
         
         // clear placed crystals, we don't want to display them later on
         _placedCrystals.clear();
@@ -177,10 +176,8 @@ public class AutoCrystalRewrite extends Module
             return;
         }
 
-        if (_destroyTimer.passed(DestroyDelay.getValue()) && isValidCrystal) // we are checking null here because we don't want to waste time not destroying crystals right away
+        if (isValidCrystal) // we are checking null here because we don't want to waste time not destroying crystals right away
         {
-            _destroyTimer.reset();
-            
             // get facing rotations to the crystal
             final double rotations[] =  EntityUtil.calculateLookAt(crystal.posX + 0.5, crystal.posY - 0.5, crystal.posZ + 0.5, mc.player);
             
@@ -196,7 +193,7 @@ public class AutoCrystalRewrite extends Module
             mc.player.swingArm(EnumHand.MAIN_HAND);
             EntityManager.Get().AddAttackedCrystal(crystal);
         }
-        else if (isValidCrystal && !Multiplace.getValue()) // don't place more crystals, there is some to destroy at the next time.
+        else if (isValidCrystal) // don't place more crystals, there is some to destroy at the next time.
         {
             if (_rotations != null)
             {
@@ -207,7 +204,7 @@ public class AutoCrystalRewrite extends Module
         }
         
         // verify the placeTimer is ready, selectedPosition is not 0,0,0 and the event isn't already cancelled
-        if (_placeTimer.passed(PlaceDelay.getValue()) && !selectedPositions.isEmpty() && !event.isCancelled())
+        if (!selectedPositions.isEmpty() && !event.isCancelled())
         {
             // auto switch
             if (AutoSwitch.getValue())
@@ -258,9 +255,6 @@ public class AutoCrystalRewrite extends Module
                 }
                 return;
             }
-            
-            // only reset timer if we have a valid position, because if we don't we can iterate again next tick for speed (in this case, it's valid)
-            _placeTimer.reset();
             
             // get facing rotations to the position
             final double rotations[] =  EntityUtil.calculateLookAt(selectedPos.getX() + 0.5, selectedPos.getY() - 0.5, selectedPos.getZ() + 0.5, mc.player);

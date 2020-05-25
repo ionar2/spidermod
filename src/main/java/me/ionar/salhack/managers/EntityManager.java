@@ -2,6 +2,7 @@ package me.ionar.salhack.managers;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -66,6 +67,44 @@ public class EntityManager implements Listenable
         
         if (e.getDistance(mc.player) > (!mc.player.canEntityBeSeen(e) ? WallsRange.getValue() : BreakRadius.getValue()))
             return false;
+        
+        switch (BreakMode.getValue())
+        {
+            case OnlyOwn:
+                return e.getDistance(e.posX, e.posY, e.posZ) <= 3;
+            case Smart:
+                float selfDamage = CrystalUtils.calculateDamage(mc.world, e.posX, e.posY, e.posZ, mc.player, 0);
+                
+                if (selfDamage > MaxSelfDMG.getValue())
+                    return false;
+                
+                if (NoSuicide.getValue() && selfDamage >= mc.player.getHealth()+mc.player.getAbsorptionAmount())
+                    return false;
+
+                // iterate through all players, and crystal positions to find the best position for most damage
+                for (EntityPlayer player : mc.world.playerEntities)
+                {
+                    // Ignore if the player is us, a friend, dead, or has no health (the dead variable is sometimes delayed)
+                    if (player == mc.player || FriendManager.Get().IsFriend(player) || mc.player.isDead || (mc.player.getHealth() + mc.player.getAbsorptionAmount()) <= 0.0f)
+                        continue;
+                    
+                    // store this as a variable for faceplace per player
+                    float minDamage = MinDMG.getValue();
+                    
+                    // check if players health + gap health is less than or equal to faceplace, then we activate faceplacing
+                    if (player.getHealth() + player.getAbsorptionAmount() <= FacePlace.getValue())
+                        minDamage = 1f;
+                    
+                    float calculatedDamage = CrystalUtils.calculateDamage(mc.world,  e.posX, e.posY, e.posZ, player, 0);
+                    
+                    if (calculatedDamage > minDamage)
+                        return true;
+                }
+                break;
+            case Always:
+            default:
+                break;
+        }
         
         return true;
     }
@@ -132,7 +171,7 @@ public class EntityManager implements Listenable
                     float minDamage = MinDMG.getValue();
                     
                     // check if players health + gap health is less than or equal to faceplace, then we activate faceplacing
-                    if (mc.player.getHealth() + mc.player.getAbsorptionAmount() <= FacePlace.getValue())
+                    if (player.getHealth() + player.getAbsorptionAmount() <= FacePlace.getValue())
                         minDamage = 1f;
                     
                     for (BlockPos pos : cachedCrystalBlocks)
@@ -141,7 +180,10 @@ public class EntityManager implements Listenable
                         
                         if (selfDamage > MaxSelfDMG.getValue())
                             continue;
-    
+
+                        if (NoSuicide.getValue() && selfDamage >= mc.player.getHealth()+mc.player.getAbsorptionAmount())
+                            continue;
+                        
                         if (WallsRange.getValue() > 0)
                         {
                             if (!PlayerUtil.CanSeeBlock(pos))
@@ -164,8 +206,30 @@ public class EntityManager implements Listenable
                 
                 if (playerTarget != null)
                 {
+                    if (playerTarget.isDead || playerTarget.getHealth() <= 0.0f)
+                        return;
+                    
                     if (!_placeLocations.isEmpty())
                     {
+                        // store this as a variable for faceplace per player
+                        float minDamage = MinDMG.getValue();
+                        
+                        // check if players health + gap health is less than or equal to faceplace, then we activate faceplacing
+                        if (playerTarget.getHealth() + playerTarget.getAbsorptionAmount() <= FacePlace.getValue())
+                            minDamage = 1f;
+                        
+                        // iterate this again, we need to remove some values that are useless
+                        Iterator<BlockPos> itr = _placeLocations.iterator();
+                        while (itr.hasNext())
+                        {
+                            BlockPos pos = itr.next();
+
+                            float calculatedDamage = CrystalUtils.calculateDamage(mc.world, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, playerTarget, 0);
+                         
+                            if (calculatedDamage < minDamage)
+                                itr.remove();
+                        }
+                        
                         // at this point, the place locations list is in asc order, we need to reverse it to get to desc
                         Collections.reverse(_placeLocations);
                     
