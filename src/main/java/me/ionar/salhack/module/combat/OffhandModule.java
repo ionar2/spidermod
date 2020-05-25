@@ -19,6 +19,7 @@ public final class OffhandModule extends Module
     public final Value<Modes> Mode = new Value<Modes>("Mode", new String[]{"Mode"}, "If you are above the required health for a totem, x will be used in offhand instead.", Modes.Gap);
     public final Value<Float> ToggleHealth = new Value<Float>("ToggleHealth", new String[]
     { "TH" }, "When you are below this value, this will disable the module.", 10.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Boolean> HotbarFirst = new Value<Boolean>("HotbarFirst", new String[] {"Recursive"}, "Prioritizes your hotbar before inventory slots", false);
     
     public enum Modes
     {
@@ -45,7 +46,7 @@ public final class OffhandModule extends Module
         
         if (mc.player.getHeldItemOffhand().getItem() != l_Item)
         {
-            int l_Slot = PlayerUtil.GetRecursiveItemSlot(l_Item);
+            int l_Slot = HotbarFirst.getValue() ? PlayerUtil.GetRecursiveItemSlot(l_Item) : PlayerUtil.GetItemSlot(l_Item);
             
             if (l_Slot != -1)
             {

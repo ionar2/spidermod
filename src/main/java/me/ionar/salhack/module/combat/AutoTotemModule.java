@@ -34,6 +34,8 @@ public final class AutoTotemModule extends Module
     public final Value<Boolean> TotemOnElytra = new Value<Boolean>("TotemOnElytra", new String[] {"Elytra"}, "Will automatically switch to a totem if you're elytra flying", true);
     public final Value<Boolean> OffhandGapOnSword = new Value<Boolean>("SwordGap", new String[] {"SwordGap"}, "Will override all else, and try and use a gap in offhand when using a sword in main hand", false);
     public final Value<Boolean> OffhandStrNoStrSword = new Value<Boolean>("StrGap", new String[] {"Strength"}, "Will put a potion if offhand if you don't have strength and wearing a sword", false);
+    public final Value<Boolean> HotbarFirst = new Value<Boolean>("HotbarFirst", new String[] {"Recursive"}, "Prioritizes your hotbar before inventory slots", false);
+    
     
     public enum AutoTotemMode
     {
@@ -65,7 +67,7 @@ public final class AutoTotemModule extends Module
         
         if (mc.player.getHeldItemOffhand().getItem() != l_Item)
         {
-            int l_Slot = PlayerUtil.GetRecursiveItemSlot(l_Item);
+            int l_Slot = HotbarFirst.getValue() ? PlayerUtil.GetRecursiveItemSlot(l_Item) : PlayerUtil.GetItemSlot(l_Item);
             
             Item l_Fallback = GetItemFromModeVal(FallbackMode.getValue());
             
