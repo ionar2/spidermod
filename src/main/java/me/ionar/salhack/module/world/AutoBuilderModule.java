@@ -365,7 +365,7 @@ public class AutoBuilderModule extends Module
             
             IBlockState l_State = mc.world.getBlockState(l_Pos);
             
-            if (l_State != null && l_State.getBlock() != Blocks.AIR)
+            if (l_State != null && l_State.getBlock() != Blocks.AIR && l_State.getBlock() != Blocks.WATER)
                 continue;
             
             final AxisAlignedBB bb = new AxisAlignedBB(l_Pos.getX() - mc.getRenderManager().viewerPosX,
