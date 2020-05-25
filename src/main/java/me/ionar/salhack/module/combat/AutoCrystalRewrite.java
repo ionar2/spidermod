@@ -47,8 +47,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.server.SPacketSoundEffect;
@@ -76,7 +78,8 @@ public class AutoCrystalRewrite extends Module
     public static final Value<Boolean> PauseIfHittingBlock = new Value<Boolean>("PauseIfHittingBlock", new String[] {""}, "Pauses when your hitting a block with a pickaxe", false);
     public static final Value<Boolean> PauseWhileEating = new Value<Boolean>("PauseWhileEating", new String[] {"PauseWhileEating"}, "Pause while eating", false);
     public static final Value<Boolean> NoSuicide = new Value<Boolean>("NoSuicide", new String[] {"NS"}, "Doesn't commit suicide/pop if you are going to take fatal damage from self placed crystal", true);
-     
+    public static final Value<Boolean> AntiWeakness = new Value<Boolean>("AntiWeakness", new String[] {"AW"}, "Switches to a sword to try and break crystals", true);
+    
     public static final Value<Boolean> Render = new Value<Boolean>("Render", new String[] {"Render"}, "Allows for rendering of block placements", true);
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
     public static final Value<Integer> Green = new Value<Integer>("Green", new String[] {"Green"}, "Green for rendering", 0xFF, 0, 255, 5);
@@ -387,6 +390,27 @@ public class AutoCrystalRewrite extends Module
         
         if (isValidCrystal) // we are checking null here because we don't want to waste time not destroying crystals right away
         {
+            if (AntiWeakness.getValue() && mc.player.isPotionActive(MobEffects.WEAKNESS))
+            {
+                if (mc.player.getHeldItemMainhand() == ItemStack.EMPTY || (!(mc.player.getHeldItemMainhand().getItem() instanceof ItemSword) && !(mc.player.getHeldItemMainhand().getItem() instanceof ItemTool)))
+                {
+                    for (int i = 0; i < 9; ++i)
+                    {
+                        ItemStack stack = mc.player.inventory.getStackInSlot(i);
+                        
+                        if (stack.isEmpty())
+                            continue;
+                        
+                        if (stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemSword)
+                        {
+                            mc.player.inventory.currentItem = i;
+                            mc.playerController.updateController();
+                            break;
+                        }
+                    }
+                }
+            }
+            
             // get facing rotations to the crystal
             _rotations = EntityUtil.calculateLookAt(crystal.posX + 0.5, crystal.posY - 0.5, crystal.posZ + 0.5, mc.player);
             _rotationResetTimer.reset();
