@@ -85,16 +85,14 @@ public class AutoTendModule extends Module
 
                 final double l_Pos[] =  EntityUtil.calculateLookAt(
                         l_ClosestPos.getX() + 0.5,
-                        l_ClosestPos.getY() + 0.5,
+                        l_ClosestPos.getY() - 0.5,
                         l_ClosestPos.getZ() + 0.5,
                         mc.player);
 
-                mc.player.rotationYawHead = (float) l_Pos[0];
-
                 PlayerUtil.PacketFacePitchAndYaw((float)l_Pos[1], (float)l_Pos[0]);
 
-                mc.player.swingArm(EnumHand.MAIN_HAND);
                 mc.playerController.clickBlock(l_ClosestPos, EnumFacing.UP);
+                mc.player.swingArm(EnumHand.MAIN_HAND);
                 return;
             }
         }
@@ -117,11 +115,9 @@ public class AutoTendModule extends Module
 
                 final double l_Pos[] =  EntityUtil.calculateLookAt(
                         l_ClosestPos.getX() + 0.5,
-                        l_ClosestPos.getY() + 0.5,
+                        l_ClosestPos.getY() - 0.5,
                         l_ClosestPos.getZ() + 0.5,
                         mc.player);
-
-                mc.player.rotationYawHead = (float) l_Pos[0];
 
                 PlayerUtil.PacketFacePitchAndYaw((float)l_Pos[1], (float)l_Pos[0]);
 
