@@ -1,10 +1,5 @@
 package me.ionar.salhack.main;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import me.ionar.salhack.SalHackMod;
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
 import me.zero.alpine.fork.listener.EventHandler;
@@ -18,6 +13,10 @@ import net.minecraft.util.text.TextComponentString;
 public class AlwaysEnabledModule implements Listenable
 {
     public AlwaysEnabledModule()
+    {
+    }
+    
+    public void init()
     {
         SalHackMod.EVENT_BUS.subscribe(this);
     }

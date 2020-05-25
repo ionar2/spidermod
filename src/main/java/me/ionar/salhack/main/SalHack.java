@@ -5,7 +5,6 @@ import me.ionar.salhack.managers.CapeManager;
 import me.ionar.salhack.managers.CommandManager;
 import me.ionar.salhack.managers.DirectoryManager;
 import me.ionar.salhack.managers.DiscordManager;
-import me.ionar.salhack.managers.EntityManager;
 import me.ionar.salhack.managers.FontManager;
 import me.ionar.salhack.managers.FriendManager;
 import me.ionar.salhack.managers.HudManager;
@@ -32,10 +31,8 @@ public class SalHack
     private static NotificationManager m_NotificationManager = new NotificationManager();
     private static WaypointManager m_WaypointManager = new WaypointManager();
     private static CapeManager m_CapeManager = new CapeManager();
-    private static EntityManager m_EntityManager = new EntityManager();
     private static AlwaysEnabledModule m_AlwaysEnabledMod;
     private static PresetsManager m_PresetsManager = new PresetsManager();
-    private static Timer SalTimer = new Timer();
 
     public static void Init()
     {
@@ -55,26 +52,7 @@ public class SalHack
         
         /// features people can't turn off
         m_AlwaysEnabledMod = new AlwaysEnabledModule();
-        
-        new Thread(() ->
-        {
-            while (true)
-            {
-                try
-                {
-                    if (SalTimer.passed(50))
-                    {
-                        SalTimer.reset();
-                        //SalHackMod.EVENT_BUS.post(new EventSalHackTick());
-                        m_EntityManager.Update();
-                    }
-                }
-                catch (Exception e)
-                {
-                    
-                }
-            }
-        }).start();
+        m_AlwaysEnabledMod.init();
     }
 
     public static ModuleManager GetModuleManager()
@@ -144,12 +122,7 @@ public class SalHack
     {
         return m_CapeManager;
     }
-
-    public static EntityManager GetEntityManager()
-    {
-        return m_EntityManager;
-    }
-
+    
     public static PresetsManager GetPresetsManager()
     {
         return m_PresetsManager;
