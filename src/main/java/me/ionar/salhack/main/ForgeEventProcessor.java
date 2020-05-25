@@ -35,6 +35,31 @@ public class ForgeEventProcessor
     /// @TODO: All of these should be removed and replaced by mixins.
 
     @SubscribeEvent
+    public void onRender(RenderWorldLastEvent event)
+    { 
+        if (event.isCanceled())
+            return;
+        
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.disableDepth();
+
+        GlStateManager.glLineWidth(1f);
+        SalHackMod.EVENT_BUS.post(new RenderEvent(event.getPartialTicks()));
+        GlStateManager.glLineWidth(1f);
+
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableDepth();
+        GlStateManager.enableCull();
+    }
+    
+    @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent event)
     {
         if (Wrapper.GetMC().player == null)

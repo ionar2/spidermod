@@ -98,24 +98,6 @@ public class MixinEntityRenderer
     private void renderWorldPassPost(int pass, float partialTicks, long finishTimeNano, CallbackInfo callbackInfo)
     {
         RenderUtil.updateModelViewProjectionMatrix();
-        
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        GlStateManager.disableDepth();
-
-        GlStateManager.glLineWidth(1f);
-        SalHackMod.EVENT_BUS.post(new RenderEvent(partialTicks));
-        GlStateManager.glLineWidth(1f);
-
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableDepth();
-        GlStateManager.enableCull();
     }
 
     @Redirect(method = "orientCamera", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/WorldClient;rayTraceBlocks(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/RayTraceResult;"), expect = 0)
