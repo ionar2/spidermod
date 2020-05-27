@@ -25,6 +25,7 @@ public final class ChatModificationsModule extends Module
     public final Value<Boolean> AntiEZ = new Value<Boolean>("AntiEZ", new String[] {"NoEZ"}, "Prevents EZ from being rendered in chat, very useful for 2b2tpvp", true);
     public final Value<Boolean> NoDiscord = new Value<Boolean>("NoDiscord", new String[] {"NoEZ"}, "Prevents discord from being rendered in chat", true);
     public final Value<Boolean> NameHighlight = new Value<Boolean>("NameHighlight", new String[] {"Highlight"}, "Highlights your name in gold in chat", true);
+    public final Value<Integer> ChatLength = new Value<Integer>("ChatLength", new String[] {"ChatLength"}, "ChatLength number for more chat length", 100, 0, 0xFFFFFF, 1000);
 
     private enum TimeModes
     {

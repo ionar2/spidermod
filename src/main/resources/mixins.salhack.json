@@ -32,6 +32,7 @@
     "MixinGuiDisconnected",
     "MixinRenderManager",
     "MixinEntityPig",
-    "MixinEntityLlama"
+    "MixinEntityLlama",
+    "MixinGuiNewChat"
   ]
 }
