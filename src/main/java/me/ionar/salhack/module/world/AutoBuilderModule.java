@@ -70,6 +70,7 @@ public class AutoBuilderModule extends Module
         Cover,
         Wall,
         HighwayWall,
+        Stair,
     }
     
     public enum BuildingModes
@@ -812,6 +813,32 @@ public class AutoBuilderModule extends Module
                                 BlockArray.add(interpPos.add(0, l_Y, l_X));
                             }
                         }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case Stair:
+                
+                interpPos = orignPos.down();
+                
+                switch (PlayerUtil.GetFacing())
+                {
+                    case East:
+                        BlockArray.add(interpPos.east());
+                        BlockArray.add(interpPos.east().up());
+                        break;
+                    case North:
+                        BlockArray.add(interpPos.north());
+                        BlockArray.add(interpPos.north().up());
+                        break;
+                    case South:
+                        BlockArray.add(interpPos.south());
+                        BlockArray.add(interpPos.south().up());
+                        break;
+                    case West:
+                        BlockArray.add(interpPos.west());
+                        BlockArray.add(interpPos.west().up());
                         break;
                     default:
                         break;
