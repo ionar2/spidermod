@@ -116,9 +116,9 @@ public class StashLoggerModule extends Module
             }
             
             if (l_ChestsCount >= ChestNumberToImportantNotify.getValue())
-                SendMessage(String.format("%s chests located at chunk [%s, %s]", l_ChestsCount, l_Packet.getChunkX()*16, l_Packet.getChunkZ()*16), true);
+                SendMessage(String.format("%s chests located at chunk [%s, %s] Dimension: %s", l_ChestsCount, l_Packet.getChunkX()*16, l_Packet.getChunkZ()*16, GetDimensionName()), true);
             if (shulkers > 0)
-                SendMessage(String.format("%s shulker boxes at [%s, %s]", shulkers, l_Packet.getChunkX()*16, l_Packet.getChunkZ()*16), true);
+                SendMessage(String.format("%s shulker boxes at [%s, %s] Dimension: %s", shulkers, l_Packet.getChunkX()*16, l_Packet.getChunkZ()*16, GetDimensionName()), true);
         }
     });
     
@@ -132,8 +132,23 @@ public class StashLoggerModule extends Module
             
             if (horse.hasChest())
             {
-                SendMessage(String.format("%s chested animal located at [%s, %s]", horse.getName(), Math.floor(horse.posX), Math.floor(horse.posZ)), true);
+                SendMessage(String.format("%s chested animal located at [%s, %s] Dimension: %s", horse.getName(), Math.floor(horse.posX), Math.floor(horse.posZ), GetDimensionName()), true);
             }
         }
     });
+    
+    private String GetDimensionName()
+    {
+        switch (mc.player.dimension)
+        {
+            case -1:
+                return "Nether";
+            case 0:
+                return "Overworld";
+            case 1:
+                return "End";
+        }
+        
+        return "Aether";
+    }
 }
