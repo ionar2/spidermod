@@ -74,7 +74,7 @@ public class SpeedModule extends Module
         if (UseTimer.getValue())
             Timer.SetOverrideSpeed(1.088f);
         
-        if (mc.player.moveForward > 0.0f || mc.player.moveStrafing != 0.0f)
+        if (mc.player.moveForward != 0.0f || mc.player.moveStrafing != 0.0f)
         { 
             if (AutoSprint.getValue())
                 mc.player.setSprinting(true);
