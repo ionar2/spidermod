@@ -161,6 +161,7 @@ public class ModuleManager
         Add(new AutoBuilderModule());
         Add(new AutoNameTagModule());
         Add(new AutoToolModule());
+        Add(new AutoTunnelModule());
         Add(new AutoWitherModule());
         Add(new EnderChestFarmer());
         Add(new FastPlaceModule());

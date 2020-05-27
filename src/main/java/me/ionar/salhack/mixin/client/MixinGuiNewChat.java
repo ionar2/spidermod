@@ -34,7 +34,7 @@ public class MixinGuiNewChat
     public boolean isScrolled;
     
     @Inject(method = "setChatLine", at = @At("HEAD"), cancellable = true)
-    private void move(ITextComponent chatComponent, int chatLineId, int updateCounter, boolean displayOnly, CallbackInfo info)
+    private void setChatLine(ITextComponent chatComponent, int chatLineId, int updateCounter, boolean displayOnly, CallbackInfo info)
     {
         final ChatModificationsModule mod = (ChatModificationsModule)ModuleManager.Get().GetMod(ChatModificationsModule.class);
         if (mod != null)
