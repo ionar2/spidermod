@@ -146,6 +146,7 @@ public class ModuleManager
         Add(new TrajectoriesModule());
         Add(new ViewClipModule());
         Add(new VoidESPModule());
+        Add(new WaypointsModule());
 
         /// UI
         Add(new ColorsModule());

@@ -50,6 +50,6 @@ public class Command
 
     public String GetHelp()
     {
-        return "";
+        return Description;
     }
 }

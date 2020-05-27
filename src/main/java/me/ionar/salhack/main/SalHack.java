@@ -13,7 +13,7 @@ import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.managers.NotificationManager;
 import me.ionar.salhack.managers.PresetsManager;
 import me.ionar.salhack.managers.TickRateManager;
-import me.ionar.salhack.util.Timer;
+import me.ionar.salhack.managers.UUIDManager;
 import me.ionar.salhack.waypoints.WaypointManager;
 import net.minecraft.util.text.TextComponentString;
 
@@ -33,6 +33,7 @@ public class SalHack
     private static CapeManager m_CapeManager = new CapeManager();
     private static AlwaysEnabledModule m_AlwaysEnabledMod;
     private static PresetsManager m_PresetsManager = new PresetsManager();
+    private static UUIDManager m_UUIDManager = new UUIDManager();
 
     public static void Init()
     {
@@ -126,5 +127,10 @@ public class SalHack
     public static PresetsManager GetPresetsManager()
     {
         return m_PresetsManager;
+    }
+
+    public static UUIDManager GetUUIDManager()
+    {
+        return m_UUIDManager;
     }
 }
