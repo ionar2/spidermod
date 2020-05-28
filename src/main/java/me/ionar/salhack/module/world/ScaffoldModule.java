@@ -15,6 +15,7 @@ import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.util.entity.PlayerUtil;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -171,9 +172,9 @@ public class ScaffoldModule extends Module
                 }
             }
             
-            if (BlockInteractionHelper.place(toPlaceAt, 5.0f, false, false) == PlaceResult.Placed)
+            if (BlockInteractionHelper.place(toPlaceAt, 5.0f, false, false, true) == PlaceResult.Placed)
             {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
+                // swinging is already in the place function.
             }
         }
         else
@@ -282,7 +283,12 @@ public class ScaffoldModule extends Module
     
     private boolean isValidPlaceBlockState(BlockPos pos)
     {
-        return BlockInteractionHelper.valid(pos) == ValidResult.Ok;
+        ValidResult result = BlockInteractionHelper.valid(pos);
+        
+        if (result == ValidResult.AlreadyBlockThere)
+            return mc.world.getBlockState(pos).getMaterial().isReplaceable();
+        
+        return result == ValidResult.Ok;
     }
 
     private boolean verifyStack(ItemStack stack)

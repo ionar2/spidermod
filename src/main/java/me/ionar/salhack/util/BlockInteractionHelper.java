@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.EnumActionResult;
@@ -269,6 +270,11 @@ public class BlockInteractionHelper
 
     public static PlaceResult place(BlockPos pos, float p_Distance, boolean p_Rotate, boolean p_UseSlabRule)
     {
+        return place(pos, p_Distance, p_Rotate, p_UseSlabRule, false);
+    }
+    
+    public static PlaceResult place(BlockPos pos, float p_Distance, boolean p_Rotate, boolean p_UseSlabRule, boolean packetSwing)
+    {
         IBlockState l_State = mc.world.getBlockState(pos);
 
         boolean l_Replaceable = l_State.getMaterial().isReplaceable();
@@ -325,7 +331,10 @@ public class BlockInteractionHelper
 
                     if (l_Result2 != EnumActionResult.FAIL)
                     {
-                        mc.player.swingArm(EnumHand.MAIN_HAND);
+                        if (packetSwing)
+                            mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+                        else
+                            mc.player.swingArm(EnumHand.MAIN_HAND);
                         if (activated)
                         {
                             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
