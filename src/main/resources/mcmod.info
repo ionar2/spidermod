@@ -5,11 +5,11 @@
   "description": "SalHack utility mod.",
   "version": "2.05",
   "mcversion": "1.12.2",
-  "url": "http://salhack.dev",
-  "updateUrl": "http://salhack.dev",
+  "url": "https://salhack.com",
+  "updateUrl": "https://salhack.com",
   "authorList": ["ionar"],
   "credits": "ionar",
-  "logoFile": "",
+  "logoFile": "assets/salhack/imgs/SalHackWatermark.png",
   "screenshots": [],
   "dependencies": []
 }
