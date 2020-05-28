@@ -162,7 +162,7 @@ public class ScaffoldModule extends Module
                     final Vec3d hitVec = new Vec3d((Vec3i) neighbor).add(0.5, 0.5, 0.5).add(new Vec3d(side2.getDirectionVec()).scale(0.5));
                     if (eyesPos.distanceTo(hitVec) <= 5.0f)
                     {
-                        float[] rotations = getFacingRotations(toPlaceAt.getX(), toPlaceAt.getY(), toPlaceAt.getZ(), side);
+                        float[] rotations = BlockInteractionHelper.getFacingRotations(toPlaceAt.getX(), toPlaceAt.getY(), toPlaceAt.getZ(), side);
                         
                         event.cancel();
                         PlayerUtil.PacketFacePitchAndYaw(rotations[1], rotations[0]);
@@ -289,70 +289,4 @@ public class ScaffoldModule extends Module
     {
         return !stack.isEmpty() && stack.getItem() instanceof ItemBlock;
     }
-
-    // todo move these to blockinteractionhelper
-    
-    private float[] getFacingRotations(int x, int y, int z, EnumFacing facing)
-    {
-        return getFacingRotations(x, y, z, facing, 1);
-    }
-
-    private float[] getFacingRotations(int x, int y, int z, EnumFacing facing, double width)
-    {
-        return getRotationsForPosition(x + 0.5 + facing.getDirectionVec().getX() * width / 2.0, y + 0.5 + facing.getDirectionVec().getY() * width / 2.0, z + 0.5 + facing.getDirectionVec().getZ() * width / 2.0);
-    }
-
-    private float[] getRotationsForPosition(double x, double y, double z)
-    {
-        return getRotationsForPosition(x, y, z, mc.player.posX, mc.player.posY + mc.player.getEyeHeight(), mc.player.posZ);
-    }
-
-    private float[] getRotationsForPosition(double x, double y, double z, double sourceX, double sourceY, double sourceZ)
-    {
-        double deltaX = x - sourceX;
-        double deltaY = y - sourceY;
-        double deltaZ = z - sourceZ;
-
-        double yawToEntity;
-
-        if (deltaZ < 0 && deltaX < 0) { // quadrant 3
-            yawToEntity = 90D + Math.toDegrees(Math.atan(deltaZ / deltaX)); // 90
-            // degrees
-            // forward
-        } else if (deltaZ < 0 && deltaX > 0) { // quadrant 4
-            yawToEntity = -90D + Math.toDegrees(Math.atan(deltaZ / deltaX)); // 90
-            // degrees
-            // back
-        } else { // quadrants one or two
-            yawToEntity = Math.toDegrees(-Math.atan(deltaX / deltaZ));
-        }
-
-        double distanceXZ = Math.sqrt(deltaX * deltaX + deltaZ
-                * deltaZ);
-
-        double pitchToEntity = -Math.toDegrees(Math.atan(deltaY / distanceXZ));
-
-        yawToEntity = wrapAngleTo180((float) yawToEntity);
-        pitchToEntity = wrapAngleTo180((float) pitchToEntity);
-
-        yawToEntity = isNaN(yawToEntity) ? 0 : yawToEntity;
-        pitchToEntity = isNaN(pitchToEntity) ? 0 : pitchToEntity;
-
-        return new float[] { (float) yawToEntity, (float) pitchToEntity };
-    }
-
-    private float wrapAngleTo180(float angle)
-    {
-        angle %= 360.0F;
-
-        while (angle >= 180.0F) {
-            angle -= 360.0F;
-        }
-        while (angle < -180.0F) {
-            angle += 360.0F;
-        }
-
-        return angle;
-    }
-
 }
