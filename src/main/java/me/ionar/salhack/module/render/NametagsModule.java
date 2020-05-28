@@ -1,20 +1,14 @@
 package me.ionar.salhack.module.render;
 
-import me.ionar.salhack.events.blocks.EventCanCollideCheck;
-import me.ionar.salhack.events.client.EventClientTick;
 import me.ionar.salhack.events.render.EventRenderEntityName;
 import me.ionar.salhack.events.render.EventRenderGameOverlay;
-import me.ionar.salhack.events.render.EventRenderSetupFog;
-import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.managers.FontManager;
 import me.ionar.salhack.managers.FriendManager;
 import me.ionar.salhack.module.Module;
-import me.ionar.salhack.module.Module.ModuleType;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.MathUtil;
 import me.ionar.salhack.util.entity.EntityUtil;
-import me.ionar.salhack.util.entity.ItemUtil;
 import me.ionar.salhack.util.render.GLUProjection;
 import me.ionar.salhack.util.render.RenderUtil;
 import me.zero.alpine.fork.listener.EventHandler;
@@ -26,38 +20,23 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.*;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.play.server.SPacketSoundEffect;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class NametagsModule extends Module
 {
@@ -74,7 +53,7 @@ public class NametagsModule extends Module
     public NametagsModule()
     {
         super("NameTags", new String[]
-        { "Nametag" }, "Highlights entities", "NONE", -1, ModuleType.RENDER);
+        { "Nametag" }, "Improves nametags of players around you", "NONE", -1, ModuleType.RENDER);
     }
 
     @EventHandler
@@ -129,7 +108,7 @@ public class NametagsModule extends Module
                     bounds[0] + (bounds[2] - bounds[0]) / 2 - RenderUtil.getStringWidth(l_Name) / 2,
                     bounds[1] + (bounds[3] - bounds[1]) - 8 - 1, color);
                 
-           // if (this.armor.getValue())
+            if (Armor.getValue())
             {
                 final Iterator<ItemStack> items = e.getArmorInventoryList().iterator();
                 final ArrayList<ItemStack> stacks = new ArrayList<>();
