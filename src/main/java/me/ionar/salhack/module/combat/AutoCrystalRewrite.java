@@ -30,6 +30,7 @@ import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
@@ -98,6 +99,7 @@ public class AutoCrystalRewrite extends Module
     public static Timer _removeVisualTimer = new Timer();
     private Timer _rotationResetTimer = new Timer();
     private ConcurrentLinkedQueue<BlockPos> _placedCrystals = new ConcurrentLinkedQueue<>();
+    private ConcurrentHashMap<BlockPos, Float> _placedCrystalsDamage = new ConcurrentHashMap<>();
     private ICamera camera = new Frustum();
     private double[] _rotations = null;
     private ConcurrentHashMap<EntityEnderCrystal, Integer> _attackedEnderCrystals = new ConcurrentHashMap<>();
@@ -142,6 +144,7 @@ public class AutoCrystalRewrite extends Module
         
         // clear placed crystals, we don't want to display them later on
         _placedCrystals.clear();
+        _placedCrystalsDamage.clear();
         
         // also reset ticks on enable, we need as much speed as we can get.
         _remainingTicks = 0;
@@ -277,7 +280,12 @@ public class AutoCrystalRewrite extends Module
             _removeVisualTimer.reset();
             
             if (!_placedCrystals.isEmpty())
-                _placedCrystals.remove();
+            {
+                BlockPos removed = _placedCrystals.remove();
+                
+                if (removed != null)
+                    _placedCrystalsDamage.remove(removed);
+            }
             
             _attackedEnderCrystals.clear();
         }
@@ -336,6 +344,7 @@ public class AutoCrystalRewrite extends Module
 
         // create a list of available place locations
         ArrayList<BlockPos> placeLocations = new ArrayList<BlockPos>();
+        EntityPlayer playerTarget = null;
         
         // if we don't need to skip update, get crystal blocks
         if (!skipUpdateBlocks && _remainingTicks <= 0)
@@ -350,7 +359,6 @@ public class AutoCrystalRewrite extends Module
             {
                 float damage = 0f;
                 String target = null;
-                EntityPlayer playerTarget = null;
                 
                 // iterate through all players, and crystal positions to find the best position for most damage
                 for (EntityPlayer player : mc.world.playerEntities)
@@ -546,6 +554,13 @@ public class AutoCrystalRewrite extends Module
             // adds the selectedPos to the back of the placed crystals list
             _placedCrystals.add(selectedPos);
             
+            if (playerTarget != null)
+            {
+                float calculatedDamage = CrystalUtils.calculateDamage(mc.world, selectedPos.getX() + 0.5, selectedPos.getY() + 1.0, selectedPos.getZ() + 0.5, playerTarget, 0);
+                
+                _placedCrystalsDamage.put(selectedPos, calculatedDamage);
+            }
+            
             if (_lastPlaceLocation != BlockPos.ORIGIN && _lastPlaceLocation == selectedPos)
             {
                 // reset ticks, we don't need to do more rotations for this position, so we can crystal faster.
@@ -662,6 +677,18 @@ public class AutoCrystalRewrite extends Module
                 GlStateManager.enableTexture2D();
                 GlStateManager.disableBlend();
                 GlStateManager.popMatrix();
+
+                if (_placedCrystalsDamage.containsKey(pos))
+                {
+                    GlStateManager.pushMatrix();
+                    RenderUtil.glBillboardDistanceScaled((float) pos.getX() + 0.5f, (float) pos.getY() + 0.5f, (float) pos.getZ() + 0.5f, mc.player, 1);
+                    final float damage = _placedCrystalsDamage.get(pos);
+                    final String damageText = (Math.floor(damage) == damage ? (int) damage : String.format("%.1f", damage)) + "";
+                    GlStateManager.disableDepth();
+                    GlStateManager.translate(-(RenderUtil.getStringWidth(damageText) / 2.0d), 0, 0);
+                    RenderUtil.drawStringWithShadow(damageText, 0, 0, -1);
+                    GlStateManager.popMatrix();
+                }
             }
         });
     });
