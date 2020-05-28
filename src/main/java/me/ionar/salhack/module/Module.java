@@ -51,7 +51,6 @@ public class Module implements Listenable
     private int color;
     public boolean hidden = false;
     private boolean enabled = false;
-    protected boolean EnabledByDefault = false;
     private ModuleType type;
     private boolean m_NeedsClickGuiValueUpdate;
     protected final Minecraft mc = Minecraft.getMinecraft();

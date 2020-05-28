@@ -48,7 +48,6 @@ public class SalHack
         m_CommandManager.InitalizeCommands();
         
         m_ImageManager.Load();
-        m_DiscordManager.Start();
         m_FriendManager.Load();
         
         /// features people can't turn off

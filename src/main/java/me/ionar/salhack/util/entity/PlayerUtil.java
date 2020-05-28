@@ -1,5 +1,7 @@
 package me.ionar.salhack.util.entity;
 
+import java.text.DecimalFormat;
+
 import me.ionar.salhack.util.Hole.HoleTypes;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.block.state.IBlockState;
@@ -358,5 +360,24 @@ public class PlayerUtil
                 return FacingDirection.East;
         }
         return FacingDirection.North;
+    }
+
+    final static DecimalFormat Formatter = new DecimalFormat("#.#");
+    
+    public static float getSpeedInKM()
+    {
+        final double deltaX = mc.player.posX - mc.player.prevPosX;
+        final double deltaZ = mc.player.posZ - mc.player.prevPosZ;
+        
+        float l_Distance = MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+
+        double l_KMH = Math.floor(( l_Distance/1000.0f ) / ( 0.05f/3600.0f ));
+        
+        String l_Formatter = Formatter.format(l_KMH);
+        
+        if (!l_Formatter.contains("."))
+            l_Formatter += ".0";
+        
+        return Float.valueOf(l_Formatter);
     }
 }

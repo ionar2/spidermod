@@ -5,16 +5,17 @@ import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.main.Wrapper;
+import me.ionar.salhack.module.misc.DiscordRPCModule;
 
 public class DiscordManager
 {
-    public DiscordManager Get()
-    {
-        return SalHack.GetDiscordManager();
-    }
+    private DiscordRPCModule _rpcModule = null;
+    private Thread _thread = null;
 
-    public void Start()
+    public void enable()
     {
+        _rpcModule = (DiscordRPCModule)ModuleManager.Get().GetMod(DiscordRPCModule.class);
+        
         DiscordRPC lib = DiscordRPC.INSTANCE;
         String applicationId = "701991938206990397";
         String steamId = "";
@@ -25,13 +26,13 @@ public class DiscordManager
         presence.startTimestamp = System.currentTimeMillis() / 1000; // epoch second
         lib.Discord_UpdatePresence(presence);
         // in a worker thread
-        new Thread(() ->
+        _thread = new Thread(() ->
         {
             while (!Thread.currentThread().isInterrupted())
             {
                 lib.Discord_RunCallbacks();
-                presence.details = String.format("%s | %s | %s", Wrapper.GetMC().getSession().getUsername(), Wrapper.GetMC().getCurrentServerData() != null ? Wrapper.GetMC().getCurrentServerData().serverIP : "none", "SalHack on bottom!");
-                presence.state = "RIP IHackedXVIDEOS!";
+                presence.details = _rpcModule.generateDetails();
+                presence.state = _rpcModule.generateState();
                 lib.Discord_UpdatePresence(presence);
                 try
                 {
@@ -40,6 +41,18 @@ public class DiscordManager
                 {
                 }
             }
-        }, "RPC-Callback-Handler").start();
+        }, "RPC-Callback-Handler");
+        
+        _thread.start();
+    }
+    
+    public void disable() throws InterruptedException
+    {
+        _thread.interrupt();
+    }
+    
+    public static DiscordManager Get()
+    {
+        return SalHack.GetDiscordManager();
     }
 }

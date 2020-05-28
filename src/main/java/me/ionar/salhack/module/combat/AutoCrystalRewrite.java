@@ -725,4 +725,9 @@ public class AutoCrystalRewrite extends Module
         
         return false;
     }
+
+    public String getTarget()
+    {
+        return _lastTarget;
+    }
 }
