@@ -4,7 +4,11 @@
 
 Salhack is a forge mod for `1.12.2`. We provide already pre build jar files on our [release page](https://github.com/ionar2/salhack/releases). If you want to have changes before they get officially released check our [CI](https://github.com/ionar2/salhack/actions) out. (It builds a new jar file on every change we make.) To use salhack just drop the jar file in your mods folder and start forge. Have fun!
 
-**Tip:** You can open the GUI containing all hacks with your left arrow at default.
+**Tip:** You can open the GUI containing all "tweaks" with your left arrow at default (You can change that later.)
+
+## Support
+
+If you have a bug or want to suggest a feature raise an issue on Github or contact us via our Discord server.
 
 ## Info
 
