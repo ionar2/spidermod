@@ -23,7 +23,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build
+      run: |
+        ./gradlew setupDecompWorkspace
+        ./gradlew build
     - name: List files
       run: ls
     - name: Upload a Build Artifact
