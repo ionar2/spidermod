@@ -89,6 +89,7 @@ public class ModuleManager
         Add(new AutoReconnectModule());
         Add(new AutoShearModule());
         Add(new AutoShovelPathModule());
+        Add(new AutoSignModule());
         Add(new AutoTameModule());
         Add(new AutoTendModule());
         Add(new BuildHeightModule());
