@@ -8,6 +8,7 @@ import me.ionar.salhack.gui.click.component.item.ComponentItem;
 import me.ionar.salhack.main.Wrapper;
 import me.ionar.salhack.managers.FontManager;
 import me.ionar.salhack.managers.ImageManager;
+import me.ionar.salhack.module.ui.ClickGuiModule;
 import me.ionar.salhack.module.ui.ColorsModule;
 import me.ionar.salhack.util.imgs.SalDynamicTexture;
 import me.ionar.salhack.util.render.AbstractGui;
@@ -20,8 +21,10 @@ import net.minecraft.client.renderer.RenderHelper;
 public class MenuComponent
 {
     private String DisplayName;
-    private ArrayList<ComponentItem> Items = new ArrayList<ComponentItem>();
+    protected ArrayList<ComponentItem> Items = new ArrayList<ComponentItem>();
     
+    private float DefaultX;
+    private float DefaultY;
     private float X;
     private float Y;
     private float Height;
@@ -38,10 +41,13 @@ public class MenuComponent
     private int MousePlayAnim;
     private SalDynamicTexture BarTexture = null;
     private ColorsModule Colors;
+    private ClickGuiModule ClickGUI;
     
-    public MenuComponent(String p_DisplayName, float p_X, float p_Y, float p_Height, float p_Width, String p_Image, ColorsModule p_Colors)
+    public MenuComponent(String p_DisplayName, float p_X, float p_Y, float p_Height, float p_Width, String p_Image, ColorsModule p_Colors, ClickGuiModule p_ClickGui)
     {
         DisplayName = p_DisplayName;
+        DefaultX = p_X;
+        DefaultY = p_Y;
         X = p_X;
         Y = p_Y;
         Height = p_Height;
@@ -56,6 +62,7 @@ public class MenuComponent
         }
         
         Colors = p_Colors;
+        ClickGUI = p_ClickGui;
     }
     
     public void AddItem(ComponentItem p_Item)
@@ -66,7 +73,7 @@ public class MenuComponent
     final float BorderLength = 15.0f;
     final float Padding = 3;
     
-    public boolean Render(int p_MouseX, int p_MouseY, boolean p_CanHover, boolean p_AllowsOverflow)
+    public boolean Render(int p_MouseX, int p_MouseY, boolean p_CanHover, boolean p_AllowsOverflow, float p_OffsetY)
     {
         if (Dragging)
         {
@@ -91,7 +98,7 @@ public class MenuComponent
         }
 
         for (ComponentItem l_Item : Items)
-            l_Item.OnMouseMove(p_MouseX, p_MouseY, GetX(), GetY());
+            l_Item.OnMouseMove(p_MouseX, p_MouseY, GetX(), GetY()-p_OffsetY);
         
         if (IsMinimizing)
         {
@@ -125,10 +132,10 @@ public class MenuComponent
             }
         }
         
-        RenderUtil.drawGradientRect(GetX(), GetY()+17, GetX()+GetWidth(), GetY()+GetHeight(), 0x992A2A2A, 0x992A2A2A);
+        RenderUtil.drawGradientRect(GetX(), GetY()+17-p_OffsetY, GetX()+GetWidth(), GetY()+GetHeight(), 0x992A2A2A, 0x992A2A2A);
 
-        RenderUtil.drawRect(GetX(), GetY(), GetX() + GetWidth(), GetY() + 17, 0x99000000); /// top
-        FontManager.Get().TwCenMtStd28.drawStringWithShadow(GetDisplayName(), GetX() + 2, GetY() + 1, GetTextColor());
+        RenderUtil.drawRect(GetX(), GetY()-p_OffsetY, GetX() + GetWidth(), GetY() + 17-p_OffsetY, 0x99000000); /// top
+        FontManager.Get().TwCenMtStd28.drawStringWithShadow(GetDisplayName(), GetX() + 2, GetY() + 1-p_OffsetY, GetTextColor());
 
         
         if (BarTexture != null)
@@ -144,7 +151,7 @@ public class MenuComponent
             GlStateManager.color(Colors.ImageRed.getValue(), Colors.ImageGreen.getValue(), Colors.ImageBlue.getValue(), Colors.ImageAlpha.getValue());
             GlStateManager.enableTexture2D();
             //   public static void drawTexture(float x, float y, float width, float height, float u, float v, float t, float s)
-            RenderUtil.drawTexture(l_X, GetY()+3, BarTexture.GetWidth()/3, BarTexture.GetHeight()/3, 0, 0, 1, 1);
+            RenderUtil.drawTexture(l_X, GetY()+3-p_OffsetY, BarTexture.GetWidth()/3, BarTexture.GetHeight()/3, 0, 0, 1, 1);
             
             /*
             
@@ -173,7 +180,7 @@ public class MenuComponent
         
         if (!Minimized)
         {
-            float l_Y = GetY() + 5;
+            float l_Y = GetY() + 5-p_OffsetY;
             
             HoveredItem = null;
             
@@ -200,7 +207,7 @@ public class MenuComponent
                 IsMaximizing = false;
             }
             
-            if (HoveredItem != null)
+            if (HoveredItem != null && (ClickGUI != null ? ClickGUI.HoverDescriptions.getValue() : true))
             {
                 if (HoveredItem.GetDescription() != null && HoveredItem.GetDescription() != "")
                 {
@@ -219,7 +226,7 @@ public class MenuComponent
             RenderUtil.DrawPolygon(p_MouseX, p_MouseY, MousePlayAnim, 360, 0x99FFFFFF);
         }
         
-        return p_CanHover && p_MouseX > GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY > GetY() && p_MouseY < GetY()+GetHeight();
+        return p_CanHover && p_MouseX > GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY > GetY()-p_OffsetY && p_MouseY < GetY()+GetHeight()-p_OffsetY;
     }
     
     public float DisplayComponentItem(ComponentItem p_Item, float p_Y, int p_MouseX, int p_MouseY, boolean p_CanHover, boolean p_DisplayExtendedLine, final float p_MaxY)
@@ -294,9 +301,9 @@ public class MenuComponent
         return p_Y;
     }
 
-    public boolean MouseClicked(int p_MouseX, int p_MouseY, int p_MouseButton)
+    public boolean MouseClicked(int p_MouseX, int p_MouseY, int p_MouseButton, float offsetY)
     {
-        if (p_MouseX > GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY > GetY() && p_MouseY < GetY()+BorderLength)
+        if (p_MouseX > GetX() && p_MouseX < GetX() + GetWidth() && p_MouseY > GetY()-offsetY && p_MouseY < GetY()+BorderLength-offsetY)
         {
             /// Dragging (Top border)
             if (p_MouseButton == 0)
@@ -437,5 +444,17 @@ public class MenuComponent
     public int GetTextColor()
     {
     	return (Colors.Red.getValue() << 16) & 0x00FF0000 | (Colors.Green.getValue() << 8) & 0x0000FF00 | Colors.Blue.getValue() & 0x000000FF;
+    }
+
+    public void Default()
+    {
+        X = DefaultX;
+        Y = DefaultY;
+        
+        Items.forEach(comp ->
+        {
+            if (comp.HasState(ComponentItem.Extended))
+                comp.RemoveState(ComponentItem.Extended);
+        });
     }
 }

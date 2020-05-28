@@ -1,25 +1,17 @@
 package me.ionar.salhack.managers;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.lwjgl.opengl.GL11;
-
-import com.google.gson.internal.LinkedTreeMap;
-
 import me.ionar.salhack.SalHackMod;
-import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.main.SalHack;
-import me.ionar.salhack.main.Wrapper;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Module.ModuleType;
 import me.ionar.salhack.module.Value;
-import me.ionar.salhack.module.bot.*;
 import me.ionar.salhack.module.combat.*;
 import me.ionar.salhack.module.exploit.*;
 import me.ionar.salhack.module.misc.*;
@@ -28,15 +20,10 @@ import me.ionar.salhack.module.render.*;
 import me.ionar.salhack.module.schematica.*;
 import me.ionar.salhack.module.ui.*;
 import me.ionar.salhack.module.world.*;
-import me.ionar.salhack.util.Pair;
-import me.ionar.salhack.util.entity.EntityUtil;
-import me.ionar.salhack.util.render.CustomTessellator;
+import me.ionar.salhack.preset.Preset;
+import me.ionar.salhack.util.ReflectionUtil;
 import me.ionar.salhack.util.render.RenderUtil;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraft.client.gui.GuiScreen;
 
 public class ModuleManager
 {
@@ -51,18 +38,19 @@ public class ModuleManager
 
     public ArrayList<Module> Mods = new ArrayList<Module>();
     private ArrayList<Module> ArrayListAnimations = new ArrayList<Module>();
+    private KeybindsModule Keybinds = null;
     
     public void Init()
     {
-        /// Bot
-        Add(new DupeBot());
-        
         /// Combat
         Add(new AimbotModule());
+        Add(new AntiBots());
         Add(new AntiCityBossModule());
         Add(new Auto32kModule());
         Add(new AutoArmorModule());
+        Add(new AutoCityModule());
         Add(new AutoCrystalModule());
+        Add(new AutoCrystalRewrite());
         Add(new AutoTotemModule());
         Add(new AutoTrap());
         Add(new AutoTrapFeet());
@@ -70,6 +58,7 @@ public class ModuleManager
         Add(new CriticalsModule());
         Add(new HoleFillerModule());
         Add(new KillAuraModule());
+        Add(new OffhandModule());
         Add(new ReachModule());
         Add(new SelfTrapModule());
         Add(new SurroundModule());
@@ -81,7 +70,6 @@ public class ModuleManager
         Add(new CrashExploitModule());
         Add(new EntityDesyncModule());
         Add(new LiquidInteractModule());
-        Add(new ModifiedFreecam());
         Add(new MountBypassModule());
         Add(new NoMiningTrace());
         Add(new NewChunksModule());
@@ -97,6 +85,8 @@ public class ModuleManager
         Add(new AutoDyeModule());
         Add(new AutoFarmlandModule());
         Add(new AutoMendArmorModule());
+        Add(new AutoMountModule());
+        Add(new AutoReconnectModule());
         Add(new AutoShearModule());
         Add(new AutoShovelPathModule());
         Add(new AutoTameModule());
@@ -105,6 +95,8 @@ public class ModuleManager
         Add(new ChatModificationsModule());
         Add(new ChatNotifierModule());
         Add(new ChestStealerModule());
+        Add(new ChestSwapModule());
+        Add(new FakePlayer());
         Add(new FriendsModule());
         Add(new GlobalLocationModule());
         Add(new HotbarCacheModule());
@@ -112,10 +104,13 @@ public class ModuleManager
         Add(new RetardChatModule());
         Add(new StopWatchModule());
         Add(new TotemPopNotifierModule());
+        Add(new VisualRangeModule());
         Add(new XCarryModule());
         
         /// Movement
         Add(new AntiLevitationModule());
+        Add(new AutoWalkModule());
+        Add(new BlinkModule());
         Add(new ElytraFlyModule());
         Add(new EntityControlModule());
         Add(new FlightModule());
@@ -127,6 +122,7 @@ public class ModuleManager
         Add(new SneakModule());
         Add(new SpeedModule());
         Add(new SprintModule());
+        Add(new StepModule());
         Add(new YawModule());
         
         /// Render
@@ -134,15 +130,25 @@ public class ModuleManager
         Add(new BlockHighlightModule());
         Add(new BreakHighlightModule());
         Add(new BrightnessModule());
-    //    Add(new ContainerPreviewModule());
-        Add(new ESPModule());
+        Add(new ChunkAnimator());
+        Add(new CityESPModule());
+        Add(new ContainerPreviewModule());
+        Add(new EntityESPModule());
+        Add(new FarmESPModule());
         Add(new FreecamModule());
         Add(new HandProgressModule());
+        Add(new HoleESPModule());
         Add(new NametagsModule());
         Add(new NoBobModule());
         Add(new NoRenderModule());
         Add(new ShulkerPreviewModule());
+        Add(new SkeletonModule());
+        Add(new StorageESPModule());
+        Add(new TracersModule());
         Add(new TrajectoriesModule());
+        Add(new ViewClipModule());
+        Add(new VoidESPModule());
+        Add(new WaypointsModule());
 
         /// UI
         Add(new ColorsModule());
@@ -150,31 +156,46 @@ public class ModuleManager
         Add(new ClickGuiModule());
         Add(new HudEditorModule());
         Add(new HudModule());
+        Add(Keybinds = new KeybindsModule());
         Add(new ReliantChatModule());
         
         /// World
         Add(new AutoBuilderModule());
         Add(new AutoNameTagModule());
         Add(new AutoToolModule());
+        Add(new AutoTunnelModule());
         Add(new AutoWitherModule());
+        Add(new EnderChestFarmer());
         Add(new FastPlaceModule());
         Add(new LawnmowerModule());
         Add(new NoGlitchBlocksModule());
         Add(new NoWeatherModule());
+        Add(new NukerModule());
         Add(new ScaffoldModule());
         Add(new SpeedyGonzales());
+        Add(new StashFinderModule());
+        Add(new StashLoggerModule());
         Add(new TimerModule());
         Add(new TorchAnnihilatorModule());
         
         /// Schematica
         Add(new PrinterModule());
         Add(new PrinterBypassModule());
-
+        
+        LoadExternalModules();
+        
         Mods.sort((p_Mod1, p_Mod2) -> p_Mod1.getDisplayName().compareTo(p_Mod2.getDisplayName()));
 
-        Mods.forEach(p_Mod ->
+        final Preset preset = PresetsManager.Get().getActivePreset();
+        
+        Mods.forEach(mod ->
         {
-            p_Mod.LoadSettings();
+            preset.initValuesForMod(mod);
+        });
+        
+        Mods.forEach(mod ->
+        {
+            mod.init();
         });
     }
 
@@ -224,14 +245,14 @@ public class ModuleManager
         return Mods;
     }
 
-    public void OnBind(String string)
+    public void OnKeyPress(String string)
     {
         if (string == null || string.isEmpty() || string.equalsIgnoreCase("NONE"))
             return;
         
         Mods.forEach(p_Mod ->
         {
-            if (p_Mod.getKey().equals(string))
+            if (p_Mod.IsKeyPressed(string))
             {
                 p_Mod.toggle();
             }
@@ -296,6 +317,50 @@ public class ModuleManager
         {
             ArrayListAnimations.remove(l_Mod);
             l_Mod.RemainingXAnimation = 0;
+        }
+    }
+
+    public boolean IgnoreStrictKeybinds()
+    {
+        if (GuiScreen.isAltKeyDown() && !Keybinds.Alt.getValue())
+            return true;
+        if (GuiScreen.isCtrlKeyDown() && !Keybinds.Ctrl.getValue())
+            return true;
+        if (GuiScreen.isShiftKeyDown() && !Keybinds.Shift.getValue())
+            return true;
+        
+        return false;
+    }
+    
+    public void LoadExternalModules()
+    {
+        // from seppuku
+        try
+        {
+            final File dir = new File("SalHack/CustomMods");
+            
+            for (Class newClass : ReflectionUtil.getClassesEx(dir.getPath()))
+            {
+                if (newClass == null)
+                    continue;
+                
+                // if we have found a class and the class inherits "Module"
+                if (Module.class.isAssignableFrom(newClass))
+                {
+                    //create a new instance of the class
+                    final Module module = (Module) newClass.newInstance();
+
+                    if (module != null)
+                    {
+                        // initialize the modules
+                        Add(module);
+                    }
+                }
+                
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 }

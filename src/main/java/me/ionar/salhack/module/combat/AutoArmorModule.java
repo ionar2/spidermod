@@ -1,6 +1,7 @@
 package me.ionar.salhack.module.combat;
 
 import me.ionar.salhack.events.player.EventPlayerUpdate;
+import me.ionar.salhack.gui.hud.components.ArmorComponent;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
@@ -16,15 +17,17 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 
 public final class AutoArmorModule extends Module
 {
-
-    public final Value<Float> delay = new Value("Delay", new String[]
+    public final Value<Float> delay = new Value<Float>("Delay", new String[]
     { "Del" }, "The amount of delay in milliseconds.", 50.0f, 0.0f, 1000.0f, 1.0f);
-    public final Value<Boolean> curse = new Value("Curse", new String[]
+    public final Value<Boolean> curse = new Value<Boolean>("Curse", new String[]
     { "Curses" }, "Prevents you from equipping armor with cursed enchantments.", false);
+    public final Value<Boolean> PreferElytra = new Value<Boolean>("Elytra", new String[] {"Wings"}, "Prefers elytra over chestplate if available", false);
+    public final Value<Boolean> ElytraReplace = new Value<Boolean>("ElytraReplace", new String[] {"ElytraReplace"}, "Attempts to replace your broken elytra", false);
 
     private Timer timer = new Timer();
 
@@ -43,115 +46,77 @@ public final class AutoArmorModule extends Module
         
         AutoMend = (AutoMendArmorModule)ModuleManager.Get().GetMod(AutoMendArmorModule.class);
     }
+    
+    private void SwitchItemIfNeed(ItemStack p_Stack, EntityEquipmentSlot p_Slot, int p_ArmorSlot)
+    {
+        if (p_Stack.getItem() == Items.AIR)
+        {
+            if (!timer.passed(delay.getValue()))
+                return;
+            
+            final int l_FoundSlot = findArmorSlot(p_Slot);
+
+            if (l_FoundSlot != -1)
+            {
+                timer.reset();
+                
+                /// support for xcarry
+                if (l_FoundSlot <= 4)
+                {
+                    /// We can't use quick move for this. have to send 2 packets, pickup and drop down.
+                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, l_FoundSlot, 0, ClickType.PICKUP, mc.player);
+                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, p_ArmorSlot, 0, ClickType.PICKUP, mc.player);
+                }
+                else
+                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, l_FoundSlot, 0, ClickType.QUICK_MOVE, mc.player);
+            }
+        }
+    }
 
     @EventHandler
     private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
         if (mc.currentScreen instanceof GuiInventory)
-        {
             return;
-        }
         
         if (AutoMend != null && AutoMend.isEnabled())
             return;
-
-        final ItemStack helm = mc.player.inventoryContainer.getSlot(5).getStack();
-
-        if (helm.getItem() == Items.AIR)
+        
+        SwitchItemIfNeed(mc.player.inventoryContainer.getSlot(5).getStack(), EntityEquipmentSlot.HEAD, 5);
+        SwitchItemIfNeed(mc.player.inventoryContainer.getSlot(6).getStack(), EntityEquipmentSlot.CHEST, 6);
+        SwitchItemIfNeed(mc.player.inventoryContainer.getSlot(7).getStack(), EntityEquipmentSlot.LEGS, 7);
+        SwitchItemIfNeed(mc.player.inventoryContainer.getSlot(8).getStack(), EntityEquipmentSlot.FEET, 8);
+        
+        if (ElytraReplace.getValue() && !mc.player.inventoryContainer.getSlot(6).getStack().isEmpty())
         {
-            final int slot = this.findArmorSlot(EntityEquipmentSlot.HEAD);
-
-            if (slot != -1)
+            ItemStack stack = mc.player.inventoryContainer.getSlot(6).getStack();
+            
+            if (stack.getItem() instanceof ItemElytra)
             {
-                if (slot <= 4)
+                if (!ItemElytra.isUsable(stack) && ArmorComponent.GetPctFromStack(stack) < 3)
                 {
-                    if (this.timer.passed(this.delay.getValue()))
+                    for (int i = 0; i < mc.player.inventoryContainer.getInventory().size(); ++i)
                     {
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 5, 0, ClickType.PICKUP, mc.player);
-                        this.timer.reset();
+                        /// @see: https://wiki.vg/Inventory, 0 is crafting slot, and 5,6,7,8 are Armor slots
+                        if (i == 0 || i == 5 || i == 6 || i == 7 || i == 8)
+                            continue;
+                        
+                        ItemStack s = mc.player.inventoryContainer.getInventory().get(i);
+                        if (s != null && s.getItem() != Items.AIR)
+                        {
+                            if (s.getItem() instanceof ItemElytra && ItemElytra.isUsable(s))
+                            {
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, 0, ClickType.PICKUP, mc.player);
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.PICKUP, mc.player);
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, 0, ClickType.PICKUP, mc.player);
+                                break;
+                            }
+                        }
                     }
                 }
-                else
-                    this.clickSlot(slot, 0, ClickType.QUICK_MOVE);
-            }
-        }
-
-        final ItemStack chest = mc.player.inventoryContainer.getSlot(6).getStack();
-
-        if (chest.getItem() == Items.AIR)
-        {
-            final int slot = this.findArmorSlot(EntityEquipmentSlot.CHEST);
-
-            if (slot != -1)
-            {
-                if (slot <= 4)
-                {
-                    if (this.timer.passed(this.delay.getValue()))
-                    {
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.PICKUP, mc.player);
-                        this.timer.reset();
-                    }
-                }
-                else
-                    this.clickSlot(slot, 0, ClickType.QUICK_MOVE);
-            }
-        }
-
-        final ItemStack legging = mc.player.inventoryContainer.getSlot(7).getStack();
-
-        if (legging.getItem() == Items.AIR)
-        {
-            final int slot = this.findArmorSlot(EntityEquipmentSlot.LEGS);
-
-            if (slot != -1)
-            {
-                if (slot <= 4)
-                {
-                    if (this.timer.passed(this.delay.getValue()))
-                    {
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 7, 0, ClickType.PICKUP, mc.player);
-                        this.timer.reset();
-                    }
-                }
-                else
-                    this.clickSlot(slot, 0, ClickType.QUICK_MOVE);
-            }
-        }
-
-        final ItemStack feet = mc.player.inventoryContainer.getSlot(8).getStack();
-
-        if (feet.getItem() == Items.AIR)
-        {
-            final int slot = this.findArmorSlot(EntityEquipmentSlot.FEET);
-
-            if (slot != -1)
-            {
-                if (slot <= 4)
-                {
-                    if (this.timer.passed(this.delay.getValue()))
-                    {
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 8, 0, ClickType.PICKUP, mc.player);
-                        this.timer.reset();
-                    }
-                }
-                else
-                    this.clickSlot(slot, 0, ClickType.QUICK_MOVE);
             }
         }
     });
-
-    private void clickSlot(int slot, int mouse, ClickType type)
-    {
-        if (this.timer.passed(this.delay.getValue()))
-        {
-            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, mouse, type, mc.player);
-            this.timer.reset();
-        }
-    }
 
     private int findArmorSlot(EntityEquipmentSlot type)
     {
@@ -160,13 +125,13 @@ public final class AutoArmorModule extends Module
 
         for (int i = 0; i < mc.player.inventoryContainer.getInventory().size(); ++i)
         {
+            /// @see: https://wiki.vg/Inventory, 0 is crafting slot, and 5,6,7,8 are Armor slots
             if (i == 0 || i == 5 || i == 6 || i == 7 || i == 8)
                 continue;
             
             ItemStack s = mc.player.inventoryContainer.getInventory().get(i);
             if (s != null && s.getItem() != Items.AIR)
             {
-
                 if (s.getItem() instanceof ItemArmor)
                 {
                     final ItemArmor armor = (ItemArmor) s.getItem();
@@ -183,6 +148,8 @@ public final class AutoArmorModule extends Module
                         }
                     }
                 }
+                else if (type == EntityEquipmentSlot.CHEST && PreferElytra.getValue() && s.getItem() instanceof ItemElytra && ArmorComponent.GetPctFromStack(s) > 3)
+                    return i;
             }
         }
 

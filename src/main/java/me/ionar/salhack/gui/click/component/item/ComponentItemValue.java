@@ -2,6 +2,8 @@ package me.ionar.salhack.gui.click.component.item;
 
 import java.math.BigDecimal;
 
+import org.lwjgl.input.Keyboard;
+
 import me.ionar.salhack.gui.click.component.listeners.ComponentItemListener;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
@@ -14,6 +16,7 @@ public class ComponentItemValue extends ComponentItem
     private boolean IsDraggingSlider = false;
     private Timer timer = new Timer();
     private String DisplayString = "";
+    private boolean _isEditingString = false;
 
     public ComponentItemValue(final Value p_Val, String p_DisplayText, String p_Description, int p_Flags, int p_State, ComponentItemListener p_Listener, float p_Width,
             float p_Height)
@@ -127,7 +130,7 @@ public class ComponentItemValue extends ComponentItem
             return l_DisplayText;
         }
 
-        String l_DisplayText = Val.getName() + " " + Val.getValue().toString() + " ";
+        String l_DisplayText = Val.getName() + " " + (Val.getValue() == null ? "null" : Val.getValue().toString()) + " ";
         
         if (HasState(ComponentItem.Hovered) && RenderUtil.getStringWidth(l_DisplayText) > GetWidth() - 3)
         {
@@ -177,10 +180,8 @@ public class ComponentItemValue extends ComponentItem
             Val.setEnumValue(Val.GetNextEnumValue(p_MouseButton == 1));
         else if (Val.getValue() instanceof String)
         {
-            /*String l_String = Mod.GetNextStringValue(Val, p_MouseButton == 1);
-
-            if (l_String != null)
-                Val.setValue(l_String);*/
+            _isEditingString = !_isEditingString;
+            Val.setValue("");
         }
         else if (Val.getValue() instanceof Boolean)
         {
@@ -250,5 +251,33 @@ public class ComponentItemValue extends ComponentItem
         else if (Val.getValue().getClass() == Integer.class)
             this.Val.setValue((int) ((int) this.Val.getMax() * l_Pct));
         // salhack.INSTANCE.logChat("Calculated Pct is " + (l_X-GetX())/GetWidth());
+    }
+    
+    @Override
+    public void keyTyped(char typedChar, int keyCode)
+    {
+        if (_isEditingString)
+        {
+            if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) || Keyboard.isKeyDown(Keyboard.KEY_RETURN))
+            {
+                _isEditingString = false;
+                return;
+            }
+            
+            String string = (String)Val.getValue();
+            
+            if (string == null)
+                return;
+            
+            if (Keyboard.isKeyDown(Keyboard.KEY_BACK))
+            {
+                if (string.length() > 0)
+                    string = string.substring(0, string.length() - 1);
+            }
+            else if (Character.isDigit(typedChar) || Character.isLetter(typedChar))
+                string += typedChar;
+            
+            Val.setValue(string);;
+        }
     }
 }

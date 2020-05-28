@@ -1,11 +1,15 @@
 package me.ionar.salhack.mixin.client;
 
+import me.ionar.salhack.events.entity.EventEntityAdded;
+import me.ionar.salhack.events.entity.EventEntityRemoved;
 import me.ionar.salhack.events.world.EventWorldSetBlockState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import me.ionar.salhack.SalHackMod;
@@ -41,5 +45,27 @@ public class MixinWorld
             p_CallBack.cancel();
             p_CallBack.setReturnValue(false);
         }
+    }
+
+    @Inject(method = "onEntityAdded", at = @At("HEAD"), cancellable = true)
+    public void onEntityAdded(Entity p_Entity, CallbackInfo p_Info)
+    {
+        EventEntityAdded l_Event = new EventEntityAdded(p_Entity);
+
+        SalHackMod.EVENT_BUS.post(l_Event);
+
+        if (l_Event.isCancelled())
+            p_Info.cancel();
+    }
+
+    @Inject(method = "onEntityRemoved", at = @At("HEAD"), cancellable = true)
+    public void onEntityRemoved(Entity p_Entity, CallbackInfo p_Info)
+    {
+        EventEntityRemoved l_Event = new EventEntityRemoved(p_Entity);
+
+        SalHackMod.EVENT_BUS.post(l_Event);
+
+        if (l_Event.isCancelled())
+            p_Info.cancel();
     }
 }

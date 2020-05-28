@@ -37,7 +37,7 @@ public class HudComponentItem
 
     private boolean Hidden = true;
     private boolean Dragging = false;
-    protected boolean Clamped = false;
+    protected int ClampLevel = 0;
     protected int Side = 0;
     private boolean Selected = false;
     private boolean MultiSelectedDragging = false;
@@ -106,8 +106,8 @@ public class HudComponentItem
             return;
         
         X = p_X;
-        
-        if (!Clamped)
+
+        if (ClampLevel == 0)
             HudManager.Get().ScheduleSave(this);
     }
 
@@ -118,7 +118,7 @@ public class HudComponentItem
         
         Y = p_Y;
 
-        if (!Clamped)
+        if (ClampLevel == 0)
             HudManager.Get().ScheduleSave(this);
     }
 
@@ -138,9 +138,9 @@ public class HudComponentItem
         ClampY = p_Y;
     }
 
-    protected void SetClamped(boolean p_Clamped)
+    protected void SetClampLevel(int p_ClampLevel)
     {
-        Clamped = p_Clamped;
+        ClampLevel = p_ClampLevel;
     }
 
     /// don't override unless you return this
@@ -218,7 +218,10 @@ public class HudComponentItem
             }
             else if (p_MouseButton == 2)
             {
-                SetClamped(!IsClamped());
+                ++ClampLevel;
+                
+                if (ClampLevel > 2)
+                    ClampLevel = 0;
                 SetClampPosition(GetX(), GetY());
                 HudManager.Get().ScheduleSave(this);
             }
@@ -291,9 +294,9 @@ public class HudComponentItem
                     continue;
                 }
                 
-                if (l_Key.equalsIgnoreCase("Clamped"))
+                if (l_Key.equalsIgnoreCase("ClampLevel"))
                 {
-                    SetClamped(l_Value.equalsIgnoreCase("true"));
+                    SetClampLevel(Integer.parseInt(l_Value));
                     continue;
                 }
 
@@ -359,9 +362,9 @@ public class HudComponentItem
         return Side;
     }
 
-    public boolean IsClamped()
+    public int GetClampLevel()
     {
-        return Clamped;
+        return ClampLevel;
     }
     
     public boolean HasFlag(int p_Flag)

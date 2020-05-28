@@ -20,6 +20,7 @@ import me.ionar.salhack.gui.hud.components.*;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.main.Wrapper;
 import me.ionar.salhack.module.Value;
+import me.ionar.salhack.module.ValueListeners;
 import net.minecraft.client.gui.GuiScreen;
 
 public class HudManager
@@ -27,7 +28,7 @@ public class HudManager
     public HudManager()
     {
     }
-
+    
     public void Init()
     {
         Add(new WatermarkComponent());
@@ -86,7 +87,19 @@ public class HudManager
                     {
                         field.setAccessible(true);
                     }
+                    
                     final Value val = (Value) field.get(p_Item);
+                    
+                    ValueListeners listener = new ValueListeners()
+                    {
+                        @Override
+                        public void OnValueChange(Value p_Val)
+                        {
+                            ScheduleSave(p_Item);
+                        }
+                    };
+                    
+                    val.Listener = listener;
                     p_Item.ValueList.add(val);
                 }
             }
@@ -153,7 +166,7 @@ public class HudManager
             map.put("visible", !p_Item.IsHidden() ? "true" : "false");
             map.put("PositionX", String.valueOf(p_Item.GetX()));
             map.put("PositionY", String.valueOf(p_Item.GetY()));
-            map.put("Clamped", p_Item.IsClamped() ? "true" : "false");
+            map.put("ClampLevel", String.valueOf(p_Item.GetClampLevel()));
             map.put("ClampPositionX", String.valueOf(p_Item.GetX()));
             map.put("ClampPositionY", String.valueOf(p_Item.GetY()));
             map.put("Side", String.valueOf(p_Item.GetSide()));

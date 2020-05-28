@@ -7,6 +7,7 @@ import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.BlockInteractionHelper;
+import me.ionar.salhack.util.Timer;
 import me.ionar.salhack.util.entity.EntityUtil;
 import me.ionar.salhack.util.entity.PlayerUtil;
 import me.zero.alpine.fork.listener.EventHandler;
@@ -14,12 +15,10 @@ import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockFarmland;
-import net.minecraft.block.BlockRedstoneTorch;
-import net.minecraft.block.BlockTorch;
+import net.minecraft.block.BlockReed;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
@@ -34,6 +33,8 @@ public class AutoTendModule extends Module
 
     public final Value<Modes> Mode = new Value<Modes>("ReplantMode", new String[] {"Replant"}, "What crop to plant at empty plowed places", Modes.Wheat);
 
+    public final Value<Float> Delay = new Value<Float>("Delay", new String[] {"D"}, "Delay to harvest/replant", 1.0f, 0.0f, 10.0f, 0.1f);
+    
     private enum Modes
     {
         Beetrot,
@@ -48,6 +49,7 @@ public class AutoTendModule extends Module
     }
 
     private AutoBonemealModule Bonemeal;
+    private Timer timer = new Timer();
 
     @Override
     public void onEnable()
@@ -67,6 +69,11 @@ public class AutoTendModule extends Module
 
         if (Harvest.getValue())
         {
+            if (!timer.passed(Delay.getValue() * 100))
+                return;
+            
+            timer.reset();
+            
             BlockPos l_ClosestPos = BlockInteractionHelper.getSphere(PlayerUtil.GetLocalPlayerPosFloored(), Radius.getValue(), Radius.getValue(), false, true, 0).stream()
                                     .filter(p_Pos -> IsHarvestBlock(p_Pos))
                                     .min(Comparator.comparing(p_Pos -> EntityUtil.GetDistanceOfEntityToBlock(mc.player, p_Pos)))
@@ -78,22 +85,25 @@ public class AutoTendModule extends Module
 
                 final double l_Pos[] =  EntityUtil.calculateLookAt(
                         l_ClosestPos.getX() + 0.5,
-                        l_ClosestPos.getY() + 0.5,
+                        l_ClosestPos.getY() - 0.5,
                         l_ClosestPos.getZ() + 0.5,
                         mc.player);
 
-                mc.player.rotationYawHead = (float) l_Pos[0];
-
                 PlayerUtil.PacketFacePitchAndYaw((float)l_Pos[1], (float)l_Pos[0]);
 
-                mc.player.swingArm(EnumHand.MAIN_HAND);
                 mc.playerController.clickBlock(l_ClosestPos, EnumFacing.UP);
+                mc.player.swingArm(EnumHand.MAIN_HAND);
                 return;
             }
         }
 
         if (Replant.getValue() && HasSeeds())
         {
+            if (!timer.passed(Delay.getValue() * 100))
+                return;
+            
+            timer.reset();
+            
             BlockPos l_ClosestPos = BlockInteractionHelper.getSphere(PlayerUtil.GetLocalPlayerPosFloored(), Radius.getValue(), Radius.getValue(), false, true, 0).stream()
                                     .filter(p_Pos -> IsReplantBlock(p_Pos))
                                     .min(Comparator.comparing(p_Pos -> EntityUtil.GetDistanceOfEntityToBlock(mc.player, p_Pos)))
@@ -105,11 +115,9 @@ public class AutoTendModule extends Module
 
                 final double l_Pos[] =  EntityUtil.calculateLookAt(
                         l_ClosestPos.getX() + 0.5,
-                        l_ClosestPos.getY() + 0.5,
+                        l_ClosestPos.getY() - 0.5,
                         l_ClosestPos.getZ() + 0.5,
                         mc.player);
-
-                mc.player.rotationYawHead = (float) l_Pos[0];
 
                 PlayerUtil.PacketFacePitchAndYaw((float)l_Pos[1], (float)l_Pos[0]);
 
@@ -131,6 +139,11 @@ public class AutoTendModule extends Module
             BlockCrops l_Crop = (BlockCrops)l_State.getBlock();
 
             if (l_Crop.isMaxAge(l_State))
+                return true;
+        }
+        else if (l_State.getBlock() instanceof BlockReed)
+        {
+            if (mc.world.getBlockState(p_Pos.down()).getBlock() == Blocks.REEDS)
                 return true;
         }
 

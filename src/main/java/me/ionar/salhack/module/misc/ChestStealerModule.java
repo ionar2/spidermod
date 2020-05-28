@@ -72,6 +72,9 @@ public class ChestStealerModule extends Module
 
                 if (Shulkers.getValue() && !(l_Stack.getItem() instanceof ItemShulkerBox))
                     continue;
+                
+                if (l_Stack.isEmpty())
+                    continue;
 
                 switch (Mode.getValue())
                 {
@@ -101,6 +104,9 @@ public class ChestStealerModule extends Module
                 }
 
                 if (Shulkers.getValue() && !(l_Stack.getItem() instanceof ItemShulkerBox))
+                    continue;
+                
+                if (l_Stack.isEmpty())
                     continue;
 
                 switch (Mode.getValue())
@@ -133,6 +139,9 @@ public class ChestStealerModule extends Module
                 if (Shulkers.getValue() && !(l_Stack.getItem() instanceof ItemShulkerBox))
                     continue;
 
+                if (l_Stack.isEmpty())
+                    continue;
+                
                 switch (Mode.getValue())
                 {
                     case Steal:

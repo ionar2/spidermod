@@ -1,6 +1,8 @@
 package me.ionar.salhack.module.render;
 
+import me.ionar.salhack.events.blocks.EventSetOpaqueCube;
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
+import me.ionar.salhack.events.player.EventPlayerMove;
 import me.ionar.salhack.events.player.EventPlayerUpdate;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
@@ -18,7 +20,16 @@ public class FreecamModule extends Module
 {   
     public final Value<Float> speed = new Value<Float>("Speed", new String[]
     { "Spd" }, "Speed of freecam flight, higher number equals quicker motion.", 1.0f, 0.0f, 10.0f, 0.1f);
-
+    public final Value<Boolean> CancelPackes = new Value<Boolean>("Cancel Packets", new String[] {""}, "Cancels the packets, you won't be able to freely move without this.", true);
+    
+    public final Value<Modes> Mode = new Value<Modes>("Mode", new String[] {"M"}, "Mode of freecam to use, camera allows you to watch baritone, etc", Modes.Normal);
+    
+    public enum Modes
+    {
+        Normal,
+        Camera,
+    }
+    
     public FreecamModule()
     {
         super("Freecam", new String[] {"OutOfBody"}, "Allows out of body movement", "NONE", -1, ModuleType.RENDER);
@@ -29,6 +40,12 @@ public class FreecamModule extends Module
     private Vec3d position;
     private float yaw;
     private float pitch;
+
+    @Override
+    public void toggleNoSave()
+    {
+
+    }
     
     @Override
     public void onEnable()
@@ -38,37 +55,53 @@ public class FreecamModule extends Module
         if (mc.world == null)
             return;
         
-        if (mc.player.getRidingEntity() != null)
+        if (Mode.getValue() == Modes.Normal)
         {
-            this.riding = mc.player.getRidingEntity();
-            mc.player.dismountRidingEntity();
-        }
-        
-        Camera = new EntityOtherPlayerMP(mc.world, mc.getSession().getProfile());
-        Camera.copyLocationAndAnglesFrom(mc.player);
-        Camera.prevRotationYaw = mc.player.rotationYaw;
-        Camera.rotationYawHead = mc.player.rotationYawHead;
-        Camera.inventory.copyInventory(mc.player.inventory);
-        mc.world.addEntityToWorld(-69, Camera);
-
-        this.position = mc.player.getPositionVector();
-        this.yaw = mc.player.rotationYaw;
-        this.pitch = mc.player.rotationPitch;
-        mc.player.noClip = true;
-    }
+            riding = null;
+            
+            if (mc.player.getRidingEntity() != null)
+            {
+                this.riding = mc.player.getRidingEntity();
+                mc.player.dismountRidingEntity();
+            }
+            
+            Camera = new EntityOtherPlayerMP(mc.world, mc.getSession().getProfile());
+            Camera.copyLocationAndAnglesFrom(mc.player);
+            Camera.prevRotationYaw = mc.player.rotationYaw;
+            Camera.rotationYawHead = mc.player.rotationYawHead;
+            Camera.inventory.copyInventory(mc.player.inventory);
+            mc.world.addEntityToWorld(-69, Camera);
     
+            this.position = mc.player.getPositionVector();
+            this.yaw = mc.player.rotationYaw;
+            this.pitch = mc.player.rotationPitch;
+           
+            mc.player.noClip = true;
+        }
+        else // camera
+        {
+            Camera = new EntityOtherPlayerMP(mc.world, mc.getSession().getProfile());
+            Camera.copyLocationAndAnglesFrom(mc.player);
+            Camera.prevRotationYaw = mc.player.rotationYaw;
+            Camera.rotationYawHead = mc.player.rotationYawHead;
+            Camera.inventory.copyInventory(mc.player.inventory);
+            Camera.noClip = true;
+            mc.world.addEntityToWorld(-69, Camera);
+            mc.setRenderViewEntity(Camera);
+        }
+    }
     
     @Override
     public void onDisable()
     {
         super.onDisable();
-        Camera = null;
         
-        if (mc.world != null)
+        if (mc.world != null && Mode.getValue() == Modes.Normal)
         {
             if (this.riding != null)
             {
                 mc.player.startRiding(this.riding, true);
+                riding = null;
             }
             if (this.Camera != null)
             {
@@ -81,44 +114,64 @@ public class FreecamModule extends Module
             mc.player.rotationYaw = this.yaw;
             mc.player.rotationPitch = this.pitch;
             mc.player.noClip = false;
-            mc.player.motionX = 0;
-            mc.player.motionY = 0;
-            mc.player.motionZ = 0;
+            mc.player.setVelocity(0, 0, 0);
+        }
+        else if (Mode.getValue() == Modes.Camera)
+        {
+            if (this.Camera != null)
+            {
+                mc.world.removeEntity(this.Camera);
+            }
+            mc.setRenderViewEntity(mc.player);
         }
     }
 
     @EventHandler
+    private Listener<EventPlayerMove> OnPlayerMove = new Listener<>(p_Event ->
+    {
+        if (Mode.getValue() == Modes.Normal)
+            mc.player.noClip = true;
+    });
+
+    @EventHandler
+    private Listener<EventSetOpaqueCube> OnEventSetOpaqueCube  = new Listener<>(p_Event ->
+    {
+        p_Event.cancel();
+    });
+
+    @EventHandler
     private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
-        mc.player.noClip = true;
-
-        mc.player.setVelocity(0, 0, 0);
-        mc.player.renderArmPitch = 5000;
-        mc.player.jumpMovementFactor = this.speed.getValue();
-
-        final double[] dir = MathUtil.directionSpeed(this.speed.getValue());
-
-        if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0)
+        if (Mode.getValue() == Modes.Normal)
         {
-            mc.player.motionX = dir[0];
-            mc.player.motionZ = dir[1];
-        }
-        else
-        {
-            mc.player.motionX = 0;
-            mc.player.motionZ = 0;
-        }
-
-        mc.player.setSprinting(false);
-
-        if (mc.gameSettings.keyBindJump.isKeyDown())
-        {
-            mc.player.motionY += this.speed.getValue();
-        }
-
-        if (mc.gameSettings.keyBindSneak.isKeyDown())
-        {
-            mc.player.motionY -= this.speed.getValue();
+            mc.player.noClip = true;
+    
+            mc.player.setVelocity(0, 0, 0);
+    
+            final double[] dir = MathUtil.directionSpeed(this.speed.getValue());
+    
+            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0)
+            {
+                mc.player.motionX = dir[0];
+                mc.player.motionZ = dir[1];
+            }
+            else
+            {
+                mc.player.motionX = 0;
+                mc.player.motionZ = 0;
+            }
+    
+            mc.player.setSprinting(false);
+    
+            if (mc.gameSettings.keyBindJump.isKeyDown())
+            {
+                mc.player.motionY += this.speed.getValue();
+            }
+    
+            if (mc.gameSettings.keyBindSneak.isKeyDown())
+            {
+                mc.player.motionY -= this.speed.getValue();
+            }
         }
     });
     
@@ -134,15 +187,20 @@ public class FreecamModule extends Module
     @EventHandler
     private Listener<EventNetworkPacketEvent> PacketEvent = new Listener<>(p_Event ->
     {
-        if (!(p_Event.getPacket() instanceof CPacketUseEntity)
-                && !(p_Event.getPacket() instanceof CPacketPlayerTryUseItem)
-                && !(p_Event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock)
-                && !(p_Event.getPacket() instanceof CPacketPlayer)
-                && !(p_Event.getPacket() instanceof CPacketVehicleMove)
-                && !(p_Event.getPacket() instanceof CPacketChatMessage)
-                && !(p_Event.getPacket() instanceof CPacketKeepAlive))
+        if (Mode.getValue() == Modes.Normal)
         {
-            p_Event.cancel();
+            if (!CancelPackes.getValue())
+                return;
+            
+            if ((p_Event.getPacket() instanceof CPacketUseEntity)
+                    || (p_Event.getPacket() instanceof CPacketPlayerTryUseItem)
+                    || (p_Event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock)
+                    || (p_Event.getPacket() instanceof CPacketPlayer)
+                    || (p_Event.getPacket() instanceof CPacketVehicleMove)
+                    || (p_Event.getPacket() instanceof CPacketChatMessage))
+            {
+                p_Event.cancel();
+            }
         }
     });
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
+
 import me.ionar.salhack.events.MinecraftEvent.Era;
 import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
 import me.ionar.salhack.main.SalHack;
@@ -11,21 +13,19 @@ import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.BlockInteractionHelper;
 import me.ionar.salhack.util.SalUtil;
+import me.ionar.salhack.util.entity.PlayerUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEnderChest;
 import net.minecraft.block.BlockObsidian;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -70,6 +70,8 @@ public final class AutoTrap extends Module
             new Vec3d(0.0, 3.0, 0.0), // +3 middle
             new Vec3d(0.0, 4.0, 0.0) // +4 middle
     };
+    public final Value<Boolean> toggleMode = new Value<Boolean>("toggleMode", new String[]
+    { "toggleMode "}, "ToggleMode", true);
     public final Value<Float> range = new Value<Float>("range", new String[]
     { "range" }, "Range", 5.5f, 0f, 10.0f, 1.0f);
     public final Value<Integer> blockPerTick = new Value<Integer>("blockPerTick", new String[]
@@ -79,10 +81,9 @@ public final class AutoTrap extends Module
     public final Value<Boolean> announceUsage = new Value<Boolean>("announceUsage", new String[]
     { "announceUsage" }, "Announce Usage", true);
     public final Value<Boolean> EChests = new Value<Boolean>("EChests", new String[]
-    { "EChests" }, "EChests", true);
+    { "EChests" }, "EChests", false);
 
     public final Value<Modes> Mode = new Value<Modes>("Mode", new String[] {"Mode"}, "The mode to use for autotrap", Modes.Full);
-
 
     public enum Modes
     {
@@ -102,6 +103,15 @@ public final class AutoTrap extends Module
     private boolean isSneaking = false;
     private int offsetStep = 0;
     private boolean firstRun = true;
+    
+    @Override
+    public String getMetaData()
+    {
+        if (EChests.getValue())
+            return "Ender Chests";
+        
+        return "Obsidian";
+    }
 
     @Override
     public void toggleNoSave()
@@ -126,7 +136,7 @@ public final class AutoTrap extends Module
 
         if (findObiInHotbar() == -1)
         {
-            SalHack.SendMessage("[AutoTrap] You do not have any obisidan in your hotbar!");
+            SalHack.SendMessage(String.format("[AutoTrap] You do not have any %s in your hotbar!", ChatFormatting.LIGHT_PURPLE + (EChests.getValue() ? "Ender Chests" : "Obsidian") + ChatFormatting.RESET));
             toggle();
         }
     }
@@ -185,6 +195,15 @@ public final class AutoTrap extends Module
             if (announceUsage.getValue())
             {
                 SalHack.SendMessage("[AutoTrap] New target: " + lastTickTargetName);
+            }
+        }
+
+        if (toggleMode.getValue())
+        {
+            if (PlayerUtil.IsEntityTrapped(closestTarget))
+            {
+                toggle();
+                return;
             }
         }
 

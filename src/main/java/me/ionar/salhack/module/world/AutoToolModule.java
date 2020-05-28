@@ -5,6 +5,7 @@ import me.ionar.salhack.events.player.EventPlayerDamageBlock;
 import me.ionar.salhack.events.player.EventPlayerUpdate;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
+import me.ionar.salhack.util.Timer;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.block.Block;
@@ -28,11 +29,7 @@ public final class AutoToolModule extends Module
 
     public final Value<Boolean> silent = new Value<Boolean>("Silent", new String[]
     { "Sil" }, "Hold any item and spoof your mining tool.", true);
-
-    private boolean send;
-
-    public BlockPos position;
-    public EnumFacing facing;
+    public final Value<Boolean> GoBack = new Value<Boolean>("GoBack", new String[] {"ToolBack"}, "Replaces back to your original hotbar item, if you finish mining something", false);
 
     public AutoToolModule()
     {
@@ -40,6 +37,12 @@ public final class AutoToolModule extends Module
         { "Tool" }, "Automatically switches to the best tool", "NONE", 0x70DB24, ModuleType.WORLD);
     }
 
+    private boolean send;
+    public BlockPos position;
+    public EnumFacing facing;
+    private int _previousSlot = -1;
+    private Timer _timer = new Timer();
+    
     private float blockStrength(BlockPos pos, ItemStack stack)
     {
         float hardness = mc.world.getBlockState(pos).getBlockHardness(mc.world, pos);
@@ -172,12 +175,31 @@ public final class AutoToolModule extends Module
         }
         else
         {
+            _timer.reset();
             final int slot = getToolHotbar(p_Event.getPos());
-            if (slot != -1)
+            if (slot != -1 && mc.player.inventory.currentItem != slot)
             {
+                if (_previousSlot != slot)
+                    _previousSlot = mc.player.inventory.currentItem;
+                
                 mc.player.inventory.currentItem = slot;
                 mc.playerController.updateController();
             }
+        }
+    });
+    
+    @EventHandler
+    private Listener<EventPlayerUpdate> PlayerUpdate = new Listener<>(event ->
+    { 
+        if (_previousSlot != -1 && _timer.passed(250) && !mc.playerController.isHittingBlock)
+        {
+            _timer.reset();
+            if (GoBack.getValue())
+            {
+                mc.player.inventory.currentItem = _previousSlot;
+                mc.playerController.updateController();
+            }
+            _previousSlot = -1;
         }
     });
 
@@ -203,12 +225,12 @@ public final class AutoToolModule extends Module
                     if (slot != -1)
                     {
                         p_Event.cancel();
-                        Minecraft.getMinecraft().playerController.windowClick(Minecraft.getMinecraft().player.inventoryContainer.windowId, slot,
-                                Minecraft.getMinecraft().player.inventory.currentItem, ClickType.SWAP, Minecraft.getMinecraft().player);
+                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot,
+                                mc.player.inventory.currentItem, ClickType.SWAP, mc.player);
                         send = true;
-                        Minecraft.getMinecraft().player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, this.position, this.facing));
-                        Minecraft.getMinecraft().playerController.windowClick(Minecraft.getMinecraft().player.inventoryContainer.windowId, slot,
-                                Minecraft.getMinecraft().player.inventory.currentItem, ClickType.SWAP, Minecraft.getMinecraft().player);
+                        mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, this.position, this.facing));
+                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot,
+                                mc.player.inventory.currentItem, ClickType.SWAP, mc.player);
                     }
                     else
                     {
@@ -216,12 +238,12 @@ public final class AutoToolModule extends Module
                         if (hotbar != -1)
                         {
                             p_Event.cancel();
-                            Minecraft.getMinecraft().playerController.windowClick(Minecraft.getMinecraft().player.inventoryContainer.windowId, hotbar,
-                                    Minecraft.getMinecraft().player.inventory.currentItem, ClickType.SWAP, Minecraft.getMinecraft().player);
+                            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, hotbar,
+                                    mc.player.inventory.currentItem, ClickType.SWAP, mc.player);
                             send = true;
-                            Minecraft.getMinecraft().player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, this.position, this.facing));
-                            Minecraft.getMinecraft().playerController.windowClick(Minecraft.getMinecraft().player.inventoryContainer.windowId, hotbar,
-                                    Minecraft.getMinecraft().player.inventory.currentItem, ClickType.SWAP, Minecraft.getMinecraft().player);
+                            mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, this.position, this.facing));
+                            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, hotbar,
+                                    mc.player.inventory.currentItem, ClickType.SWAP, mc.player);
                         }
                     }
                 }
@@ -237,11 +259,11 @@ public final class AutoToolModule extends Module
 
         for (int i = 9; i < 36; i++)
         {
-            final ItemStack stack = Minecraft.getMinecraft().player.inventoryContainer.getSlot(i).getStack();
+            final ItemStack stack = mc.player.inventoryContainer.getSlot(i).getStack();
             if (stack != null && stack != ItemStack.EMPTY)
             {
                 final float digSpeed = EnchantmentHelper.getEnchantmentLevel(Enchantments.EFFICIENCY, stack);
-                final float destroySpeed = stack.getDestroySpeed(Minecraft.getMinecraft().world.getBlockState(pos));
+                final float destroySpeed = stack.getDestroySpeed(mc.world.getBlockState(pos));
 
                 if ((digSpeed + destroySpeed) > speed)
                 {
@@ -262,11 +284,11 @@ public final class AutoToolModule extends Module
 
         for (int i = 0; i <= 9; i++)
         {
-            final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
+            final ItemStack stack = mc.player.inventory.getStackInSlot(i);
             if (stack != null && stack != ItemStack.EMPTY)
             {
                 final float digSpeed = EnchantmentHelper.getEnchantmentLevel(Enchantments.EFFICIENCY, stack);
-                final float destroySpeed = stack.getDestroySpeed(Minecraft.getMinecraft().world.getBlockState(pos));
+                final float destroySpeed = stack.getDestroySpeed(mc.world.getBlockState(pos));
 
                 if ((digSpeed + destroySpeed) > speed)
                 {

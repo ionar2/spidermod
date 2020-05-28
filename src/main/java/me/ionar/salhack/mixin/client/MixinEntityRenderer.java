@@ -6,14 +6,18 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,8 +34,10 @@ import me.ionar.salhack.events.render.EventRenderGetEntitiesINAABBexcluding;
 import me.ionar.salhack.events.render.EventRenderGetFOVModifier;
 import me.ionar.salhack.events.render.EventRenderHand;
 import me.ionar.salhack.events.render.EventRenderHurtCameraEffect;
+import me.ionar.salhack.events.render.EventRenderOrientCamera;
 import me.ionar.salhack.events.render.EventRenderSetupFog;
 import me.ionar.salhack.events.render.EventRenderUpdateLightmap;
+import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.util.render.RenderUtil;
 
 @Mixin(EntityRenderer.class)
@@ -92,5 +98,16 @@ public class MixinEntityRenderer
     private void renderWorldPassPost(int pass, float partialTicks, long finishTimeNano, CallbackInfo callbackInfo)
     {
         RenderUtil.updateModelViewProjectionMatrix();
+    }
+
+    @Redirect(method = "orientCamera", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/WorldClient;rayTraceBlocks(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/RayTraceResult;"), expect = 0)
+    private RayTraceResult rayTraceBlocks(WorldClient worldClient, Vec3d start, Vec3d end)
+    {
+        EventRenderOrientCamera event = new EventRenderOrientCamera();
+        SalHackMod.EVENT_BUS.post(event);
+        if (event.isCancelled())
+            return null;
+        else
+            return worldClient.rayTraceBlocks(start, end);
     }
 }

@@ -951,4 +951,153 @@ public final class RenderUtil
         ts.draw();// Ends Z.
     }
 
+
+    public static void drawBox(AxisAlignedBB boundingBox)
+    {
+        assert(boundingBox != null);
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.maxY, (float)boundingBox.maxZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glEnd();
+          GlStateManager.glBegin(7);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.minZ);
+          GlStateManager.glVertex3f((float)boundingBox.minX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glVertex3f((float)boundingBox.maxX, (float)boundingBox.minY, (float)boundingBox.maxZ);
+          GlStateManager.glEnd();
+    }
+    
+    public static void drawOutlinedBox(AxisAlignedBB bb)
+    {
+          GL11.glBegin(1);
+          GL11.glVertex3d(bb.minX, bb.minY, bb.minZ);
+          GL11.glVertex3d(bb.maxX, bb.minY, bb.minZ);
+          GL11.glVertex3d(bb.maxX, bb.minY, bb.minZ);
+          GL11.glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+          GL11.glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+          GL11.glVertex3d(bb.minX, bb.minY, bb.maxZ);
+          GL11.glVertex3d(bb.minX, bb.minY, bb.maxZ);
+          GL11.glVertex3d(bb.minX, bb.minY, bb.minZ);
+          GL11.glVertex3d(bb.minX, bb.minY, bb.minZ);
+          GL11.glVertex3d(bb.minX, bb.maxY, bb.minZ);
+          GL11.glVertex3d(bb.maxX, bb.minY, bb.minZ);
+          GL11.glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+          GL11.glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+          GL11.glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+          GL11.glVertex3d(bb.minX, bb.minY, bb.maxZ);
+          GL11.glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+          GL11.glVertex3d(bb.minX, bb.maxY, bb.minZ);
+          GL11.glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+          GL11.glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+          GL11.glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+          GL11.glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+          GL11.glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+          GL11.glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+          GL11.glVertex3d(bb.minX, bb.maxY, bb.minZ);
+          GL11.glEnd();
+    }
+    
+    
+    public static void drawESPOutline(AxisAlignedBB bb, float red, float green, float blue, float alpha, float width)
+    {
+      GL11.glPushMatrix();
+      GL11.glEnable(3042);
+      GL11.glBlendFunc(770, 771);
+      GL11.glDisable(3553);
+      GL11.glEnable(2848);
+      GL11.glDisable(2929);
+      GL11.glDepthMask(false);
+      GL11.glLineWidth(width);
+      GL11.glColor4f(red / 255.0F, green / 255.0F, blue / 255.0F, alpha / 255.0F);
+      drawOutlinedBox(bb);
+      GL11.glDisable(2848);
+      GL11.glEnable(3553);
+      GL11.glEnable(2929);
+      GL11.glDepthMask(true);
+      GL11.glDisable(3042);
+      GL11.glPopMatrix();
+      GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    public static void drawESP(AxisAlignedBB bb, float red, float green, float blue, float alpha)
+    {
+      GL11.glPushMatrix();
+      GL11.glEnable(3042);
+      GL11.glBlendFunc(770, 771);
+      GL11.glDisable(3553);
+      GL11.glEnable(2848);
+      GL11.glDisable(2929);
+      GL11.glDepthMask(false);
+      GL11.glColor4f(red / 255.0F, green / 255.0F, blue / 255.0F, alpha / 255.0F);
+      drawBox(bb);
+      GL11.glDisable(2848);
+      GL11.glEnable(3553);
+      GL11.glEnable(2929);
+      GL11.glDepthMask(true);
+      GL11.glDisable(3042);
+      GL11.glPopMatrix();
+      GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+    }
 }

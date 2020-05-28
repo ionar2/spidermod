@@ -123,10 +123,12 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer
     {
         try
         {
-            double l_MotionX = motionX;
-            double l_MotionZ = motionZ;
-            super.jump();
-            SalHackMod.EVENT_BUS.post(new EventPlayerJump(l_MotionX, l_MotionZ));
+            EventPlayerJump l_Event = new EventPlayerJump(motionX, motionZ);
+
+            SalHackMod.EVENT_BUS.post(l_Event);
+            
+            if (!l_Event.isCancelled())
+                super.jump();
         }
         catch (Exception v3)
         {
@@ -134,7 +136,7 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer
         }
     }
 
-    @Inject(method = "displayGUIChest", at = @At("HEAD"), cancellable = true)
+    /*@Inject(method = "displayGUIChest", at = @At("HEAD"), cancellable = true)
     public void displayGUIChest(IInventory inventory, CallbackInfo ci)
     {
         /// @todo move to events
@@ -144,5 +146,5 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer
             Wrapper.GetMC().displayGuiScreen(new SalGuiChest(Wrapper.GetPlayer().inventory, inventory));
             ci.cancel();
         }
-    }
+    }*/
 }

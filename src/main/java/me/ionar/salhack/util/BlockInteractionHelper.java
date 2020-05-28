@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.EnumActionResult;
@@ -18,6 +19,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+
+import static java.lang.Double.isNaN;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -267,12 +270,17 @@ public class BlockInteractionHelper
 
     public static PlaceResult place(BlockPos pos, float p_Distance, boolean p_Rotate, boolean p_UseSlabRule)
     {
+        return place(pos, p_Distance, p_Rotate, p_UseSlabRule, false);
+    }
+    
+    public static PlaceResult place(BlockPos pos, float p_Distance, boolean p_Rotate, boolean p_UseSlabRule, boolean packetSwing)
+    {
         IBlockState l_State = mc.world.getBlockState(pos);
 
         boolean l_Replaceable = l_State.getMaterial().isReplaceable();
 
         boolean l_IsSlabAtBlock = l_State.getBlock() instanceof BlockSlab;
-
+        
         if (!l_Replaceable && !l_IsSlabAtBlock)
             return PlaceResult.NotReplaceable;
         if (!BlockInteractionHelper.checkForNeighbours(pos))
@@ -323,7 +331,10 @@ public class BlockInteractionHelper
 
                     if (l_Result2 != EnumActionResult.FAIL)
                     {
-                        mc.player.swingArm(EnumHand.MAIN_HAND);
+                        if (packetSwing)
+                            mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+                        else
+                            mc.player.swingArm(EnumHand.MAIN_HAND);
                         if (activated)
                         {
                             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
@@ -341,5 +352,68 @@ public class BlockInteractionHelper
         IBlockState l_State = mc.world.getBlockState(p_Pos);
 
         return l_State.getBlock() == Blocks.WATER || l_State.getBlock() == Blocks.LAVA || l_State.getBlock() == Blocks.AIR;
+    }
+
+    public static float[] getFacingRotations(int x, int y, int z, EnumFacing facing)
+    {
+        return getFacingRotations(x, y, z, facing, 1);
+    }
+
+    public static float[] getFacingRotations(int x, int y, int z, EnumFacing facing, double width)
+    {
+        return getRotationsForPosition(x + 0.5 + facing.getDirectionVec().getX() * width / 2.0, y + 0.5 + facing.getDirectionVec().getY() * width / 2.0, z + 0.5 + facing.getDirectionVec().getZ() * width / 2.0);
+    }
+
+    public static float[] getRotationsForPosition(double x, double y, double z)
+    {
+        return getRotationsForPosition(x, y, z, mc.player.posX, mc.player.posY + mc.player.getEyeHeight(), mc.player.posZ);
+    }
+
+    public static float[] getRotationsForPosition(double x, double y, double z, double sourceX, double sourceY, double sourceZ)
+    {
+        double deltaX = x - sourceX;
+        double deltaY = y - sourceY;
+        double deltaZ = z - sourceZ;
+
+        double yawToEntity;
+
+        if (deltaZ < 0 && deltaX < 0) { // quadrant 3
+            yawToEntity = 90D + Math.toDegrees(Math.atan(deltaZ / deltaX)); // 90
+            // degrees
+            // forward
+        } else if (deltaZ < 0 && deltaX > 0) { // quadrant 4
+            yawToEntity = -90D + Math.toDegrees(Math.atan(deltaZ / deltaX)); // 90
+            // degrees
+            // back
+        } else { // quadrants one or two
+            yawToEntity = Math.toDegrees(-Math.atan(deltaX / deltaZ));
+        }
+
+        double distanceXZ = Math.sqrt(deltaX * deltaX + deltaZ
+                * deltaZ);
+
+        double pitchToEntity = -Math.toDegrees(Math.atan(deltaY / distanceXZ));
+
+        yawToEntity = wrapAngleTo180((float) yawToEntity);
+        pitchToEntity = wrapAngleTo180((float) pitchToEntity);
+
+        yawToEntity = isNaN(yawToEntity) ? 0 : yawToEntity;
+        pitchToEntity = isNaN(pitchToEntity) ? 0 : pitchToEntity;
+
+        return new float[] { (float) yawToEntity, (float) pitchToEntity };
+    }
+
+    public static float wrapAngleTo180(float angle)
+    {
+        angle %= 360.0F;
+
+        while (angle >= 180.0F) {
+            angle -= 360.0F;
+        }
+        while (angle < -180.0F) {
+            angle += 360.0F;
+        }
+
+        return angle;
     }
 }

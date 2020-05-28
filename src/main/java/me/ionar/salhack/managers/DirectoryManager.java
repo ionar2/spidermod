@@ -32,6 +32,11 @@ public class DirectoryManager
             CreateDirectory("SalHack/LogoutSpots");
             CreateDirectory("SalHack/DeathSpots");
             CreateDirectory("SalHack/Waypoints");
+            CreateDirectory("SalHack/Fonts");
+            CreateDirectory("SalHack/CustomMods");
+            CreateDirectory("SalHack/Presets");
+            CreateDirectory("SalHack/Presets/Default");
+            CreateDirectory("SalHack/Presets/Default/Modules");
         }
         catch (IOException e)
         {
@@ -50,5 +55,10 @@ public class DirectoryManager
     public static DirectoryManager Get()
     {
         return SalHack.GetDirectoryManager();
+    }
+
+    public String GetCurrentDirectory() throws IOException
+    {
+        return new java.io.File(".").getCanonicalPath();
     }
 }

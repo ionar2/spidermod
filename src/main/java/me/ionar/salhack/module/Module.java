@@ -14,9 +14,12 @@ import me.ionar.salhack.gui.click.component.item.ComponentItem;
 import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.managers.CommandManager;
 import me.ionar.salhack.managers.ModuleManager;
+import me.ionar.salhack.managers.PresetsManager;
+import me.ionar.salhack.preset.Preset;
 import me.ionar.salhack.util.render.RenderUtil;
 import me.zero.alpine.fork.listener.Listenable;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.HoverEvent;
@@ -37,21 +40,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.input.Keyboard;
+
 public class Module implements Listenable
 { 
-    private String displayName;
+    public String displayName;
     private String[] alias;
     private String desc;
-    private String key;
+    public String key;
     private int color;
-    private boolean hidden = false;
+    public boolean hidden = false;
     private boolean enabled = false;
     protected boolean EnabledByDefault = false;
     private ModuleType type;
     private boolean m_NeedsClickGuiValueUpdate;
     protected final Minecraft mc = Minecraft.getMinecraft();
     
-    private List<Value> valueList = new ArrayList<Value>();
+    public List<Value> valueList = new ArrayList<Value>();
     public float RemainingXAnimation = 0f;
 
     private Module(String displayName, String[] alias, String key, int color, ModuleType type)
@@ -279,6 +284,48 @@ public class Module implements Listenable
     {
         return key;
     }
+    
+    public boolean IsKeyPressed(String p_KeyCode)
+    {
+        if (GuiScreen.isAltKeyDown() || GuiScreen.isCtrlKeyDown() || GuiScreen.isShiftKeyDown())
+        {
+            if (key.contains(" + "))
+            {
+                if (GuiScreen.isAltKeyDown() && key.contains("MENU"))
+                {
+                    String l_Result = key.replace(Keyboard.isKeyDown(56) ? "LMENU + " : "RMENU + ", "");
+                    return l_Result.equals(p_KeyCode);
+                }
+                else if (GuiScreen.isCtrlKeyDown() && key.contains("CONTROL"))
+                {
+                    String l_CtrlKey = "";
+                    
+                    if (Minecraft.IS_RUNNING_ON_MAC)
+                        l_CtrlKey = Keyboard.isKeyDown(219) ? "LCONTROL" : "RCONTROL";
+                    else
+                        l_CtrlKey = Keyboard.isKeyDown(29) ? "LCONTROL" : "RCONTROL";
+                    
+                    String l_Result = key.replace(l_CtrlKey + " + ", "");
+                    return l_Result.equals(p_KeyCode);
+                }
+                else if (GuiScreen.isShiftKeyDown() && key.contains("SHIFT"))
+                {
+                    String l_Result = key.replace((Keyboard.isKeyDown(42) ? "LSHIFT" : "RSHIFT") + " + ", "");
+                    return l_Result.equals(p_KeyCode);
+                }
+            }
+            
+            if (!ModuleManager.Get().IgnoreStrictKeybinds())
+            {
+                if (p_KeyCode.contains("SHIFT") || p_KeyCode.contains("CONTROL") || p_KeyCode.contains("MENU"))
+                    return key.equals(p_KeyCode);
+                
+                return false;
+            }
+        }
+        
+        return key.equals(p_KeyCode);
+    }
 
     public void setKey(String key)
     {
@@ -389,124 +436,15 @@ public class Module implements Listenable
             SalHack.SendMessage(ChatFormatting.AQUA + "[" + GetArrayListDisplayName() + "]: " + ChatFormatting.RESET + p_Message);
     }
     
-    public void LoadSettings()
-    {
-        File l_Exists = new File("SalHack/Modules/" + getDisplayName() + ".json");
-        if (!l_Exists.exists())
-        {
-            if (EnabledByDefault && !isEnabled())
-                toggle();
-            return;
-        }
-        
-        try 
-        {
-            // create Gson instance
-            Gson gson = new Gson();
-
-            // create a reader
-            Reader reader = Files.newBufferedReader(Paths.get("SalHack/Modules/" + getDisplayName() + ".json"));
-
-            // convert JSON file to map
-            Map<?, ?> map = gson.fromJson(reader, Map.class);
-            
-            // print map entries
-            for (Map.Entry<?, ?> entry : map.entrySet())
-            {
-                String l_Key = (String)entry.getKey();
-                String l_Value = (String)entry.getValue();
-             
-                if (l_Key.equalsIgnoreCase("enabled"))
-                {
-                    if (l_Value.equalsIgnoreCase("true"))
-                        toggleNoSave();
-                    continue;
-                }
-
-                if (l_Key.equalsIgnoreCase("display"))
-                {
-                    displayName = l_Value;
-                    continue;
-                }
-
-                if (l_Key.equalsIgnoreCase("keybind"))
-                {
-                    key = l_Value;
-                    continue;
-                }
-                
-                if (l_Key.equalsIgnoreCase("hidden"))
-                {
-                    hidden = l_Value.equalsIgnoreCase("true");
-                    continue;
-                }
-                
-                for (Value l_Val : valueList)
-                {
-                    if (l_Val.getName().equalsIgnoreCase((String) entry.getKey()))
-                    {
-                        if (l_Val.getValue() instanceof Number && !(l_Val.getValue() instanceof Enum))
-                        {
-                            if (l_Val.getValue() instanceof Integer)
-                                l_Val.SetForcedValue(Integer.parseInt(l_Value));
-                            else if (l_Val.getValue() instanceof Float)
-                                l_Val.SetForcedValue(Float.parseFloat(l_Value));
-                            else if (l_Val.getValue() instanceof Double)
-                                l_Val.SetForcedValue(Double.parseDouble(l_Value));
-                        }
-                        else if (l_Val.getValue() instanceof Boolean)
-                        {
-                            l_Val.SetForcedValue(l_Value.equalsIgnoreCase("true"));
-                        }
-                        else if (l_Val.getValue() instanceof Enum)
-                        {
-                            l_Val.SetForcedValue(l_Val.GetEnumReal(l_Value));
-                        }
-                        else if (l_Val.getValue() instanceof String)
-                            l_Val.SetForcedValue(l_Value);
-                        
-                        break;
-                    }
-                }
-            }
-
-            // close reader
-            reader.close();
-
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-    }
-    
     public void SaveSettings()
     {
-        try
+        new Thread(() ->
         {
-            GsonBuilder builder = new GsonBuilder();
-            
-            Gson gson = builder.setPrettyPrinting().create();
+            PresetsManager.Get().getActivePreset().addModuleSettings(this);
+        }).start();
+    }
 
-            Writer writer = Files.newBufferedWriter(Paths.get("SalHack/Modules/" + getDisplayName() + ".json"));
-            Map<String, String> map = new HashMap<>();
-            
-            map.put("enabled", isEnabled() ? "true" : "false");
-            map.put("display", getDisplayName());
-            map.put("keybind", getKey());
-            map.put("hidden", isHidden() ? "true" : "false");
-            
-            for (Value l_Val : valueList)
-            {
-                map.put(l_Val.getName().toString(), l_Val.getValue().toString());
-            }
-            gson.toJson(map, writer);
-            writer.close();
-        }
-        catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void init()
+    {
     }
 }

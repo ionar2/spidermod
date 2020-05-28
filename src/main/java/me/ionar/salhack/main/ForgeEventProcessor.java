@@ -9,7 +9,6 @@ import me.ionar.salhack.events.render.EventRenderGetFOVModifier;
 import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.util.entity.EntityUtil;
-import me.ionar.salhack.util.render.CustomTessellator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -36,20 +35,11 @@ public class ForgeEventProcessor
     /// @TODO: All of these should be removed and replaced by mixins.
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent event)
-    {
-        if (Wrapper.GetMC().player == null)
-            return;
-
-        SalHackMod.EVENT_BUS.post(new EventClientTick());
-    }
-
-    @SubscribeEvent
-    public void onWorldRender(RenderWorldLastEvent event)
-    {
+    public void onRender(RenderWorldLastEvent event)
+    { 
         if (event.isCanceled())
             return;
-
+        
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -58,13 +48,7 @@ public class ForgeEventProcessor
         GlStateManager.disableDepth();
 
         GlStateManager.glLineWidth(1f);
-        Vec3d renderPos = EntityUtil.getInterpolatedPos(Wrapper.GetPlayer(), event.getPartialTicks());
-
-        RenderEvent l_Event = new RenderEvent(CustomTessellator.INSTANCE, renderPos);
-        l_Event.resetTranslation();
-
-        SalHackMod.EVENT_BUS.post(l_Event);
-
+        SalHackMod.EVENT_BUS.post(new RenderEvent(event.getPartialTicks()));
         GlStateManager.glLineWidth(1f);
 
         GlStateManager.shadeModel(GL11.GL_FLAT);
@@ -73,7 +57,15 @@ public class ForgeEventProcessor
         GlStateManager.enableTexture2D();
         GlStateManager.enableDepth();
         GlStateManager.enableCull();
-        CustomTessellator.releaseGL();
+    }
+    
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent event)
+    {
+        if (Wrapper.GetMC().player == null)
+            return;
+
+        SalHackMod.EVENT_BUS.post(new EventClientTick());
     }
 
     @SubscribeEvent
@@ -89,7 +81,7 @@ public class ForgeEventProcessor
     public void onKeyInput(InputEvent.KeyInputEvent event)
     {
         if (Keyboard.getEventKeyState())
-            ModuleManager.Get().OnBind(Keyboard.getKeyName(Keyboard.getEventKey()));
+            ModuleManager.Get().OnKeyPress(Keyboard.getKeyName(Keyboard.getEventKey()));
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

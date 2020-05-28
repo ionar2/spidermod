@@ -21,7 +21,7 @@ public class MenuComponentHUDList extends MenuComponent
 
     public MenuComponentHUDList(String p_DisplayName, float p_X, float p_Y)
     {
-        super(p_DisplayName, p_X, p_Y, 100f, 105f, "", (ColorsModule)ModuleManager.Get().GetMod(ColorsModule.class));
+        super(p_DisplayName, p_X, p_Y, 100f, 105f, "", (ColorsModule)ModuleManager.Get().GetMod(ColorsModule.class), null);
         
         final float Width = 105f;
         final float Height = 11f;

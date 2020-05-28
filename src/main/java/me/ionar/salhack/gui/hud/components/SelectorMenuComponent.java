@@ -21,7 +21,7 @@ public class SelectorMenuComponent extends HudComponentItem
     {
         super.render(p_MouseX, p_MouseY, p_PartialTicks);
         
-        l_Component.Render(p_MouseX, p_MouseY, true, true);
+        l_Component.Render(p_MouseX, p_MouseY, true, true, 0);
         
         SetWidth(l_Component.GetWidth());
         SetHeight(l_Component.GetHeight());
@@ -32,7 +32,7 @@ public class SelectorMenuComponent extends HudComponentItem
     @Override
     public boolean OnMouseClick(int p_MouseX, int p_MouseY, int p_MouseButton)
     {
-        return l_Component.MouseClicked(p_MouseX, p_MouseY, p_MouseButton);
+        return l_Component.MouseClicked(p_MouseX, p_MouseY, p_MouseButton, 0);
     }
 
     @Override

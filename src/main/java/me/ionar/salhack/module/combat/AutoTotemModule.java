@@ -4,7 +4,9 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.ionar.salhack.events.player.EventPlayerTravel;
 import me.ionar.salhack.events.player.EventPlayerUpdate;
+import me.ionar.salhack.gui.SalGuiScreen;
 import me.ionar.salhack.main.SalHack;
+import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.entity.PlayerUtil;
@@ -26,12 +28,14 @@ public final class AutoTotemModule extends Module
 {
     public final Value<Float> health = new Value<Float>("Health", new String[]
     { "Hp" }, "The amount of health needed to acquire a totem.", 16.0f, 0.0f, 20.0f, 0.5f);
-    public final Value<AutoTotemMode> Mode = new Value<AutoTotemMode>("Mode", new String[]{"Mode"}, "If you are below the required health for a totem, x will be used in offhand instead", AutoTotemMode.Totem);
+    public final Value<AutoTotemMode> Mode = new Value<AutoTotemMode>("Mode", new String[]{"Mode"}, "If you are above the required health for a totem, x will be used in offhand instead.", AutoTotemMode.Totem);
     public final Value<AutoTotemMode> FallbackMode = new Value<AutoTotemMode>("Fallback", new String[]{"FallbackMode"}, "If you don't have the required item for mode, this will be the fallback.", AutoTotemMode.Crystal);
     public final Value<Float> FallDistance = new Value<Float>("FallDistance", new String[] {"Fall"}, "If your fall distance exceeds this value, use a totem", 15.0f, 0.0f, 100.0f, 10.0f);
     public final Value<Boolean> TotemOnElytra = new Value<Boolean>("TotemOnElytra", new String[] {"Elytra"}, "Will automatically switch to a totem if you're elytra flying", true);
     public final Value<Boolean> OffhandGapOnSword = new Value<Boolean>("SwordGap", new String[] {"SwordGap"}, "Will override all else, and try and use a gap in offhand when using a sword in main hand", false);
     public final Value<Boolean> OffhandStrNoStrSword = new Value<Boolean>("StrGap", new String[] {"Strength"}, "Will put a potion if offhand if you don't have strength and wearing a sword", false);
+    public final Value<Boolean> HotbarFirst = new Value<Boolean>("HotbarFirst", new String[] {"Recursive"}, "Prioritizes your hotbar before inventory slots", false);
+    
     
     public enum AutoTotemMode
     {
@@ -48,6 +52,8 @@ public final class AutoTotemModule extends Module
         super("AutoTotem", new String[]
         { "Totem" }, "Automatically places a totem of undying in your offhand", "NONE", 0xDADB24, ModuleType.COMBAT);
     }
+    
+    private OffhandModule OffhandMod = null;
 
     @Override
     public String getMetaData()
@@ -61,7 +67,7 @@ public final class AutoTotemModule extends Module
         
         if (mc.player.getHeldItemOffhand().getItem() != l_Item)
         {
-            int l_Slot = PlayerUtil.GetItemSlot(l_Item);
+            int l_Slot = HotbarFirst.getValue() ? PlayerUtil.GetRecursiveItemSlot(l_Item) : PlayerUtil.GetItemSlot(l_Item);
             
             Item l_Fallback = GetItemFromModeVal(FallbackMode.getValue());
             
@@ -69,7 +75,7 @@ public final class AutoTotemModule extends Module
             
             if (l_Slot == -1 && l_Item != l_Fallback && mc.player.getHeldItemOffhand().getItem() != l_Fallback)
             {
-                l_Slot = PlayerUtil.GetItemSlot(l_Fallback);
+                l_Slot = PlayerUtil.GetRecursiveItemSlot(l_Fallback);
                 l_Display = GetItemNameFromModeVal(FallbackMode.getValue());
                 
                 /// still -1...
@@ -79,7 +85,7 @@ public final class AutoTotemModule extends Module
                     
                     if (l_Item != l_Fallback && mc.player.getHeldItemOffhand().getItem() != l_Fallback)
                     {
-                        l_Slot = PlayerUtil.GetItemSlot(l_Fallback);
+                        l_Slot = PlayerUtil.GetRecursiveItemSlot(l_Fallback);
                         l_Display = "Emergency Totem";
                     }
                 }
@@ -105,7 +111,7 @@ public final class AutoTotemModule extends Module
     @EventHandler
     private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(p_Event ->
     {
-        if (mc.currentScreen != null && !(mc.currentScreen instanceof GuiInventory))
+        if (mc.currentScreen != null && (!(mc.currentScreen instanceof GuiInventory) && !(mc.currentScreen instanceof SalGuiScreen)) || OffhandMod.isEnabled())
             return;
         
         if (!mc.player.getHeldItemMainhand().isEmpty())
@@ -134,6 +140,14 @@ public final class AutoTotemModule extends Module
         /// If we meet the required health
         SwitchOffHandIfNeed(Mode.getValue());
     });
+    
+    @Override
+    public void onEnable()
+    {
+        super.onEnable();
+        
+        OffhandMod = (OffhandModule)ModuleManager.Get().GetMod(OffhandModule.class);
+    }
     
     public Item GetItemFromModeVal(AutoTotemMode p_Val)
     {

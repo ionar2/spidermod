@@ -7,39 +7,15 @@ import net.minecraft.util.math.Vec3d;
 
 public class RenderEvent extends MinecraftEvent
 {
-    private final Tessellator tessellator;
-    private final Vec3d renderPos;
-
-    public RenderEvent(Tessellator tessellator, Vec3d renderPos)
+    private float _partialTicks;
+    
+    public RenderEvent(float partialTicks)
     {
-        super();
-        this.tessellator = tessellator;
-        this.renderPos = renderPos;
+        _partialTicks = partialTicks;
     }
-
-    public Tessellator getTessellator()
+    
+    public float getPartialTicks()
     {
-        return tessellator;
+        return _partialTicks;
     }
-
-    public BufferBuilder getBuffer()
-    {
-        return tessellator.getBuffer();
-    }
-
-    public Vec3d getRenderPos()
-    {
-        return renderPos;
-    }
-
-    public void setTranslation(Vec3d translation)
-    {
-        getBuffer().setTranslation(-translation.x, -translation.y, -translation.z);
-    }
-
-    public void resetTranslation()
-    {
-        setTranslation(renderPos);
-    }
-
 }

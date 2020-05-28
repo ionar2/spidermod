@@ -24,6 +24,16 @@
     "MixinItemRenderer",
     "MixinEntityRenderer",
     "MixinMapItemRenderer",
-    "MixinAbstractHorse"
+    "MixinAbstractHorse",
+    "MixinVisGraph",
+    "MixinGuiBossOverlay",
+    "MixinChunkRenderContainer",
+    "MixinRenderChunk",
+    "MixinGuiDisconnected",
+    "MixinRenderManager",
+    "MixinEntityPig",
+    "MixinEntityLlama",
+    "MixinGuiNewChat",
+    "MixinModelPlayer"
   ]
 }

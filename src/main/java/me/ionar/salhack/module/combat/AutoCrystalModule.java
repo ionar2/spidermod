@@ -8,55 +8,39 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glHint;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import javax.annotation.Nullable;
-
-import com.mojang.realmsclient.gui.ChatFormatting;
 
 import me.ionar.salhack.events.MinecraftEvent.Era;
 import me.ionar.salhack.events.client.EventClientTick;
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
 import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
-import me.ionar.salhack.events.render.EventRenderGameOverlay;
 import me.ionar.salhack.events.render.RenderEvent;
-import me.ionar.salhack.main.SalHack;
 import me.ionar.salhack.managers.FriendManager;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.module.misc.AutoMendArmorModule;
 import me.ionar.salhack.util.BlockInteractionHelper;
-import me.ionar.salhack.util.BlockInteractionHelper.PlaceResult;
 import me.ionar.salhack.util.BlockInteractionHelper.ValidResult;
 import me.ionar.salhack.util.CrystalUtils;
-import me.ionar.salhack.util.MathUtil;
 import me.ionar.salhack.util.RotationSpoof;
 import me.ionar.salhack.util.entity.EntityUtil;
 import me.ionar.salhack.util.entity.PlayerUtil;
 import me.ionar.salhack.util.render.RenderUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
-import net.minecraft.block.BlockObsidian;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.AbstractChestHorse;
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityDonkey;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -70,8 +54,6 @@ import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.server.SPacketSoundEffect;
-import net.minecraft.potion.Potion;
-import net.minecraft.network.play.client.CPacketPlayer.PositionRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
@@ -79,7 +61,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class AutoCrystalModule extends Module
 {
@@ -122,7 +103,7 @@ public class AutoCrystalModule extends Module
     public static final Value<Float> RequiredHealth = new Value<Float>("RequiredHealth", new String[] {""}, "RequiredHealth for autocrystal to function, must be above or equal to this amount.", 11.0f, 0.0f, 20.0f, 1.0f);
     public static final Value<Boolean> AutoMultiplace = new Value<Boolean>("AutoMultiplace", new String[] {""}, "Automatically enables/disables multiplace", false);
     public static final Value<Float> HealthBelowAutoMultiplace = new Value<Float>("HealthBelowAutoMultiplace", new String[] {""}, "RequiredHealth for target to be for automatic multiplace toggling.", 11.0f, 0.0f, 20.0f, 1.0f);
-    
+    public static final Value<Boolean> PauseIfHittingBlock = new Value<Boolean>("PauseIfHittingBlock", new String[] {""}, "Pauses when your hitting a block with a pickaxe", false);
     
     public static final Value<Boolean> Render = new Value<Boolean>("Render", new String[] {"Render"}, "Allows for rendering of block placements", true);
     public static final Value<Integer> Red = new Value<Integer>("Red", new String[] {"Red"}, "Red for rendering", 0x33, 0, 255, 5);
@@ -148,6 +129,7 @@ public class AutoCrystalModule extends Module
     private AutoMendArmorModule AutoMend = null;
     private SelfTrapModule SelfTrap = null;
     private HoleFillerModule HoleFiller = null;
+    private AutoCityModule AutoCity = null;
     
     @Override
     public void SendMessage(String p_Msg)
@@ -170,6 +152,7 @@ public class AutoCrystalModule extends Module
         AutoMend = (AutoMendArmorModule)ModuleManager.Get().GetMod(AutoMendArmorModule.class);
         SelfTrap = (SelfTrapModule)ModuleManager.Get().GetMod(SelfTrapModule.class);
         HoleFiller = (HoleFillerModule)ModuleManager.Get().GetMod(HoleFillerModule.class);
+        AutoCity = (AutoCityModule)ModuleManager.Get().GetMod(AutoCityModule.class);
         
       //  if (!Holes.isEnabled())
        //     Holes.toggle();
@@ -286,13 +269,27 @@ public class AutoCrystalModule extends Module
       //              return;
             }
             
-            if (PlaceMode.getValue() != PlaceModes.None)
-                HandlePlaceCrystal(null);
+            try
+            {
+                if (PlaceMode.getValue() != PlaceModes.None)
+                    HandlePlaceCrystal(null);
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
         else
         {
-            if (!HandleBreakCrystals(l_Crystal, null))
-                HandlePlaceCrystal(null);
+            try
+            {
+                if (!HandleBreakCrystals(l_Crystal, null))
+                    HandlePlaceCrystal(null);
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
     });
 
@@ -344,10 +341,17 @@ public class AutoCrystalModule extends Module
             
             if (PlaceMode.getValue() != PlaceModes.None)
             {
-                final BlockPos l_Pos = HandlePlaceCrystal(p_Event);
-                
-                if (!l_Result && l_Pos != BlockPos.ORIGIN)
-                    l_Result = true;
+                try
+                {
+                    final BlockPos l_Pos = HandlePlaceCrystal(p_Event);
+                    
+                    if (!l_Result && l_Pos != BlockPos.ORIGIN)
+                        l_Result = true;
+                }
+                catch (Exception e)
+                {
+                    
+                }
             }
             
             if (l_Result)
@@ -357,10 +361,17 @@ public class AutoCrystalModule extends Module
         {
             if (!HandleBreakCrystals(l_Crystal, p_Event))
             {
-                final BlockPos l_Pos = HandlePlaceCrystal(p_Event);
-                
-                if (l_Pos != BlockPos.ORIGIN)
-                    m_WaitTicks = Ticks.getValue();
+                try
+                {
+                    final BlockPos l_Pos = HandlePlaceCrystal(p_Event);
+                    
+                    if (l_Pos != BlockPos.ORIGIN)
+                        m_WaitTicks = Ticks.getValue();
+                }
+                catch (Exception e)
+                {
+                    
+                }
             }
         }
     });
@@ -560,7 +571,7 @@ public class AutoCrystalModule extends Module
         m_Target = GetNearTarget(mc.player);
     }
     
-    private BlockPos HandlePlaceCrystal(@Nullable EventPlayerMotionUpdate p_Event)
+    private BlockPos HandlePlaceCrystal(@Nullable EventPlayerMotionUpdate p_Event) throws Exception
     {
         if (OnlyPlaceWithCrystal.getValue())
         {
@@ -571,7 +582,6 @@ public class AutoCrystalModule extends Module
         
         List<BlockPos> l_AvailableBlockPositions = CrystalUtils.findCrystalBlocks(mc.player, PlaceDistance.getValue());
 
-        
         switch (PlaceMode.getValue())
         {
             case Nearest:
@@ -1060,7 +1070,13 @@ public class AutoCrystalModule extends Module
     {
         /// We need to pause if we have surround enabled, and don't have obsidian
         if (Surround.isEnabled() && !Surround.IsSurrounded(mc.player) && Surround.HasObsidian())
-            return true;
+        {
+            if (!Surround.ActivateOnlyOnShift.getValue())
+                return true;
+
+            if (!mc.gameSettings.keyBindSneak.isKeyDown())
+                return true;
+        }
         
         if (AutoTrapFeet.isEnabled() && !AutoTrapFeet.IsCurrentTargetTrapped() && AutoTrapFeet.HasObsidian())
             return true;
@@ -1075,6 +1091,12 @@ public class AutoCrystalModule extends Module
             return true;
 
         if (HoleFiller.isEnabled() && HoleFiller.IsProcessing())
+            return true;
+
+        if (PauseIfHittingBlock.getValue() && mc.playerController.isHittingBlock && mc.player.getHeldItemMainhand().getItem() instanceof ItemTool)
+            return true;
+        
+        if (AutoCity.isEnabled())
             return true;
         
         return false;

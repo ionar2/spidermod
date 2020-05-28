@@ -1,9 +1,6 @@
 package me.ionar.salhack.main;
 
-import com.google.gson.Gson;
-
 import me.ionar.salhack.SalHackMod;
-import me.ionar.salhack.friend.Friend;
 import me.ionar.salhack.managers.CapeManager;
 import me.ionar.salhack.managers.CommandManager;
 import me.ionar.salhack.managers.DirectoryManager;
@@ -14,9 +11,10 @@ import me.ionar.salhack.managers.HudManager;
 import me.ionar.salhack.managers.ImageManager;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.managers.NotificationManager;
+import me.ionar.salhack.managers.PresetsManager;
 import me.ionar.salhack.managers.TickRateManager;
+import me.ionar.salhack.managers.UUIDManager;
 import me.ionar.salhack.waypoints.WaypointManager;
-import net.minecraft.util.Session;
 import net.minecraft.util.text.TextComponentString;
 
 public class SalHack
@@ -33,6 +31,9 @@ public class SalHack
     private static NotificationManager m_NotificationManager = new NotificationManager();
     private static WaypointManager m_WaypointManager = new WaypointManager();
     private static CapeManager m_CapeManager = new CapeManager();
+    private static AlwaysEnabledModule m_AlwaysEnabledMod;
+    private static PresetsManager m_PresetsManager = new PresetsManager();
+    private static UUIDManager m_UUIDManager = new UUIDManager();
 
     public static void Init()
     {
@@ -41,6 +42,7 @@ public class SalHack
 
         /// load before mods
         m_FontManager.Load();
+        m_PresetsManager.LoadPresets(); // must be before module init 
         m_ModuleManager.Init();
         m_HudManager.Init();
         m_CommandManager.InitalizeCommands();
@@ -48,6 +50,10 @@ public class SalHack
         m_ImageManager.Load();
         m_DiscordManager.Start();
         m_FriendManager.Load();
+        
+        /// features people can't turn off
+        m_AlwaysEnabledMod = new AlwaysEnabledModule();
+        m_AlwaysEnabledMod.init();
     }
 
     public static ModuleManager GetModuleManager()
@@ -116,5 +122,15 @@ public class SalHack
     public static CapeManager GetCapeManager()
     {
         return m_CapeManager;
+    }
+    
+    public static PresetsManager GetPresetsManager()
+    {
+        return m_PresetsManager;
+    }
+
+    public static UUIDManager GetUUIDManager()
+    {
+        return m_UUIDManager;
     }
 }

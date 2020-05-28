@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import io.netty.channel.ChannelHandlerContext;
 import me.ionar.salhack.SalHackMod;
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
+import me.ionar.salhack.events.network.EventNetworkPostPacketEvent;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 
@@ -37,5 +38,17 @@ public class MixinNetworkManager
         {
             callbackInfo.cancel();
         }
+    }
+    
+    @Inject(method = "sendPacket(Lnet/minecraft/network/Packet;)V", at = @At("RETURN"))
+    private void onPostSendPacket(Packet<?> p_Packet, CallbackInfo callbackInfo)
+    {
+        SalHackMod.EVENT_BUS.post(new EventNetworkPostPacketEvent(p_Packet));
+    }
+
+    @Inject(method = "channelRead0", at = @At("RETURN"))
+    private void onPostChannelRead(ChannelHandlerContext context, Packet<?> p_Packet, CallbackInfo callbackInfo)
+    {
+        SalHackMod.EVENT_BUS.post(new EventNetworkPostPacketEvent(p_Packet));
     }
 }

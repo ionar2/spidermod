@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import me.ionar.salhack.gui.hud.HudComponentItem;
+import me.ionar.salhack.managers.FontManager;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
@@ -101,6 +102,35 @@ public class ArmorComponent extends HudComponentItem
                 this.SetHeight(l_Y);
                 break;
             case SimplePct:
+                
+                float l_X = 0;
+                float l_TextX = 4;
+                for (int l_I = 0; l_I < l_Stacks.size(); ++l_I)
+                {
+                    ItemStack l_Stack = l_Stacks.get(l_I);
+                    
+                    mc.getRenderItem().renderItemAndEffectIntoGUI(l_Stack, (int)(GetX() + l_X), (int)GetY()+10);
+                    mc.getRenderItem().renderItemOverlays(mc.fontRenderer, l_Stack, (int)(GetX() + l_X), (int)GetY()+10);
+                    
+                    FontManager.Get().TWCenMt18. drawCenteredString(Formatter.format(GetPctFromStack(l_Stack)), GetX() + l_TextX, GetY(), -1);
+                    
+                    l_X += 20;
+                    
+                    if (l_I < l_Stacks.size()-1)
+                    {
+                        float l_Pct = GetPctFromStack(l_Stacks.get(l_I+1));
+                        
+                        if (l_Pct == 100.0f)
+                            l_TextX += 22;
+                        else if (l_Pct >= 10.0)
+                            l_TextX += 21f;
+                        else
+                            l_TextX += 25f;
+                    }
+                }
+                
+                SetWidth(75);
+                SetHeight(24);
                 break;
             default:
                 break;
@@ -108,5 +138,13 @@ public class ArmorComponent extends HudComponentItem
 
         RenderHelper.disableStandardItemLighting();
         GlStateManager.popMatrix();
+    }
+    
+    public static float GetPctFromStack(ItemStack p_Stack)
+    {
+        float l_ArmorPct = ((float)(p_Stack.getMaxDamage()-p_Stack.getItemDamage()) /  (float)p_Stack.getMaxDamage())*100.0f;
+        float l_ArmorBarPct = Math.min(l_ArmorPct, 100.0f);
+
+        return l_ArmorBarPct;
     }
 }

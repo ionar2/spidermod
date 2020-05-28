@@ -1,22 +1,27 @@
 package me.ionar.salhack.module.render;
 
+import java.util.Iterator;
+
 import me.ionar.salhack.events.network.EventNetworkPacketEvent;
-import me.ionar.salhack.events.particles.EventParticleEmitParticleAtEntity;
 import me.ionar.salhack.events.player.EventPlayerIsPotionActive;
-import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
+import me.ionar.salhack.events.player.EventPlayerUpdate;
 import me.ionar.salhack.events.render.EventRenderArmorLayer;
+import me.ionar.salhack.events.render.EventRenderBossHealth;
+import me.ionar.salhack.events.render.EventRenderEntity;
 import me.ionar.salhack.events.render.EventRenderHurtCameraEffect;
 import me.ionar.salhack.events.render.EventRenderMap;
 import me.ionar.salhack.events.render.EventRenderSign;
 import me.ionar.salhack.events.render.EventRenderUpdateLightmap;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
+import me.ionar.salhack.util.Timer;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.play.server.SPacketEntityStatus;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 
@@ -33,6 +38,7 @@ public class NoRenderModule extends Module
     public final Value<Boolean> NoArmor = new Value<Boolean>("NoArmor", new String[] {"NoArmor"}, "Doesn't render armor", false);
     public final Value<Boolean> NoArmorPlayers = new Value<Boolean>("NoArmorPlayers", new String[] {"NoArmorPlayers"}, "Use in conjunction with the above mod", false);
     public final Value<Boolean> Maps = new Value<Boolean>("Maps", new String[] {"Maps"}, "Doesn't render maps", false);
+    public final Value<Boolean> BossHealth = new Value<Boolean>("BossHealth", new String[] {"WitherNames"}, "Doesn't render wither names, and other boss health", false);
     
     public enum NoItemsMode
     {
@@ -45,6 +51,44 @@ public class NoRenderModule extends Module
     {
         super("NoRender", new String[] {"NR"}, "Doesn't render certain things, if enabled", "NONE", -1, ModuleType.RENDER);
     }
+    
+    private Timer timer = new Timer();
+    
+    @EventHandler
+    private Listener<EventRenderEntity> OnRenderEntity = new Listener<>(event ->
+    {
+        if (event.GetEntity() instanceof EntityItem && NoItems.getValue() == NoItemsMode.Hide)
+            event.cancel();
+    });
+    
+    @EventHandler
+    private Listener<EventPlayerUpdate> OnPlayerUpdate = new Listener<>(event ->
+    {
+        switch (NoItems.getValue())
+        {
+            case Remove:
+                if (!timer.passed(5000))
+                    return;
+                
+                timer.reset();
+                
+                Iterator<Entity> itr = mc.world.loadedEntityList.iterator();
+                
+                while (itr.hasNext())
+                {
+                    Entity entity = itr.next();
+                    
+                    if (entity != null)
+                    {
+                        if (entity instanceof EntityItem)
+                            mc.world.removeEntity(entity);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    });
 
     @EventHandler
     private Listener<EventRenderHurtCameraEffect> OnHurtCameraEffect = new Listener<>(p_Event ->
@@ -79,6 +123,9 @@ public class NoRenderModule extends Module
     @EventHandler
     private Listener<EventNetworkPacketEvent> PacketEvent = new Listener<>(p_Event ->
     {
+        if (mc.world == null || mc.player == null)
+            return;
+        
         if (p_Event.getPacket() instanceof SPacketEntityStatus)
         {
             SPacketEntityStatus l_Packet = (SPacketEntityStatus)p_Event.getPacket();
@@ -122,6 +169,13 @@ public class NoRenderModule extends Module
     {
         if (Maps.getValue())
             p_Event.cancel();
+    });
+    
+    @EventHandler
+    private Listener<EventRenderBossHealth> OnRenderBossHealth = new Listener<>(p_Event ->
+    {
+       if (BossHealth.getValue())
+           p_Event.cancel();
     });
 
 }

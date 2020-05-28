@@ -1,29 +1,76 @@
 package me.ionar.salhack.waypoints;
 
-import net.minecraft.util.math.Vec3d;
+import me.ionar.salhack.util.SalVec3d;
 
 public class Waypoint
 {
-    private Vec3d Position;
-    private Type m_Type;
+    private String _displayName;
+    private SalVec3d _pos;
+    private Type _type;
+    private String _address;
+    private int _dimension;
     
-    public Waypoint(Vec3d p_Position, Type p_Type)
+    public Waypoint(String displayName, SalVec3d pos, Type type, String address, int dimension)
     {
-        Position = p_Position;
-        m_Type = p_Type;
+        _displayName = displayName;
+        _pos = pos;
+        _type = type;
+        _address = address;
+        _dimension = dimension;
     }
     
     @Override
     public String toString()
     {
-        return Position.toString() + " Type: " + String.valueOf(m_Type);
+        return _pos.toString() + " Type: " + String.valueOf(_type);
     }
     
-    private enum Type
+    public Type getType()
+    {
+        return _type;
+    }
+    
+    public String getDisplayName()
+    {
+        return _displayName;
+    }
+    
+    public double getX()
+    {
+        return _pos.x;
+    }
+    
+    public double getY()
+    {
+        return _pos.y;
+    }
+    
+    public double getZ()
+    {
+        return _pos.z;
+    }
+
+    public void setPos(SalVec3d pos)
+    {
+        _pos = pos;
+    }
+
+    public String getAddress()
+    {
+        return _address;
+    }
+
+    public int getDimension()
+    {
+        return _dimension;
+    }
+
+    public enum Type
     {
         Normal,
         Logout,
         Death,
         CoordTPExploit
     }
+
 }

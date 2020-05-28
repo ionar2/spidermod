@@ -5,7 +5,6 @@ import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
 import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
-import me.ionar.salhack.module.render.ESPModule;
 import me.ionar.salhack.util.BlockInteractionHelper;
 import me.ionar.salhack.util.BlockInteractionHelper.ValidResult;
 import me.ionar.salhack.util.Hole;

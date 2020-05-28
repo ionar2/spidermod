@@ -18,6 +18,7 @@ public final class FlightModule extends Module
     public final Value<Float> Speed = new Value<Float>("Speed", new String[]
     { "" }, "Speed to use", 1.0f, 0.0f, 10.0f, 1.0f);
     public final Value<Boolean> Glide = new Value<Boolean>("Glide", new String[] {""}, "Allows the glide speed under this to function.", false);
+    public final Value<Boolean> GlideWhileMoving = new Value<Boolean>("GlideWhileMoving", new String[] {""}, "If no binds are pressed, should glide be enabled?", false);
     public final Value<Float> GlideSpeed = new Value<Float>("GlideSpeed", new String[] {"GlideSpeed"}, "Glide speed of going down", 0.0f, 0.0f, 10.0f, 1.0f);
     public final Value<Boolean> ElytraOnly = new Value<Boolean>("Elytra", new String[] {""}, "Only functions while on an elytra.", false);
     public final Value<Boolean> AntiFallDmg = new Value<Boolean>("AntiFallDmg", new String[] {""}, "Prevents you from taking fall damage while flying", false);
@@ -62,13 +63,13 @@ public final class FlightModule extends Module
                 mc.player.motionZ = dir[1];
             }
 
-            if (mc.gameSettings.keyBindJump.isKeyDown())
+            if (mc.player.movementInput.jump && !mc.player.isElytraFlying())
                 mc.player.motionY = Speed.getValue();
 
-            if (mc.gameSettings.keyBindSneak.isKeyDown())
+            if (mc.player.movementInput.sneak)
                 mc.player.motionY = -Speed.getValue();
 
-            if (Glide.getValue())
+            if (Glide.getValue() && (GlideWhileMoving.getValue() ? (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) : true))
             {
                 mc.player.motionY += -GlideSpeed.getValue();
             }

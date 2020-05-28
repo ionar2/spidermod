@@ -46,6 +46,29 @@ public class PlayerUtil
         return -1;
     }
 
+    public static int GetRecursiveItemSlot(Item input)
+    {
+        if (mc.player == null)
+            return 0;
+
+        for (int i = mc.player.inventoryContainer.getInventory().size() - 1; i > 0; --i)
+        {
+            if (i == 0 || i == 5 || i == 6 || i == 7 || i == 8)
+                continue;
+
+            ItemStack s = mc.player.inventoryContainer.getInventory().get(i);
+            
+            if (s.isEmpty())
+                continue;
+            
+            if (s.getItem() == input)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
     public static int GetItemSlotNotHotbar(Item input)
     {
         if (mc.player == null)
@@ -120,6 +143,11 @@ public class PlayerUtil
     public static BlockPos GetLocalPlayerPosFloored()
     {
         return new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ));
+    }
+
+    public static BlockPos EntityPosToFloorBlockPos(Entity e)
+    {
+        return new BlockPos(Math.floor(e.posX), Math.floor(e.posY), Math.floor(e.posZ));
     }
     
     public static float GetHealthWithAbsorption()
@@ -255,6 +283,33 @@ public class PlayerUtil
         
         final BlockPos[] l_TrapPositions = {
                 l_PlayerPos.down(),
+                l_PlayerPos.up().up(),
+                l_PlayerPos.north(),
+                l_PlayerPos.south(),
+                l_PlayerPos.east(),
+                l_PlayerPos.west(),
+                l_PlayerPos.north().up(),
+                l_PlayerPos.south().up(),
+                l_PlayerPos.east().up(),
+                l_PlayerPos.west().up(),
+                };
+        
+        for (BlockPos l_Pos : l_TrapPositions)
+        {
+            IBlockState l_State = mc.world.getBlockState(l_Pos);
+            
+            if (l_State.getBlock() != Blocks.OBSIDIAN && mc.world.getBlockState(l_Pos).getBlock() != Blocks.BEDROCK)
+                return false;
+        }
+
+        return true;
+    }
+
+    public static boolean IsEntityTrapped(Entity e)
+    {
+        BlockPos l_PlayerPos = EntityPosToFloorBlockPos(e);
+        
+        final BlockPos[] l_TrapPositions = {
                 l_PlayerPos.up().up(),
                 l_PlayerPos.north(),
                 l_PlayerPos.south(),

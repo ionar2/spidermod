@@ -27,6 +27,10 @@ public class CommandManager
         Commands.add(new ToggleCommand());
         Commands.add(new BindCommand());
         Commands.add(new UnbindCommand());
+        Commands.add(new ResetGUICommand());
+        Commands.add(new FontCommand());
+        Commands.add(new PresetsCommand());
+        Commands.add(new WaypointCommand());
         
         ModuleManager.Get().GetModuleList().forEach(p_Mod ->
         {
