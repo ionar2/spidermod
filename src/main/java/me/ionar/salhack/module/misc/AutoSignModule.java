@@ -44,12 +44,14 @@ public class AutoSignModule extends Module
         {
             _completeTimer.reset();
             _wasInSign = true;
+            return; // wait for next tick
         }
         
         GuiEditSign sign = (GuiEditSign)mc.currentScreen;
         
         if (_completeTimer.passed(3000))
         {
+            _completeTimer.reset();
             // complete transaction
             sign.tileSign.markDirty();
             mc.displayGuiScreen(null);
