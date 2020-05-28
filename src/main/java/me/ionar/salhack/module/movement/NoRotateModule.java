@@ -28,7 +28,7 @@ public final class NoRotateModule extends Module
     {
         if (p_Event.getPacket() instanceof SPacketPlayerPosLook)
         {
-            if (mc.player != null && mc.currentScreen == null)
+            if (mc.player != null && mc.getConnection().doneLoadingTerrain)
             {
                 p_Event.cancel();
                 EntityPlayer entityplayer = mc.player;
@@ -36,8 +36,6 @@ public final class NoRotateModule extends Module
                 double d0 = packetIn.getX();
                 double d1 = packetIn.getY();
                 double d2 = packetIn.getZ();
-                float f = packetIn.getYaw();
-                float f1 = packetIn.getPitch();
 
                 if (packetIn.getFlags().contains(SPacketPlayerPosLook.EnumFlags.X))
                 {
@@ -66,15 +64,6 @@ public final class NoRotateModule extends Module
                     entityplayer.motionZ = 0.0D;
                 }
 
-                if (packetIn.getFlags().contains(SPacketPlayerPosLook.EnumFlags.X_ROT))
-                {
-                    f1 += entityplayer.rotationPitch;
-                }
-
-                if (packetIn.getFlags().contains(SPacketPlayerPosLook.EnumFlags.Y_ROT))
-                {
-                    f += entityplayer.rotationYaw;
-                }
                 entityplayer.setPosition(d0, d1, d2);
                 mc.getConnection().sendPacket(new CPacketConfirmTeleport(packetIn.getTeleportId()));
                 mc.getConnection().sendPacket(new CPacketPlayer.PositionRotation(entityplayer.posX, entityplayer.getEntityBoundingBox().minY, entityplayer.posZ, packetIn.yaw, packetIn.pitch, false));
