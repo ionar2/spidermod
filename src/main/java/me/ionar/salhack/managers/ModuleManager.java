@@ -141,6 +141,7 @@ public class ModuleManager
         Add(new NoBobModule());
         Add(new NoRenderModule());
         Add(new ShulkerPreviewModule());
+        Add(new SkeletonModule());
         Add(new StorageESPModule());
         Add(new TracersModule());
         Add(new TrajectoriesModule());

@@ -33,6 +33,7 @@
     "MixinRenderManager",
     "MixinEntityPig",
     "MixinEntityLlama",
-    "MixinGuiNewChat"
+    "MixinGuiNewChat",
+    "MixinModelPlayer"
   ]
 }
