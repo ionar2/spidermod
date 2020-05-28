@@ -26,6 +26,9 @@ public final class NoRotateModule extends Module
     @EventHandler
     private Listener<EventNetworkPacketEvent> PacketEvent = new Listener<>(p_Event ->
     {
+        if (mc.world == null || mc.player == null)
+            return;
+        
         if (p_Event.getPacket() instanceof SPacketPlayerPosLook)
         {
             if (mc.player != null && mc.getConnection().doneLoadingTerrain)

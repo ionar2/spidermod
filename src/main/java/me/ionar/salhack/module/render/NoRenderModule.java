@@ -123,6 +123,9 @@ public class NoRenderModule extends Module
     @EventHandler
     private Listener<EventNetworkPacketEvent> PacketEvent = new Listener<>(p_Event ->
     {
+        if (mc.world == null || mc.player == null)
+            return;
+        
         if (p_Event.getPacket() instanceof SPacketEntityStatus)
         {
             SPacketEntityStatus l_Packet = (SPacketEntityStatus)p_Event.getPacket();
