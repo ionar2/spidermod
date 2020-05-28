@@ -130,7 +130,7 @@ public class ComponentItemValue extends ComponentItem
             return l_DisplayText;
         }
 
-        String l_DisplayText = Val.getName() + " " + Val.getValue().toString() + " ";
+        String l_DisplayText = Val.getName() + " " + (Val.getValue() == null ? "null" : Val.getValue().toString()) + " ";
         
         if (HasState(ComponentItem.Hovered) && RenderUtil.getStringWidth(l_DisplayText) > GetWidth() - 3)
         {

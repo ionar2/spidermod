@@ -46,11 +46,12 @@ public class Preset
         valsMap.put("enabled", mod.isEnabled() ? "true" : "false");
         valsMap.put("display", mod.getDisplayName());
         valsMap.put("keybind", mod.getKey());
-        valsMap.put("hidden", mod.isHidden() ? "true" : "false");
+        valsMap.put("hidden",  mod.isHidden() ? "true" : "false");
         
         mod.getValueList().forEach(val ->
         {
-            valsMap.put(val.getName(), val.getValue().toString());
+            if (val.getValue() != null)
+                valsMap.put(val.getName(), val.getValue().toString());
         });
 
         _valueListMods.put(mod.getDisplayName(), valsMap);
@@ -256,7 +257,10 @@ public class Preset
                         }
                         else if (l_Val.getValue() instanceof Enum)
                         {
-                            l_Val.SetForcedValue(l_Val.GetEnumReal(l_Value));
+                            Enum e = l_Val.GetEnumReal(l_Value);
+                            
+                            if (e != null)
+                                l_Val.SetForcedValue(e);
                         }
                         else if (l_Val.getValue() instanceof String)
                             l_Val.SetForcedValue(l_Value);
