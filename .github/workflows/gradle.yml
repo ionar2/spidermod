@@ -23,7 +23,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew jar
+      run: ./gradlew build
     - name: List files
       run: ls
     - name: Upload a Build Artifact
@@ -32,4 +32,4 @@ jobs:
        # Artifact name
        name: Salhack
        # A file, directory or wildcard pattern that describes what to upload
-       path: ./build/libs/salhack-*-release.jar
+       path: ./build/libs/*-release.jar
