@@ -5,12 +5,12 @@
   "description": "SalHack utility mod.",
   "version": "2.05",
   "mcversion": "1.12.2",
-  "url": "http://salhack.dev",
-  "updateUrl": "http://salhack.dev",
+  "url": "https://salhack.com",
+  "updateUrl": "https://salhack.com",
   "authorList": ["ionar"],
   "credits": "ionar",
-  "logoFile": "",
-  "screenshots": [],
+  "logoFile": "assets/salhack/imgs/SalHackWatermark.png",
+  "screenshots": [https://salhack.com/img/ss2-img-1.jpg, https://salhack.com/img/ss2-img-2.jpg, https://salhack.com/img/ss2-img-3.jpg, https://salhack.com/img/bg-ss-4.png, https://salhack.com/img/bg-ss-5.png],
   "dependencies": []
 }
 ]
