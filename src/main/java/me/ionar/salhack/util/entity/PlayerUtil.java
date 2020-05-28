@@ -310,7 +310,6 @@ public class PlayerUtil
         BlockPos l_PlayerPos = EntityPosToFloorBlockPos(e);
         
         final BlockPos[] l_TrapPositions = {
-                l_PlayerPos.down(),
                 l_PlayerPos.up().up(),
                 l_PlayerPos.north(),
                 l_PlayerPos.south(),

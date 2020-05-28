@@ -13,6 +13,7 @@ import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.BlockInteractionHelper;
 import me.ionar.salhack.util.SalUtil;
+import me.ionar.salhack.util.entity.PlayerUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.block.Block;
@@ -69,6 +70,8 @@ public final class AutoTrap extends Module
             new Vec3d(0.0, 3.0, 0.0), // +3 middle
             new Vec3d(0.0, 4.0, 0.0) // +4 middle
     };
+    public final Value<Boolean> toggleMode = new Value<Boolean>("toggleMode", new String[]
+    { "toggleMode "}, "ToggleMode", true);
     public final Value<Float> range = new Value<Float>("range", new String[]
     { "range" }, "Range", 5.5f, 0f, 10.0f, 1.0f);
     public final Value<Integer> blockPerTick = new Value<Integer>("blockPerTick", new String[]
@@ -192,6 +195,15 @@ public final class AutoTrap extends Module
             if (announceUsage.getValue())
             {
                 SalHack.SendMessage("[AutoTrap] New target: " + lastTickTargetName);
+            }
+        }
+
+        if (toggleMode.getValue())
+        {
+            if (PlayerUtil.IsEntityTrapped(closestTarget))
+            {
+                toggle();
+                return;
             }
         }
 
