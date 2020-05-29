@@ -2,14 +2,10 @@
 
 [![Discord](https://img.shields.io/discord/694337597371056198?label=discord&logo=discord&logoColor=white)](https://discord.gg/UEyGRGu) 
 [![Gradle Build](https://github.com/ionar2/salhack/workflows/Gradle%20Build/badge.svg?branch=master)](https://github.com/ionar2/salhack/actions)
-[![HitCount](http://hits.dwyl.com/ionar2/salhack.svg)](http://hits.dwyl.com/ionar2/salhack/)
-[![Release](https://img.shields.io/github/release/ionar2/salhack.svg)](https://github.com/ionar2/salhack/releases/)
 [![GitHub All Releases](https://img.shields.io/github/downloads/ionar2/salhack/total.svg)](https://github.com/ionar2/salhack/releases/)
 [![Minecraft](https://img.shields.io/badge/MC-1.12.2-brightgreen.svg)](https://github.com/ionar2/salhack/tree/master/)
 [![GitHub contributors](https://img.shields.io/github/contributors/ionar2/salhack.svg)](https://github.com/ionar2/salhack/graphs/contributors/)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ionar2/salhack/issues/)
-[![Issues](https://img.shields.io/github/issues/ionar2/salhack.svg)](https://github.com/ionar2/salhack/issues/)
-[![GitHub issues-closed](https://img.shields.io/github/issues-closed/ionar2/salhack.svg)](https://github.com/ionar2/salhack/issues?q=is%3Aissue+is%3Aclosed)
 [![Lines of Code](https://tokei.rs/b1/github/ionar2/salhack?category=code)](https://github.com/ionar2/salhack/)
 
 ## Salhack
