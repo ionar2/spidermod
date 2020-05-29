@@ -1,6 +1,4 @@
-{
-  "modListVersion": 2,
-  "modList": [
+[
     {
       "modid": "salhack",
       "name": "SalHack",
@@ -43,5 +41,4 @@
       "updateUrl": "http://mc.lunatri.us/",
       "url": "http://mc.lunatri.us/"
     }
-  ]
-}
+]
