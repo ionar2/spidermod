@@ -1,16 +1,44 @@
 [
-{
-  "modid": "salhack",
-  "name": "SalHack",
-  "description": "SalHack utility mod.",
-  "version": "2.05",
-  "mcversion": "1.12.2",
-  "url": "https://salhack.com",
-  "updateUrl": "https://salhack.com",
-  "authorList": ["ionar"],
-  "credits": "ionar",
-  "logoFile": "assets/salhack/imgs/SalHackWatermark.png",
-  "screenshots": [],
-  "dependencies": []
-}
+    {
+      "modid": "salhack",
+      "name": "SalHack",
+      "description": "SalHack utility mod.",
+      "version": "${modVersion}",
+      "mcversion": "${version_minecraft}",
+      "url": "https://salhack.com",
+      "updateUrl": "https://salhack.com",
+      "authorList": ["ionar"],
+      "credits": "ionar",
+      "logoFile": "assets/salhack/imgs/SalHackWatermark.png",
+      "screenshots": [],
+      "dependencies": []
+    },
+    {
+      "modid": "lunatriuscore",
+      "name": "LunatriusCore",
+      "description": "A collection of utilities for Lunatrius' mods.",
+      "mcversion": "${version_minecraft}",
+      "version": "${version_lunatriuscore}",
+      "authorList": ["Lunatrius"],
+      "credits": "",
+      "dependencies": [],
+      "logoFile": "",
+      "screenshots": [],
+      "updateUrl": "http://mc.lunatri.us/",
+      "url": "http://mc.lunatri.us/"
+    },
+    {
+      "modid": "schematica",
+      "name": "Schematica",
+      "description": "Import and export Minecraft schematic files in Minecraft!",
+      "mcversion": "${version_minecraft}",
+      "version": "${version_schematica}",
+      "authorList": ["Lunatrius"],
+      "credits": "AbrarSyed, AtomicBlom, UltraMoogleMan",
+      "dependencies": [],
+      "logoFile": "assets/schematica/logo.png",
+      "screenshots": [],
+      "updateUrl": "http://mc.lunatri.us/",
+      "url": "http://mc.lunatri.us/"
+    }
 ]

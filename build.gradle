@@ -47,6 +47,15 @@ minecraft {
     mappings = project.mcpVersion
     coreMod = 'me.ionar.salhack.mixin.MixinLoaderForge'
     makeObfSourceJar = false
+
+    replaceIn 'reference/Reference.java'
+    replace '${version}', project.version
+    replace '${mcversion}', project.minecraft.version
+    replace '${modVersion}', project.modVersion
+    replace '${version_minecraft}', project.version_minecraft
+    replace '${version_lunatriuscore}', project.version_lunatriuscore
+    replace '${version_schematica}', project.version_schematica
+    replace '${forgeVersion}', project.forgeVersion
 }
 
 repositories {
@@ -97,8 +106,15 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
 
-        // replace version and mcversion
-        expand 'version': project.version, 'mcversion': project.minecraft.version
+        // replace version and mcversion and much more
+        expand 'version': project.version,
+        'mcversion': project.minecraft.version,
+        'modVersion': project.modVersion,
+        'version_minecraft': project.version_minecraft,
+        'version_lunatriuscore': project.version_lunatriuscore,
+        'version_schematica': project.version_schematica,
+        'forgeVersion': project.forgeVersion
+
     }
 
     // copy everything else, thats not the mcmod.info
