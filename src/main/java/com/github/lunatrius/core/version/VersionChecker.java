@@ -33,6 +33,9 @@ public class VersionChecker {
         REGISTERED_MODS.add(container);
 
         final ModMetadata metadata = container.getMetadata();
+        if (metadata.description != null) {
+            metadata.description += "\n---\nCompiled against Forge " + forgeVersion;
+        }
     }
 
     public static void startVersionCheck() {
