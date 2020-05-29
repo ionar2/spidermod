@@ -10,7 +10,7 @@ public final class AntiAim extends Module
     public AntiAim()
     {
         super("AntiAim", new String[]
-        { "BuildH", "BHeight" }, "Moves your head in different directions", "NONE", 0xDB24C4, ModuleType.MISC);
+        { "BuildH", "BHeight" }, "Moves your head in different directions", "NONE", 0xDB24C4, ModuleType.MISC); // sorry im fucking retarded and cant code
     }
 
     private Timer timer = new Timer();
