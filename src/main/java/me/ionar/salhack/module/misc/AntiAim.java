@@ -5,9 +5,9 @@ import java.util.TimerTask;
 
 import me.ionar.salhack.module.Module;
 
-public final class AntiAFKModule extends Module
+public final class AntiAim extends Module
 {
-    public AntiAFKModule()
+    public AntiAim()
     {
         super("AntiAim", new String[]
         { "BuildH", "BHeight" }, "Moves your head in different directions", "NONE", 0xDB24C4, ModuleType.MISC);
@@ -22,8 +22,8 @@ public final class AntiAFKModule extends Module
 
         if (mc.player == null)
         {
-            toggle();
-            return;
+            Yaw = mc.player.rotationYaw;
+            Pitch = mc.player.rotationPitch;
         }
 
         timer = new Timer();
@@ -33,7 +33,15 @@ public final class AntiAFKModule extends Module
             @Override
             public void run()
             {
-                mc.player.sendChatMessage("/stats");
+                        if (p_Event.getEra() != Era.PRE)
+            return;
+        
+        Entity l_Entity = mc.player.isRiding() ? mc.player.getRidingEntity() : mc.player; // for real what is this
+            l_Entity.rotationYaw = 90f;
+            l_Entity.rotationPitch = 180f;
+            l_Entity.rotationYaw = 95f;
+            l_Entity.rotationPitch = 175f;
+            //mc.player.sendChatMessage("");
             }
         }, 0, 120000);
     }
