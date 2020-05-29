@@ -12,6 +12,10 @@
 [![GitHub issues-closed](https://img.shields.io/github/issues-closed/ionar2/salhack.svg)](https://github.com/ionar2/salhack/issues?q=is%3Aissue+is%3Aclosed)
 [![Lines of Code](https://tokei.rs/b1/github/ionar2/salhack?category=code)](https://github.com/ionar2/salhack/)
 
+## Salhack
+Salhack is a Forge mod made by ionar. Recently, ionar has made the decision to leave the project, and as such, this project is discontinued without a main developer. 
+**Contributions are welcome** and are maintained by dominikaaaa.
+ 
 ## Installation
 
 Salhack is a forge mod for `1.12.2`. We provide already pre build jar files on our [release page](https://github.com/ionar2/salhack/releases). If you want to have changes before they get officially released check our [CI](https://github.com/ionar2/salhack/actions) out. (It builds a new jar file on every change we make.) To use salhack just drop the jar file in your mods folder and start forge. Have fun!
