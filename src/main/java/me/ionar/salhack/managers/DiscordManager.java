@@ -48,7 +48,8 @@ public class DiscordManager
     
     public void disable() throws InterruptedException
     {
-        _thread.interrupt();
+        if (_thread != null)
+           _thread.interrupt();
     }
     
     public static DiscordManager Get()
