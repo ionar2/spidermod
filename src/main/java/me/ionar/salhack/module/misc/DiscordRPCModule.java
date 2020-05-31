@@ -80,7 +80,7 @@ public class DiscordRPCModule extends Module
 
         if (Ionar.getValue())
         {
-            result = "Thank you Ionar!"
+            return "Thank you Ionar!";
         }
         
         String result = "";

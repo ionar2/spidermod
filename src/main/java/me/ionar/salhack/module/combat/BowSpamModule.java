@@ -2,6 +2,7 @@ package me.ionar.salhack.module.combat;
 
 import me.ionar.salhack.events.client.EventClientTick;
 import me.ionar.salhack.module.Module;
+import me.ionar.salhack.module.Value;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
@@ -10,6 +11,13 @@ import net.minecraft.util.math.BlockPos;
 
 public class BowSpamModule extends Module
 {
+    public final Value<Modes> Mode = new Value<Modes>("Mode", new String[] {"M"}, "Mode to change to for bowspam", Modes.TpsSync);
+
+    public enum Modes
+    {
+        TpsSync,
+        Speed,
+    }
     /// (String displayName, String[] alias, String key, int color, ModuleType type)
     public BowSpamModule()
     {
