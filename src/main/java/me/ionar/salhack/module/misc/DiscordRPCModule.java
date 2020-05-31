@@ -13,6 +13,7 @@ public class DiscordRPCModule extends Module
     public final Value<Boolean> Username = new Value<Boolean>("Username", new String[] {"U"}, "Displays your username in the rich presence", true);
     public final Value<Boolean> ServerIP = new Value<Boolean>("ServerIP", new String[] {"S"}, "Displays your current playing server in the rich presence", true);
     public final Value<String> DetailsAddon = new Value<String>("DetailsAddon", new String[] {"D"}, "Displays a custom message after the previous", "Gaming");
+    public final Value<Boolean> Ionar = new Value<Boolean>("Ionar", new String[] {"U"}, "Displays a message about ionar", true);
     public final Value<Boolean> Speed = new Value<Boolean>("Speed", new String[] {"U"}, "Displays your speed in the rich presence", true);
     public final Value<Boolean> Movement = new Value<Boolean>("Movement", new String[] {"U"}, "Displays if you're flying/onground in the rich presence", true);
     public final Value<Boolean> Crystalling = new Value<Boolean>("Crystalling", new String[] {"U"}, "Displays the current target from autocrystal", true);
@@ -72,11 +73,15 @@ public class DiscordRPCModule extends Module
         
         return result;
     }
-
     public String generateState()
     {
         if (mc.player == null)
             return "Loading...";
+
+        if (Ionar.getValue())
+        {
+            result = "Thank you Ionar!"
+        }
         
         String result = "";
         
