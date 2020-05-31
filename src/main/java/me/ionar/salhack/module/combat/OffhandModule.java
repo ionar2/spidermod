@@ -26,6 +26,7 @@ public final class OffhandModule extends Module
         Gap,
         Crystal,
         Bow,
+        Totem,
     }
     
     public OffhandModule()
@@ -91,6 +92,8 @@ public final class OffhandModule extends Module
                 return Items.GOLDEN_APPLE;
             case Bow:
                 return Items.BOW;
+            case Totem:
+                return Items.TOTEM_OF_UNDYING;
             default:
                 break;
         }
@@ -108,6 +111,8 @@ public final class OffhandModule extends Module
                 return "Gap";
             case Bow:
                 return "Bow";
+            case Totem:
+                return "Totem"    ;
             default:
                 break;
         }
