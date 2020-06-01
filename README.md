@@ -11,7 +11,7 @@ Salhack is a Forge mod made by ionar. Recently, ionar has made the decision to l
 
 This project is now once more maintained. 
 
-The new project has three new developers.
+The new project has three new contributors.
 
 MFatC, NorkenBot and ObsidianKing10.
 
