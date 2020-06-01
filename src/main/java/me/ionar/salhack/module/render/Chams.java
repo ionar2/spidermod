@@ -16,7 +16,8 @@ public class Chams extends Module {
     public final Value<Boolean> Monsters = new Value<Boolean>("Monsters", new String[]{"Monsters"}, "Renders Monsters", false);
     public final Value<Boolean> Animals = new Value<Boolean>("Animals", new String[]{"Animals"}, "Renders Animals", false);
 
-    public Chams() {
+    public Chams()
+    {
         super("CM", new String[]{"Chams"}, "Renders the entities through walls", "NONE", 0xDADB24, ModuleType.RENDER);
     }
         public final boolean renderChams (Entity entity)

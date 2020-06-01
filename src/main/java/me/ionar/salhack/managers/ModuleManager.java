@@ -132,6 +132,7 @@ public class ModuleManager
         Add(new BlockHighlightModule());
         Add(new BreakHighlightModule());
         Add(new BrightnessModule());
+        Add(new Chams());
         Add(new ChunkAnimator());
         Add(new CityESPModule());
         Add(new ContainerPreviewModule());
