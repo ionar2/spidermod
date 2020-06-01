@@ -19,9 +19,10 @@ public class Chams extends Module {
     public final Value<Boolean> Monsters = new Value<Boolean>("Monsters", new String[]{"Mobs"}, "Renders Mobs", false);
     public final Value<Boolean> Animals = new Value<Boolean>("Animals", new String[]{"Animals"}, "Renders Animals", false);
 
-    public Chams() {
-        super("Chams", new String[]{""}, "Renders Entities through walls (WIP) ", "NONE", -1, ModuleType.RENDER);
+    public Chams()
+    {
+        super("Chams", new String[]
+                { "Chams" }, "Renders entities through walls (WIP)", "NONE", -1, ModuleType.RENDER);
     }
-}
 
 
