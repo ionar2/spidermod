@@ -6,4 +6,4 @@ I'll leave the discord server up here in case you want to support SalHack Develo
 
 Here's my contact `Brixalis#4205`
 
-Created by `ionar2`. Contact `dominika#0076` for any legal concerns or licensing questions. 
+Created by `ionar2` and many [others](https://github.com/ionar2/salhack/graphs/contributors). If you have any legal disagreements, please read [this](https://help.github.com/en/github/site-policy/guide-to-submitting-a-dmca-takedown-notice).
