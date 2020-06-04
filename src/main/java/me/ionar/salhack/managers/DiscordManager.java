@@ -15,9 +15,9 @@ public class DiscordManager
     public void enable()
     {
         _rpcModule = (DiscordRPCModule)ModuleManager.Get().GetMod(DiscordRPCModule.class);
-        
+
         DiscordRPC lib = DiscordRPC.INSTANCE;
-        String applicationId = "701991938206990397";
+        String applicationId = "716959518801789013";
         String steamId = "";
         DiscordEventHandlers handlers = new DiscordEventHandlers();
         handlers.ready = (user) -> System.out.println("Ready!");
@@ -25,7 +25,8 @@ public class DiscordManager
         DiscordRichPresence presence = new DiscordRichPresence();
         presence.startTimestamp = System.currentTimeMillis() / 1000; // epoch second
         lib.Discord_UpdatePresence(presence);
-        // in a worker thread
+        presence.largeImageKey = "image";
+        presence.largeImageText = "https://discord.gg/NwxXH6p Join The SalHack Development Discord!";
         _thread = new Thread(() ->
         {
             while (!Thread.currentThread().isInterrupted())
@@ -42,16 +43,16 @@ public class DiscordManager
                 }
             }
         }, "RPC-Callback-Handler");
-        
+
         _thread.start();
     }
-    
+
     public void disable() throws InterruptedException
     {
         if (_thread != null)
            _thread.interrupt();
     }
-    
+
     public static DiscordManager Get()
     {
         return SalHack.GetDiscordManager();
