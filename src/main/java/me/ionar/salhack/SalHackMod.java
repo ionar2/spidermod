@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 public final class SalHackMod
 {
     public static final String NAME = "SalHack";
-    public static final String VERSION = "2.06";
+    public static final String VERSION = "2.07";
 
     public static final Logger log = LogManager.getLogger("sal");
 
