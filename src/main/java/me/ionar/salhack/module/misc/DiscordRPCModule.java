@@ -18,7 +18,7 @@ public class DiscordRPCModule extends Module
     public final Value<Boolean> Movement = new Value<Boolean>("Movement", new String[] {"U"}, "Displays if you're flying/onground in the rich presence", true);
     public final Value<Boolean> Crystalling = new Value<Boolean>("Crystalling", new String[] {"U"}, "Displays the current target from autocrystal", true);
     public final Value<Boolean> Health = new Value<Boolean>("Health", new String[] {"U"}, "Displays your Health in the rich presence", true);
-    public final Value<Boolean> GitHub = new Value<Boolean>("GitHub", new String[] {"U"}, "Displays the new github link", false);
+    public final Value<Boolean> GitHub = new Value<Boolean>("GitHub", new String[] {"U"}, "Displays the github link", false);
 
     public DiscordRPCModule()
     {

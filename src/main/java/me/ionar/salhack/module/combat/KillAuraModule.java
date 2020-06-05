@@ -178,7 +178,7 @@ public class KillAuraModule extends Module
         {
             if (mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL && PauseIfCrystal.getValue())
                 return;
-            
+
             if (mc.player.getHeldItemMainhand().getItem() == Items.GOLDEN_APPLE && PauseIfEating.getValue())
                 return;
             
@@ -201,6 +201,7 @@ public class KillAuraModule extends Module
             if (SwordOnly.getValue() && l_Slot == -1)
                 return;
         }
+            if (AxeOnly.getValue() && )
         
         if (Only32k.getValue())
         {
