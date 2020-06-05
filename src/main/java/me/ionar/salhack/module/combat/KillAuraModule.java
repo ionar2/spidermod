@@ -201,7 +201,6 @@ public class KillAuraModule extends Module
             if (SwordOnly.getValue() && l_Slot == -1)
                 return;
         }
-            if (AxeOnly.getValue() && )
         
         if (Only32k.getValue())
         {
