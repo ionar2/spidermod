@@ -163,10 +163,13 @@ public class WaypointManager implements Listenable
 
         for (EntityPlayer player : mc.world.playerEntities)
         {
-            if (player == null || player.equals(mc.player))
+            if (player.equals(mc.player))
                 continue;
 
-            updatePlayerCache(player.getGameProfile().getId().toString(), player);
+            try {
+                updatePlayerCache(player.getGameProfile().getId().toString(), player);
+            } catch (NullPointerException ignored) {}
+
         }
     });
     
