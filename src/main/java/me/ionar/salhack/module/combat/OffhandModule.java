@@ -27,7 +27,6 @@ public final class OffhandModule extends Module
         Crystal,
         Bow,
         Totem,
-        Wanda,
     }
     
     public OffhandModule()
