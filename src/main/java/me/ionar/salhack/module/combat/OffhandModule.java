@@ -90,8 +90,6 @@ public final class OffhandModule extends Module
                 return Items.END_CRYSTAL;
             case Gap:
                 return Items.GOLDEN_APPLE;
-            case Wanda:
-                return Items.WATER_BUCKET;
             case Bow:
                 return Items.BOW;
             case Totem:
@@ -111,8 +109,6 @@ public final class OffhandModule extends Module
                 return "End Crystal";
             case Gap:
                 return "Gap";
-            case Wanda:
-                return "Wanda";
             case Bow:
                 return "Bow";
             case Totem:
