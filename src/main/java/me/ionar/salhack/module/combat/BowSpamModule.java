@@ -11,13 +11,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class BowSpamModule extends Module
 {
-    public final Value<Modes> Mode = new Value<Modes>("Mode", new String[] {"M"}, "Mode to change to for bowspam", Modes.TpsSync);
-
-    public enum Modes
-    {
-        TpsSync,
-    }
-    /// (String displayName, String[] alias, String key, int color, ModuleType type)
+    
     public BowSpamModule()
     {
         super("BowSpam", new String[]
