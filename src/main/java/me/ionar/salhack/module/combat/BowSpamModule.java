@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class BowSpamModule extends Module
 {
-    
+
     public BowSpamModule()
     {
         super("BowSpam", new String[]
