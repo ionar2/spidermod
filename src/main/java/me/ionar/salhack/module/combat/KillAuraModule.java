@@ -42,6 +42,7 @@ public class KillAuraModule extends Module
     public final Value<Boolean> Projectiles = new Value<Boolean>("Projectile", new String[] {"Projectile"}, "Should we target Projectiles (shulker bullets, etc)", false);
     public final Value<Boolean> SwordOnly = new Value<Boolean>("SwordOnly", new String[] {"SwordOnly"}, "Only activate on sword", false);
     public final Value<Boolean> PauseIfCrystal = new Value<Boolean>("PauseIfCrystal", new String[] {"PauseIfCrystal"}, "Pauses if a crystal is in your hand", false);
+    public final Value<Boolean> PauseIfEating = new Value<Boolean>("PauseIfEating", new String[] {"PauseIfEating"}, "Pauses if your eating", false);
     public final Value<Boolean> AutoSwitch = new Value<Boolean>("AutoSwitch", new String[] {"AutoSwitch"}, "Automatically switches to a sword in your hotbar", false);
     public final Value<Integer> Ticks = new Value<Integer>("Ticks", new String[] {"Ticks"}, "If you don't have HitDelay on, how fast the kill aura should be hitting", 10, 0, 40, 1);
     public final Value<Integer> Iterations = new Value<Integer>("Iterations", new String[] {""}, "Allows you to do more iteratons per tick", 1, 1, 10, 1);
@@ -176,6 +177,9 @@ public class KillAuraModule extends Module
         if (!(mc.player.getHeldItemMainhand().getItem() instanceof ItemSword))
         {
             if (mc.player.getHeldItemMainhand().getItem() == Items.END_CRYSTAL && PauseIfCrystal.getValue())
+                return;
+
+            if (mc.player.getHeldItemMainhand().getItem() == Items.GOLDEN_APPLE && PauseIfEating.getValue())
                 return;
             
             int l_Slot = -1;
