@@ -32,7 +32,7 @@ public class EnderChestFarmer extends Module
 
     public EnderChestFarmer()
     {
-        super("EnderChestFarmer", new String[]{ "EChestFarmer" }, "Autoamatically places enderchests around you, and attempts to mine it", "NONE", -1, ModuleType.WORLD);
+        super("EnderChestFarmer", new String[]{ "EChestFarmer" }, "Automatically places enderchests around you, and attempts to mine it", "NONE", -1, ModuleType.WORLD);
     }
     
     private Timer PlaceTimer = new Timer();
