@@ -71,6 +71,8 @@ public class AutoBuilderModule extends Module
         Wall,
         HighwayWall,
         Stair,
+        PP,
+        NomadHut,
     }
     
     public enum BuildingModes
@@ -669,6 +671,253 @@ public class AutoBuilderModule extends Module
                         BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down().down());
                         BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down());
                         BlockArray.add(interpPos.south().south().up().up().up().up().north().north().north().down().down().down().down());
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case PP: //Ollie
+                switch (PlayerUtil.GetFacing())
+                {
+                    case East:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).east().east();
+                        BlockArray.add(interpPos.south());
+                        BlockArray.add(interpPos.south().north());
+                        BlockArray.add(interpPos.south().north().north());
+                        BlockArray.add(interpPos.south().north().up());
+                        BlockArray.add(interpPos.south().north().up().up());
+                        BlockArray.add(interpPos.south().north().up().up().up());
+                        break;
+                    case North:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
+                        BlockArray.add(interpPos.east());
+                        BlockArray.add(interpPos.east().west());
+                        BlockArray.add(interpPos.east().west().west());
+                        BlockArray.add(interpPos.east().west().up());
+                        BlockArray.add(interpPos.east().west().up().up());
+                        BlockArray.add(interpPos.east().west().up().up().up());
+                        break;
+                    case South:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).south().south();
+                        BlockArray.add(interpPos.east());
+                        BlockArray.add(interpPos.east().west());
+                        BlockArray.add(interpPos.east().west().west());
+                        BlockArray.add(interpPos.east().west().up());
+                        BlockArray.add(interpPos.east().west().up().up());
+                        BlockArray.add(interpPos.east().west().up().up().up());
+                        break;
+                    case West:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).west().west();
+                        BlockArray.add(interpPos.south());
+                        BlockArray.add(interpPos.south().north());
+                        BlockArray.add(interpPos.south().north().north());
+                        BlockArray.add(interpPos.south().north().up());
+                        BlockArray.add(interpPos.south().north().up().up());
+                        BlockArray.add(interpPos.south().north().up().up().up());
+                        break;
+                    default:
+                        break;
+                }
+
+                break;
+            case NomadHut: //Ollie
+                switch (PlayerUtil.GetFacing())
+                {
+                    case East:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).east().east();
+                        //Doorframe and block to make roof on
+                        BlockArray.add(interpPos.north());
+                        BlockArray.add(interpPos.north().up());
+                        BlockArray.add(interpPos.north().up().up());
+                        BlockArray.add(interpPos.north().up().up().south());
+                        BlockArray.add(interpPos.north().up().up().south().south());
+                        BlockArray.add(interpPos.north().up().up().south().south().down());
+                        BlockArray.add(interpPos.north().up().up().south().south().down().down());
+                        BlockArray.add(interpPos.north().up().up().south().up());
+                        //Roof
+                        BlockArray.add(interpPos.north().up().up().south().up().west());
+                        BlockArray.add(interpPos.north().up().up().south().up().west().west());
+                        BlockArray.add(interpPos.north().up().up().south().up().west().west().west());
+                        BlockArray.add(interpPos.north().up().up().south().up().west().south());
+                        BlockArray.add(interpPos.north().up().up().south().up().west().south().west());
+                        BlockArray.add(interpPos.north().up().up().south().up().west().south().west().west());
+                        BlockArray.add(interpPos.north().up().up().south().up().west().north());
+                        BlockArray.add(interpPos.north().up().up().south().up().west().north().west());
+                        BlockArray.add(interpPos.north().up().up().south().up().west().north().west().west());
+                        //Left Wall
+                        BlockArray.add(interpPos.north().north().west());
+                        BlockArray.add(interpPos.north().north().west().up());
+                        BlockArray.add(interpPos.north().north().west().up().up());
+                        BlockArray.add(interpPos.north().north().west().west());
+                        BlockArray.add(interpPos.north().north().west().west().up().up());
+                        BlockArray.add(interpPos.north().north().west().west().west());
+                        BlockArray.add(interpPos.north().north().west().west().west().up());
+                        BlockArray.add(interpPos.north().north().west().west().west().up().up());
+                        //Right Wall
+                        BlockArray.add(interpPos.south().south().west());
+                        BlockArray.add(interpPos.south().south().west().up());
+                        BlockArray.add(interpPos.south().south().west().up().up());
+                        BlockArray.add(interpPos.south().south().west().west());
+                        BlockArray.add(interpPos.south().south().west().west().up().up());
+                        BlockArray.add(interpPos.south().south().west().west().west());
+                        BlockArray.add(interpPos.south().south().west().west().west().up());
+                        BlockArray.add(interpPos.south().south().west().west().west().up().up());
+                        //Back Wall
+                        BlockArray.add(interpPos.west().west().west().west());
+                        BlockArray.add(interpPos.west().west().west().west().up().up());
+                        BlockArray.add(interpPos.west().west().west().west().north());
+                        BlockArray.add(interpPos.west().west().west().west().north().up());
+                        BlockArray.add(interpPos.west().west().west().west().north().up().up());
+                        BlockArray.add(interpPos.west().west().west().west().south());
+                        BlockArray.add(interpPos.west().west().west().west().south().up());
+                        BlockArray.add(interpPos.west().west().west().west().south().up().up());
+                        break;
+                    case North:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).north().north();
+                        //Doorframe and block to make roof on
+                        BlockArray.add(interpPos.west());
+                        BlockArray.add(interpPos.west().up());
+                        BlockArray.add(interpPos.west().up().up());
+                        BlockArray.add(interpPos.west().up().up().east());
+                        BlockArray.add(interpPos.west().up().up().east().east());
+                        BlockArray.add(interpPos.west().up().up().east().east().down());
+                        BlockArray.add(interpPos.west().up().up().east().east().down().down());
+                        BlockArray.add(interpPos.west().up().up().east().up());
+                        //Roof
+                        BlockArray.add(interpPos.west().up().up().east().up().south());
+                        BlockArray.add(interpPos.west().up().up().east().up().south().south());
+                        BlockArray.add(interpPos.west().up().up().east().up().south().south().south());
+                        BlockArray.add(interpPos.west().up().up().east().up().south().east());
+                        BlockArray.add(interpPos.west().up().up().east().up().south().east().south());
+                        BlockArray.add(interpPos.west().up().up().east().up().south().east().south().south());
+                        BlockArray.add(interpPos.west().up().up().east().up().south().west());
+                        BlockArray.add(interpPos.west().up().up().east().up().south().west().south());
+                        BlockArray.add(interpPos.west().up().up().east().up().south().west().south().south());
+                        //Left Wall
+                        BlockArray.add(interpPos.west().west().south());
+                        BlockArray.add(interpPos.west().west().south().up());
+                        BlockArray.add(interpPos.west().west().south().up().up());
+                        BlockArray.add(interpPos.west().west().south().south());
+                        BlockArray.add(interpPos.west().west().south().south().up().up());
+                        BlockArray.add(interpPos.west().west().south().south().south());
+                        BlockArray.add(interpPos.west().west().south().south().south().up());
+                        BlockArray.add(interpPos.west().west().south().south().south().up().up());
+                        //Right Wall
+                        BlockArray.add(interpPos.east().east().south());
+                        BlockArray.add(interpPos.east().east().south().up());
+                        BlockArray.add(interpPos.east().east().south().up().up());
+                        BlockArray.add(interpPos.east().east().south().south());
+                        BlockArray.add(interpPos.east().east().south().south().up().up());
+                        BlockArray.add(interpPos.east().east().south().south().south());
+                        BlockArray.add(interpPos.east().east().south().south().south().up());
+                        BlockArray.add(interpPos.east().east().south().south().south().up().up());
+                        //Back Wall
+                        BlockArray.add(interpPos.south().south().south().south());
+                        BlockArray.add(interpPos.south().south().south().south().up().up());
+                        BlockArray.add(interpPos.south().south().south().south().west());
+                        BlockArray.add(interpPos.south().south().south().south().west().up());
+                        BlockArray.add(interpPos.south().south().south().south().west().up().up());
+                        BlockArray.add(interpPos.south().south().south().south().east());
+                        BlockArray.add(interpPos.south().south().south().south().east().up());
+                        BlockArray.add(interpPos.south().south().south().south().east().up().up());
+                        break;
+                    case South:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).south().south();
+                        //Doorframe and block to make roof on
+                        BlockArray.add(interpPos.east());
+                        BlockArray.add(interpPos.east().up());
+                        BlockArray.add(interpPos.east().up().up());
+                        BlockArray.add(interpPos.east().up().up().west());
+                        BlockArray.add(interpPos.east().up().up().west().west());
+                        BlockArray.add(interpPos.east().up().up().west().west().down());
+                        BlockArray.add(interpPos.east().up().up().west().west().down().down());
+                        BlockArray.add(interpPos.east().up().up().west().up());
+                        //Roof
+                        BlockArray.add(interpPos.east().up().up().west().up().north());
+                        BlockArray.add(interpPos.east().up().up().west().up().north().north());
+                        BlockArray.add(interpPos.east().up().up().west().up().north().north().north());
+                        BlockArray.add(interpPos.east().up().up().west().up().north().west());
+                        BlockArray.add(interpPos.east().up().up().west().up().north().west().north());
+                        BlockArray.add(interpPos.east().up().up().west().up().north().west().north().north());
+                        BlockArray.add(interpPos.east().up().up().west().up().north().east());
+                        BlockArray.add(interpPos.east().up().up().west().up().north().east().north());
+                        BlockArray.add(interpPos.east().up().up().west().up().north().east().north().north());
+                        //Left Wall
+                        BlockArray.add(interpPos.east().east().north());
+                        BlockArray.add(interpPos.east().east().north().up());
+                        BlockArray.add(interpPos.east().east().north().up().up());
+                        BlockArray.add(interpPos.east().east().north().north());
+                        BlockArray.add(interpPos.east().east().north().north().up().up());
+                        BlockArray.add(interpPos.east().east().north().north().north());
+                        BlockArray.add(interpPos.east().east().north().north().north().up());
+                        BlockArray.add(interpPos.east().east().north().north().north().up().up());
+                        //Right Wall
+                        BlockArray.add(interpPos.west().west().north());
+                        BlockArray.add(interpPos.west().west().north().up());
+                        BlockArray.add(interpPos.west().west().north().up().up());
+                        BlockArray.add(interpPos.west().west().north().north());
+                        BlockArray.add(interpPos.west().west().north().north().up().up());
+                        BlockArray.add(interpPos.west().west().north().north().north());
+                        BlockArray.add(interpPos.west().west().north().north().north().up());
+                        BlockArray.add(interpPos.west().west().north().north().north().up().up());
+                        //Back Wall
+                        BlockArray.add(interpPos.north().north().north().north());
+                        BlockArray.add(interpPos.north().north().north().north().up().up());
+                        BlockArray.add(interpPos.north().north().north().north().east());
+                        BlockArray.add(interpPos.north().north().north().north().east().up());
+                        BlockArray.add(interpPos.north().north().north().north().east().up().up());
+                        BlockArray.add(interpPos.north().north().north().north().west());
+                        BlockArray.add(interpPos.north().north().north().north().west().up());
+                        BlockArray.add(interpPos.north().north().north().north().west().up().up());
+                        break;
+                    case West:
+                        interpPos = new BlockPos(pos.x, pos.y, pos.z).west().west();
+                        //Doorframe and block to make roof on
+                        BlockArray.add(interpPos.south());
+                        BlockArray.add(interpPos.south().up());
+                        BlockArray.add(interpPos.south().up().up());
+                        BlockArray.add(interpPos.south().up().up().north());
+                        BlockArray.add(interpPos.south().up().up().north().north());
+                        BlockArray.add(interpPos.south().up().up().north().north().down());
+                        BlockArray.add(interpPos.south().up().up().north().north().down().down());
+                        BlockArray.add(interpPos.south().up().up().north().up());
+                        //Roof
+                        BlockArray.add(interpPos.south().up().up().north().up().east());
+                        BlockArray.add(interpPos.south().up().up().north().up().east().east());
+                        BlockArray.add(interpPos.south().up().up().north().up().east().east().east());
+                        BlockArray.add(interpPos.south().up().up().north().up().east().north());
+                        BlockArray.add(interpPos.south().up().up().north().up().east().north().east());
+                        BlockArray.add(interpPos.south().up().up().north().up().east().north().east().east());
+                        BlockArray.add(interpPos.south().up().up().north().up().east().south());
+                        BlockArray.add(interpPos.south().up().up().north().up().east().south().east());
+                        BlockArray.add(interpPos.south().up().up().north().up().east().south().east().east());
+                        //Left Wall
+                        BlockArray.add(interpPos.south().south().east());
+                        BlockArray.add(interpPos.south().south().east().up());
+                        BlockArray.add(interpPos.south().south().east().up().up());
+                        BlockArray.add(interpPos.south().south().east().east());
+                        BlockArray.add(interpPos.south().south().east().east().up().up());
+                        BlockArray.add(interpPos.south().south().east().east().east());
+                        BlockArray.add(interpPos.south().south().east().east().east().up());
+                        BlockArray.add(interpPos.south().south().east().east().east().up().up());
+                        //Right Wall
+                        BlockArray.add(interpPos.north().north().east());
+                        BlockArray.add(interpPos.north().north().east().up());
+                        BlockArray.add(interpPos.north().north().east().up().up());
+                        BlockArray.add(interpPos.north().north().east().east());
+                        BlockArray.add(interpPos.north().north().east().east().up().up());
+                        BlockArray.add(interpPos.north().north().east().east().east());
+                        BlockArray.add(interpPos.north().north().east().east().east().up());
+                        BlockArray.add(interpPos.north().north().east().east().east().up().up());
+                        //Back Wall
+                        BlockArray.add(interpPos.east().east().east().east());
+                        BlockArray.add(interpPos.east().east().east().east().up().up());
+                        BlockArray.add(interpPos.east().east().east().east().south());
+                        BlockArray.add(interpPos.east().east().east().east().south().up());
+                        BlockArray.add(interpPos.east().east().east().east().south().up().up());
+                        BlockArray.add(interpPos.east().east().east().east().north());
+                        BlockArray.add(interpPos.east().east().east().east().north().up());
+                        BlockArray.add(interpPos.east().east().east().east().north().up().up());
                         break;
                     default:
                         break;
