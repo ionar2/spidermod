@@ -35,11 +35,6 @@ public class NearestEntityFrameComponent extends HudComponentItem
     {
         super.render(p_MouseX, p_MouseY, p_PartialTicks);
 
-        //RenderUtil.drawStringWithShadow(mc.getSession().getUsername(), GetX(), GetY(), 0xFFFFFF);
-        
-        RenderUtil.drawRect(GetX(), GetY(), GetX()+GetWidth(), GetY()+GetHeight(), 0x990C0C0C);
-        //RenderUtil.drawStringWithShadow(mc.getSession().getUsername(), GetX(), GetY(), 0xFFEC00);
-        
         EntityLivingBase l_Entity = mc.world.loadedEntityList.stream()
                 .filter(entity -> IsValidEntity(entity))
                 .map(entity -> (EntityLivingBase) entity)
@@ -48,6 +43,11 @@ public class NearestEntityFrameComponent extends HudComponentItem
         
         if (l_Entity == null)
             return;
+        
+        //RenderUtil.drawStringWithShadow(mc.getSession().getUsername(), GetX(), GetY(), 0xFFFFFF);
+        
+        RenderUtil.drawRect(GetX(), GetY(), GetX()+GetWidth(), GetY()+GetHeight(), 0x990C0C0C);
+        //RenderUtil.drawStringWithShadow(mc.getSession().getUsername(), GetX(), GetY(), 0xFFEC00);
         
         float l_HealthPct = ((l_Entity.getHealth()+l_Entity.getAbsorptionAmount())/l_Entity.getMaxHealth())*100.0f ;
         float l_HealthBarPct = Math.min(l_HealthPct, 100.0f);
