@@ -13,8 +13,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class NearestEntityFrameComponent extends HudComponentItem
@@ -92,10 +93,10 @@ public class NearestEntityFrameComponent extends HudComponentItem
                 return false;
         }
         
-        if (EntityUtil.isHostileMob(p_Entity) && !Mobs.getValue() || (p_Entity instanceof EntityPigZombie && !Mobs.getValue()))
+        if (!Mobs.getValue() && (EntityUtil.isHostileMob(p_Entity) || (p_Entity instanceof EntityPigZombie) || (p_Entity instanceof EntityEnderman)))
             return false;
 
-        if (p_Entity instanceof EntityAnimal && !Animals.getValue())
+        if (!Animals.getValue() && (p_Entity instanceof EntityAnimal || p_Entity instanceof EntityAmbientCreature || p_Entity instanceof EntitySquid))
             return false;
         
         return true;
