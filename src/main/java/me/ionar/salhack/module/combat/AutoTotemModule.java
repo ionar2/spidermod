@@ -27,7 +27,7 @@ import net.minecraftforge.client.event.GuiScreenEvent.PotionShiftEvent;
 public final class AutoTotemModule extends Module
 {
     public final Value<Float> health = new Value<Float>("Health", new String[]
-    { "Hp" }, "The amount of health needed to acquire a totem.", 16.0f, 0.0f, 20.0f, 0.5f);
+    { "Hp" }, "The amount of health needed to put a totem in offhand.", 16.0f, 0.0f, 20.0f, 0.5f);
     public final Value<AutoTotemMode> Mode = new Value<AutoTotemMode>("Mode", new String[]{"Mode"}, "If you are above the required health for a totem, x will be used in offhand instead.", AutoTotemMode.Totem);
     public final Value<AutoTotemMode> FallbackMode = new Value<AutoTotemMode>("Fallback", new String[]{"FallbackMode"}, "If you don't have the required item for mode, this will be the fallback.", AutoTotemMode.Crystal);
     public final Value<Float> FallDistance = new Value<Float>("FallDistance", new String[] {"Fall"}, "If your fall distance exceeds this value, use a totem", 15.0f, 0.0f, 100.0f, 10.0f);
