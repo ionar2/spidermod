@@ -28,7 +28,8 @@ public class AlwaysEnabledModule implements Listenable
     
     public static String LastIP = null;
     public static int LastPort = -1;
-    
+
+
     @EventHandler
     private Listener<EventNetworkPacketEvent> PacketEvent = new Listener<>(p_Event ->
     {
@@ -40,8 +41,9 @@ public class AlwaysEnabledModule implements Listenable
             {
                 final TextComponentString component = (TextComponentString) packet.getChatComponent();
 
-                if (component.getFormattedText().toLowerCase().contains("polymer") || component.getFormattedText().toLowerCase().contains("veteranhack"))
-                    p_Event.cancel();
+                // if (component.getFormattedText().toLowerCase().contains("polymer") || component.getFormattedText().toLowerCase().contains("veteranhack"))
+                    // p_Event.cancel();
+                // 22 Aug 2020 , Beepjay: I got rid of these lines of code.... who needs
             }
         }
         else if (p_Event.getPacket() instanceof C00Handshake)
@@ -59,35 +61,35 @@ public class AlwaysEnabledModule implements Listenable
             final Minecraft mc = Wrapper.GetMC();
             if (mc.player != null && mc.player.ticksExisted >= 1000)
             {
+
                 if (packet.getAction() == SPacketPlayerListItem.Action.ADD_PLAYER)
                 {
-                    packet.getEntries().forEach(playerData ->
-                    {
-                        if (playerData.getProfile().getId() != mc.session.getProfile().getId())
-                        {
-                            new Thread(() ->
-                            {
+                    for (SPacketPlayerListItem.AddPlayerData playerData : packet.getEntries()) {
+                        if (playerData.getProfile().getId() != mc.session.getProfile().getId()) {
+                            new Thread(() -> {
                                 final String name = UUIDManager.Get().resolveName(playerData.getProfile().getId().toString());
-                                if (name != null)
-                                    SalHackMod.EVENT_BUS.post(new EventPlayerJoin(name, playerData.getProfile().getId().toString()));
+                                if (name != null) {
+                                    if (mc.player != null && mc.player.ticksExisted >= 1000)
+
+                                        SalHackMod.EVENT_BUS.post(new EventPlayerJoin(name, playerData.getProfile().getId().toString()));
+
+                                }
                             }).start();
                         }
-                    });
+                    }
+
                 }
                 if (packet.getAction() == SPacketPlayerListItem.Action.REMOVE_PLAYER)
                 {
-                    packet.getEntries().forEach(playerData ->
-                    {
-                        if (playerData.getProfile().getId() != mc.session.getProfile().getId())
-                        {
-                            new Thread(() ->
-                            {
+                    for (SPacketPlayerListItem.AddPlayerData playerData : packet.getEntries()) {
+                        if (playerData.getProfile().getId() != mc.session.getProfile().getId()) {
+                            new Thread(() -> {
                                 final String name = UUIDManager.Get().resolveName(playerData.getProfile().getId().toString());
                                 if (name != null)
                                     SalHackMod.EVENT_BUS.post(new EventPlayerLeave(name, playerData.getProfile().getId().toString()));
                             }).start();
                         }
-                    });
+                    }
                 }
             }
         }
