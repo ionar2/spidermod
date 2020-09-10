@@ -39,8 +39,6 @@ public class MapBoundaries extends Module {
 
         double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
 
-        double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
-
         double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
 
         int xCenter = MathHelper.floor((d0 + 64.0D) / 128) * 128;
