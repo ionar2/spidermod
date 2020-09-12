@@ -26,7 +26,7 @@ public class DiscordManager
         presence.startTimestamp = System.currentTimeMillis() / 1000; // epoch second
         lib.Discord_UpdatePresence(presence);
         presence.largeImageKey = "image";
-        presence.largeImageText = "https://discord.gg/salhack Join The SalHack Development Discord!";
+        presence.largeImageText = "http://salhack.com/";
         _thread = new Thread(() ->
         {
             while (!Thread.currentThread().isInterrupted())
