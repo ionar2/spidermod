@@ -83,16 +83,44 @@ public class AutoWitherModule extends Module
             toggle();
             return;
         }
-        
-        // WitherFeetBlock.up().up(), WitherFeetBlock.up().up().east(), WitherFeetBlock.up().up().west() 
-        
-        Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up(), Blocks.SOUL_SAND));
-        Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().east(), Blocks.SOUL_SAND));
-        Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().west(), Blocks.SOUL_SAND));
-        Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up(), Blocks.SKULL));
-        Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().east(), Blocks.SKULL));
-        Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().west(), Blocks.SKULL));
-        
+
+        switch (PlayerUtil.GetFacing())
+        {
+            case East:
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().south(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().north(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up(), Blocks.SKULL));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().south(), Blocks.SKULL));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().north(), Blocks.SKULL));
+                break;
+            case North:
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().east(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().west(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up(), Blocks.SKULL));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().east(), Blocks.SKULL));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().west(), Blocks.SKULL));
+                break;
+            case South:
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().west(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().east(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up(), Blocks.SKULL));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().west(), Blocks.SKULL));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().east(), Blocks.SKULL));
+                break;
+            case West:
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().north(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().south(), Blocks.SOUL_SAND));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up(), Blocks.SKULL));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().north(), Blocks.SKULL));
+                Positions.add(new Pair<BlockPos, Block>(WitherFeetBlock.up().up().south(), Blocks.SKULL));
+                break;
+            default:
+                break;
+        }
     }
 
     @EventHandler
