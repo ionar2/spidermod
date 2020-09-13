@@ -8,6 +8,7 @@ import me.ionar.salhack.module.combat.AutoCrystalModule;
 import me.ionar.salhack.module.combat.AutoCrystalRewrite;
 import me.ionar.salhack.module.combat.AutoTrap;
 import me.ionar.salhack.module.combat.KillAuraModule;
+import me.ionar.salhack.module.combat.AutoTotemModule;
 import me.ionar.salhack.module.movement.SpeedModule;
 import me.ionar.salhack.util.render.RenderUtil;
 
@@ -22,6 +23,8 @@ public class PvPInfoComponent extends HudComponentItem
         _autoTrap = (AutoTrap)ModuleManager.Get().GetMod(AutoTrap.class);
         _speed = (SpeedModule)ModuleManager.Get().GetMod(SpeedModule.class);
         _autoCrystalRewrite = (AutoCrystalRewrite)ModuleManager.Get().GetMod(AutoCrystalRewrite.class);
+        _autoTotem = (AutoTotemModule)ModuleManager.Get().GetMod(AutoTotemModule.class);
+        
     }
     
     private KillAuraModule _killAura;
@@ -29,6 +32,7 @@ public class PvPInfoComponent extends HudComponentItem
     private AutoTrap _autoTrap;
     private SpeedModule _speed;
     private AutoCrystalRewrite _autoCrystalRewrite;
+    private AutoTotemModule _autoTotem;
 
     @Override
     public void render(int p_MouseX, int p_MouseY, float p_PartialTicks)
@@ -39,13 +43,15 @@ public class PvPInfoComponent extends HudComponentItem
         final String crystal = ChatFormatting.GRAY + "CA " + ChatFormatting.WHITE + ((_autoCrystal.isEnabled() || _autoCrystalRewrite.isEnabled()) ? ChatFormatting.GREEN + "ON" : ChatFormatting.RED + "OFF");
         final String autoTrap = ChatFormatting.GRAY + "AT " + ChatFormatting.WHITE + (_autoTrap.isEnabled() ? ChatFormatting.GREEN + "ON" : ChatFormatting.RED + "OFF");
         final String speed = ChatFormatting.GRAY + "S " + ChatFormatting.WHITE + (_speed.isEnabled() ? ChatFormatting.GREEN + "ON" : ChatFormatting.RED + "OFF");
+        final String autoTotem = ChatFormatting.GRAY + "T " + ChatFormatting.WHITE + (_autoTotem.isEnabled() ? ChatFormatting.GREEN + "ON" : ChatFormatting.RED + "OFF");
         
         RenderUtil.drawStringWithShadow(aura, GetX(), GetY(), -1);
         RenderUtil.drawStringWithShadow(crystal, GetX(), GetY()+12, -1);
         RenderUtil.drawStringWithShadow(autoTrap, GetX(), GetY()+24, -1);
         RenderUtil.drawStringWithShadow(speed, GetX(), GetY()+36, -1);
+        RenderUtil.drawStringWithShadow(autoTotem, GetX(), GetY()+48, -1);
 
         SetWidth(RenderUtil.getStringWidth(aura));
-        SetHeight(RenderUtil.getStringHeight(crystal)+RenderUtil.getStringHeight(aura)+RenderUtil.getStringHeight(autoTrap)+RenderUtil.getStringHeight(speed));
+        SetHeight(RenderUtil.getStringHeight(crystal)+RenderUtil.getStringHeight(aura)+RenderUtil.getStringHeight(autoTrap)+RenderUtil.getStringHeight(speed)+RenderUtil.getStringHeight(autoTotem));
     }
 }
