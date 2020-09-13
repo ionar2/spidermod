@@ -35,6 +35,7 @@ public class HudManager
         Add(new ArrayListComponent());
         Add(new InventoryComponent());
         Add(new TabGUIComponent());
+        Add(new TextRadar());
         Add(new NotificationComponent());
         Add(new CoordsComponent());
         Add(new SpeedComponent());
