@@ -13,8 +13,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class NearestEntityFrameComponent extends HudComponentItem
@@ -34,11 +35,6 @@ public class NearestEntityFrameComponent extends HudComponentItem
     {
         super.render(p_MouseX, p_MouseY, p_PartialTicks);
 
-        //RenderUtil.drawStringWithShadow(mc.getSession().getUsername(), GetX(), GetY(), 0xFFFFFF);
-        
-        RenderUtil.drawRect(GetX(), GetY(), GetX()+GetWidth(), GetY()+GetHeight(), 0x990C0C0C);
-        //RenderUtil.drawStringWithShadow(mc.getSession().getUsername(), GetX(), GetY(), 0xFFEC00);
-        
         EntityLivingBase l_Entity = mc.world.loadedEntityList.stream()
                 .filter(entity -> IsValidEntity(entity))
                 .map(entity -> (EntityLivingBase) entity)
@@ -47,6 +43,11 @@ public class NearestEntityFrameComponent extends HudComponentItem
         
         if (l_Entity == null)
             return;
+        
+        //RenderUtil.drawStringWithShadow(mc.getSession().getUsername(), GetX(), GetY(), 0xFFFFFF);
+        
+        RenderUtil.drawRect(GetX(), GetY(), GetX()+GetWidth(), GetY()+GetHeight(), 0x990C0C0C);
+        //RenderUtil.drawStringWithShadow(mc.getSession().getUsername(), GetX(), GetY(), 0xFFEC00);
         
         float l_HealthPct = ((l_Entity.getHealth()+l_Entity.getAbsorptionAmount())/l_Entity.getMaxHealth())*100.0f ;
         float l_HealthBarPct = Math.min(l_HealthPct, 100.0f);
@@ -92,10 +93,10 @@ public class NearestEntityFrameComponent extends HudComponentItem
                 return false;
         }
         
-        if (EntityUtil.isHostileMob(p_Entity) && !Mobs.getValue() || (p_Entity instanceof EntityPigZombie && !Mobs.getValue()))
+        if (!Mobs.getValue() && (EntityUtil.isHostileMob(p_Entity) || (p_Entity instanceof EntityPigZombie) || (p_Entity instanceof EntityEnderman)))
             return false;
 
-        if (p_Entity instanceof EntityAnimal && !Animals.getValue())
+        if (!Animals.getValue() && (p_Entity instanceof EntityAnimal || p_Entity instanceof EntityAmbientCreature || p_Entity instanceof EntitySquid))
             return false;
         
         return true;
