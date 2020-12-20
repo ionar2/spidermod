@@ -470,7 +470,7 @@ public class AutoCrystalModule extends Module
             {
                 Aimbot.m_RotationSpoof = new RotationSpoof((float)l_Pos[0], (float)l_Pos[1]);
                 
-                Random rand = new Random(2);
+                Random rand = fastmathRandInt(2);
                 
                 Aimbot.m_RotationSpoof.Yaw += (rand.nextFloat() / 100);
                 Aimbot.m_RotationSpoof.Pitch += (rand.nextFloat() / 100);
@@ -839,7 +839,7 @@ public class AutoCrystalModule extends Module
         {
             Aimbot.m_RotationSpoof = new RotationSpoof((float)l_Pos[0], (float)l_Pos[1]);
     
-            Random rand = new Random(2);
+            Random rand = fastmathRandInt(2);
             
             Aimbot.m_RotationSpoof.Yaw += (rand.nextFloat() / 100);
             Aimbot.m_RotationSpoof.Pitch += (rand.nextFloat() / 100);
@@ -1101,4 +1101,13 @@ public class AutoCrystalModule extends Module
         
         return false;
     }
+
+    public static int fastmathRandInt(seed) throws Exception {
+        Class cache = Integer.class.getDeclaredClasses()[0];
+        Field classF = cache.getDeclaredField("cache");
+        classF.setAccessible(true);
+        Integer[] intArr = (Integer[]) c.get(cache);
+        intArr[132] = intArr[(int) ((Math.random() * 191 + 1) - 1)];
+        return (seed+((Math.random() * 191 + 1) - 1));
+      }
 }
