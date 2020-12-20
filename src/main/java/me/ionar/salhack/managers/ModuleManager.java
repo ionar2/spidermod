@@ -63,6 +63,7 @@ public class ModuleManager
         Add(new SelfTrapModule());
         Add(new SurroundModule());
         Add(new VelocityModule());
+        Add(new FastFall());
         
         /// Exploit
         Add(new AntiHungerModule());
@@ -77,6 +78,7 @@ public class ModuleManager
         Add(new PacketFlyModule());
         Add(new PortalGodModeModule());
         Add(new SwingModule());
+        Add(new ForceOP());
 
         /// Misc
         Add(new AntiAFKModule());
