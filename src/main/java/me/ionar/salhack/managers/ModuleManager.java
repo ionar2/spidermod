@@ -126,6 +126,7 @@ public class ModuleManager
         Add(new SprintModule());
         Add(new StepModule());
         Add(new YawModule());
+        Add(new Anchor());
         
         /// Render
         Add(new AntiFog());
