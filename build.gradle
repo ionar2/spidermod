@@ -69,7 +69,7 @@ repositories {
     }
     maven {
         name = 'swt-repo'
-        url = "https://maven-eclipse.github.io/maven"
+        url = "http://maven-eclipse.github.io/maven"
     }
     maven {
         name = "jitpack.io"
