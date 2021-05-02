@@ -115,6 +115,7 @@ public class ModuleManager
         Add(new BlinkModule());
         Add(new ElytraFlyModule());
         Add(new EntityControlModule());
+        Add(new FastFall());
         Add(new FlightModule());
         Add(new NoFallModule());
         Add(new NoRotateModule());

@@ -33,8 +33,6 @@ public final class SpeedyGonzales extends Module
     { "Res" }, "Stops current block destroy damage from resetting if enabled.", true);
     public final Value<Boolean> doubleBreak = new Value<Boolean>("DoubleBreak", new String[]
     { "DoubleBreak", "Double", "DB" }, "Mining a block will also mine the block above it, if enabled.", false);
-    public final Value<Boolean> FastFall = new Value<Boolean>("FastFall", new String[]
-    { "FF" }, "Makes it so you fall faster.", false);
 
     public SpeedyGonzales()
     {
@@ -57,12 +55,7 @@ public final class SpeedyGonzales extends Module
         {
             mc.playerController.isHittingBlock = false;
         }
-
-        if (FastFall.getValue())
-        {
-            if (mc.player.onGround)
-                --mc.player.motionY;
-        }
+        
     });
 
     @EventHandler
