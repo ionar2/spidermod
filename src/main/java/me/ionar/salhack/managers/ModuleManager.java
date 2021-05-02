@@ -151,7 +151,7 @@ public class ModuleManager
         Add(new ViewClipModule());
         Add(new VoidESPModule());
         Add(new WaypointsModule());
-        Add(new MapBoundaries());
+        Add(new MapBoundariesModule());
 
         /// UI
         Add(new ColorsModule());
