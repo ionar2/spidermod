@@ -10,7 +10,7 @@ public final class FastFallModule extends Module {
 
     public FastFallModule()
     {
-        super("FastFall", new String[] {"FastFall"}, "Makes you fall faster to get into holes easier", "NONE", 0x24CADB, ModuleType.COMBAT);
+        super("FastFall", new String[] {"FastFall"}, "Makes you fall faster to get into holes easier", "NONE", 0x24CADB, ModuleType.MOVEMENT);
     }
 
     @EventHandler
