@@ -168,3 +168,4 @@ public class Anchor extends Module {
     private BlockPos getPlayerPos() {
         return new BlockPos(Math.floor(mc.player.posX), Math.floor(mc.player.posY), Math.floor(mc.player.posZ));
     }
+}
