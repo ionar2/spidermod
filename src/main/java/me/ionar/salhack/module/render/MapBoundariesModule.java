@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 
 public class MapBoundariesModule extends Module {
-    public MapBoundaries()
+    public MapBoundariesModule()
     {
         super("MapBoundaries", new String[] {""}, "Shows where a 1x1 map will go", "NONE", -1, ModuleType.RENDER);
     }
