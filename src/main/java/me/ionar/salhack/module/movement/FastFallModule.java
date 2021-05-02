@@ -6,9 +6,9 @@ import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
 import me.ionar.salhack.events.player.EventPlayerUpdate;
 
-public final class FastFall extends Module {
+public final class FastFallModule extends Module {
 
-    public FastFall()
+    public FastFallModule()
     {
         super("FastFall", new String[] {"FastFall"}, "Makes you fall faster to get into holes easier", "NONE", 0x24CADB, ModuleType.COMBAT);
     }
