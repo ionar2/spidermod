@@ -15,7 +15,7 @@ import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 
-public class MapBoundaries extends Module {
+public class MapBoundariesModule extends Module {
     public MapBoundaries()
     {
         super("MapBoundaries", new String[] {""}, "Shows where a 1x1 map will go", "NONE", -1, ModuleType.RENDER);
