@@ -4,15 +4,15 @@ buildscript {
         jcenter()
         maven {
             name = 'gradle plugins'
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
         maven {
             name = 'forge'
-            url = 'http://files.minecraftforge.net/maven'
+            url = 'https://files.minecraftforge.net/maven'
         }
         maven {
             name = 'SpongePowered'
-            url = 'http://repo.spongepowered.org/maven'
+            url = 'https://repo.spongepowered.org/maven'
         }
         maven {
             name = 'sonatype'
@@ -61,7 +61,7 @@ minecraft {
 repositories {
     maven {
         name = 'spongepowered-repo'
-        url = 'http://repo.spongepowered.org/maven/'
+        url = 'https://repo.spongepowered.org/maven/'
     }
     maven {
         name = 'impactdevelopment-repo'
@@ -69,7 +69,7 @@ repositories {
     }
     maven {
         name = 'swt-repo'
-        url = "http://maven-eclipse.github.io/maven"
+        url = "https://maven-eclipse.github.io/maven"
     }
     maven {
         name = "jitpack.io"
