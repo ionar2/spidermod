@@ -91,44 +91,4 @@ public class CoordsComponent extends HudComponentItem
 
     }
 
-    private CoordsSpooferModule _getCoords = (CoordsSpooferModule) ModuleManager.Get().GetMod(CoordsSpooferModule.class) ;
-
-    private Boolean getCoordSpoofer() {
-        return _getCoords.isEnabled();
-    }
-
-    private int randX() {
-        int i = (int)(Math.random() * 2) +1;
-        if (i==1) {
-            i = (int)((Math.random() * 30000000) + 0) * -1;
-        } else {
-            i = (int)((Math.random() * 30000000) + 0);
-        }
-        return i;
-    }
-
-    private int randZ() {
-        int i = (int)(Math.random() * 2) +1;
-        if (i==1) {
-            i = (int)((Math.random() * 30000000) + 0) * -1;
-        } else {
-            i = (int)((Math.random() * 30000000) + 0);
-        }
-        return i;
-    }
-
-    private double getX() {
-        if(getCoordSpoofer()) {
-            return mc.player.posX + randX();
-        }
-        return mc.player.posX;
-    }
-
-    private double getZ() {
-        if(getCoordSpoofer()) {
-            return mc.player.posZ + randZ();
-        }
-        return mc.player.posZ;
-    }
-
 }
