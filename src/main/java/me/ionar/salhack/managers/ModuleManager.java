@@ -69,8 +69,8 @@ public class ModuleManager
         Add(new AntiHungerModule());
         Add(new CoordTPExploitModule());
         Add(new CrashExploitModule());
-        Add(new EntityDesyncModule())
-        Add(new GhostModule());;
+        Add(new EntityDesyncModule());
+        Add(new GhostModule());
         Add(new LiquidInteractModule());
         Add(new MobOwnerModule());
         Add(new MountBypassModule());
