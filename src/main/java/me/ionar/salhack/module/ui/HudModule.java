@@ -1,14 +1,8 @@
 package me.ionar.salhack.module.ui;
 
-import org.lwjgl.util.glu.Project;
-
-import me.ionar.salhack.events.player.EventPlayerUpdate;
 import me.ionar.salhack.events.render.EventRenderGameOverlay;
 import me.ionar.salhack.events.render.EventRenderGetFOVModifier;
 import me.ionar.salhack.events.render.EventRenderHand;
-import me.ionar.salhack.events.render.EventRenderTooltip;
-import me.ionar.salhack.main.SalHack;
-import me.ionar.salhack.main.Wrapper;
 import me.ionar.salhack.managers.HudManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
@@ -18,7 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
+import org.lwjgl.util.glu.Project;
 
 public final class HudModule extends Module
 {
@@ -33,6 +27,7 @@ public final class HudModule extends Module
     public final Value<Boolean> NoBob = new Value<Boolean>("NoBob", new String[]
     { "NoBob" }, "Disables bobbing effect", true);
     public final Value<Boolean> CustomFont = new Value<Boolean>("CustomFont", new String[] {"CF"}, "Displays the custom font", true);
+    public final Value<Boolean> Rainbow = new Value<Boolean>("Rainbow", new String[] {"RGB"}, "Give HUD items rainbow effect.", true);
 
     public HudModule()
     {

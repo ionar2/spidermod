@@ -1,8 +1,8 @@
 package me.ionar.salhack.util.colors;
 
-import java.util.ArrayList;
-
 import me.ionar.salhack.util.Timer;
+
+import java.util.ArrayList;
 
 /// Object for rainbow handling
 public class SalRainbowUtil
@@ -61,6 +61,14 @@ public class SalRainbowUtil
             l_Index = 0;
 
         CurrentRainbowIndexes.add(l_Index);
+    }
+
+    public int getRainbowColorNumber(int l_I) {
+        l_I += 20;
+        if (l_I >= 355) {
+            l_I = 0;
+        }
+        return l_I;
     }
     
 }

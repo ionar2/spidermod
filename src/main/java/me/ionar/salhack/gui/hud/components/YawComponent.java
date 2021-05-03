@@ -1,16 +1,14 @@
 package me.ionar.salhack.gui.hud.components;
 
-import java.text.DecimalFormat;
-
 import com.mojang.realmsclient.gui.ChatFormatting;
-
 import me.ionar.salhack.gui.hud.HudComponentItem;
-import me.ionar.salhack.managers.TickRateManager;
+import me.ionar.salhack.managers.ModuleManager;
+import me.ionar.salhack.module.ui.HudModule;
+import me.ionar.salhack.util.colors.SalRainbowUtil;
 import me.ionar.salhack.util.render.RenderUtil;
-import net.minecraft.client.Minecraft;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+
+import java.text.DecimalFormat;
 
 public class YawComponent extends HudComponentItem
 {
@@ -18,6 +16,10 @@ public class YawComponent extends HudComponentItem
     {
         super("Yaw", 2, 200);
     }
+
+    private HudModule l_Hud = (HudModule) ModuleManager.Get().GetMod(HudModule.class);
+    private SalRainbowUtil Rainbow = new SalRainbowUtil(9);
+    private int l_I = 0;
 
     @Override
     public void render(int p_MouseX, int p_MouseY, float p_PartialTicks)
@@ -27,7 +29,7 @@ public class YawComponent extends HudComponentItem
         DecimalFormat l_Format = new DecimalFormat("#.##");
         float l_Yaw = MathHelper.wrapDegrees(mc.player.rotationYaw);
         
-        String direction = ChatFormatting.GRAY + "Yaw: " + ChatFormatting.WHITE + l_Format.format(l_Yaw);
+        String direction = l_Hud.Rainbow.getValue() ? "Yaw: " + l_Format.format(l_Yaw) : ChatFormatting.GRAY + "Yaw: " + ChatFormatting.WHITE + l_Format.format(l_Yaw);
         
         if (!direction.contains("."))
             direction += ".00";
@@ -42,7 +44,8 @@ public class YawComponent extends HudComponentItem
         SetWidth(RenderUtil.getStringWidth(direction));
         SetHeight(RenderUtil.getStringHeight(direction));
 
-        RenderUtil.drawStringWithShadow(direction, GetX(), GetY(), -1);
+        Rainbow.OnRender();
+        RenderUtil.drawStringWithShadow(direction, GetX(), GetY(), l_Hud.Rainbow.getValue() ? Rainbow.GetRainbowColorAt(Rainbow.getRainbowColorNumber(l_I)) : -1);
     }
 
 }

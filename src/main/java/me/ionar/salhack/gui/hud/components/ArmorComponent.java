@@ -1,18 +1,21 @@
 package me.ionar.salhack.gui.hud.components;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-
 import me.ionar.salhack.gui.hud.HudComponentItem;
 import me.ionar.salhack.managers.FontManager;
+import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Value;
+import me.ionar.salhack.module.ui.HudModule;
+import me.ionar.salhack.util.colors.SalRainbowUtil;
 import me.ionar.salhack.util.render.RenderUtil;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
 public class ArmorComponent extends HudComponentItem
 {
@@ -30,6 +33,10 @@ public class ArmorComponent extends HudComponentItem
     }
     
     DecimalFormat Formatter = new DecimalFormat("#");
+
+    private HudModule l_Hud = (HudModule) ModuleManager.Get().GetMod(HudModule.class);
+    private SalRainbowUtil Rainbow = new SalRainbowUtil(9);
+    private int l_I = 0;
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks)
@@ -111,8 +118,9 @@ public class ArmorComponent extends HudComponentItem
                     
                     mc.getRenderItem().renderItemAndEffectIntoGUI(l_Stack, (int)(GetX() + l_X), (int)GetY()+10);
                     mc.getRenderItem().renderItemOverlays(mc.fontRenderer, l_Stack, (int)(GetX() + l_X), (int)GetY()+10);
-                    
-                    FontManager.Get().TWCenMt18. drawCenteredString(Formatter.format(GetPctFromStack(l_Stack)), GetX() + l_TextX, GetY(), -1);
+
+                    Rainbow.OnRender();
+                    FontManager.Get().TWCenMt18. drawCenteredString(Formatter.format(GetPctFromStack(l_Stack)), GetX() + l_TextX, GetY(), l_Hud.Rainbow.getValue() ? Rainbow.GetRainbowColorAt(Rainbow.getRainbowColorNumber(l_I)) : -1);
                     
                     l_X += 20;
                     
