@@ -165,6 +165,7 @@ public class ModuleManager
         
         /// World
         Add(new AutoBuilderModule());
+        Add(new AutoHighwayBuilder());
         Add(new AutoNameTagModule());
         Add(new AutoToolModule());
         Add(new AutoTunnelModule());

@@ -18,22 +18,26 @@ import me.zero.alpine.fork.listener.Listener;
 public final class GlobalLocationModule extends Module
 {
     public final Value<Boolean> thunder = new Value<Boolean>("Thunder", new String[]
-    { "thund" }, "Logs positions of thunder/lightning sounds.", true);
+            { "thund" }, "Logs positions of thunder/lightning sounds.", true);
     public final Value<Boolean> slimes = new Value<Boolean>("Slimes", new String[]
-    { "slime" }, "Logs positions of slime spawns.", false);
+            { "slime" }, "Logs positions of slime spawns.", false);
     public final Value<Boolean> Wither = new Value<Boolean>("Wither", new String[]
-    { "Wither" }, "Logs positions of Wither spawns.", false);
+            { "Wither" }, "Logs positions of Wither spawns.", false);
     public final Value<Boolean> EndPortal = new Value<Boolean>("End Portal", new String[]
-    { "EndPortal" }, "Logs positions of EndPortal spawns.", false);
+            { "EndPortal" }, "Logs positions of EndPortal spawns.", false);
     public final Value<Boolean> EnderDragon = new Value<Boolean>("Ender Dragon", new String[]
-    { "ED" }, "Logs positions of EnderDragon spawns.", false);
+            { "ED" }, "Logs positions of EnderDragon spawns.", false);
     public final Value<Boolean> Donkey = new Value<Boolean>("Donkey", new String[]
-    { "Donkey" }, "logs location of donkey spawns", false);
+            { "Donkey" }, "logs location of donkey spawns", false);
+    public final Value<Boolean> Llama = new Value<Boolean>("Llama", new String[]
+            { "Llama" }, "logs location of llama spawns", false);
+    public final Value<Boolean> Mule = new Value<Boolean>("Mule", new String[]
+            { "Mule" }, "logs location of mule spawns", false);
 
     public GlobalLocationModule()
     {
         super("GlobalLocation", new String[]
-        { "WitherLocationModule" }, "Logs in chat where a global sound happened (Warning can send current location if server changed the packet!)", "NONE", 0xDBB024, ModuleType.MISC);
+                { "WitherLocationModule" }, "Logs in chat where a global sound happened (Warning can send current location if server changed the packet!)", "NONE", 0xDBB024, ModuleType.MISC);
     }
 
     @EventHandler
@@ -55,7 +59,13 @@ public final class GlobalLocationModule extends Module
 
             if (this.Donkey.getValue() && packet.getEntityType() == 31)
             {
-                SalHack.SendMessage(String.format("Donkey spawned at %s %s %s", packet.getX(), packet.getY(), packet.getZ()));
+                SalHack.SendMessage(String.format("Donkey spawned at %s %s %s", Math.round(packet.getX()), Math.round(packet.getY()), Math.round(packet.getZ())));
+            } else if (this.Llama.getValue() && packet.getEntityType() == 103)
+            {
+                SalHack.SendMessage(String.format("Llama spawned at %s %s %s", Math.round(packet.getX()), Math.round(packet.getY()), Math.round(packet.getZ())));
+            } else if (this.Mule.getValue() && packet.getEntityType() == 32)
+            {
+                SalHack.SendMessage(String.format("Mule spawned at %s %s %s", Math.round(packet.getX()), Math.round(packet.getY()), Math.round(packet.getZ())));
             }
         }
         else if (p_Event.getPacket() instanceof SPacketSoundEffect)
