@@ -32,6 +32,7 @@ public class HudManager
     public void Init()
     {
         Add(new WatermarkComponent());
+        Add(new WelcomeComponent());
         Add(new ArrayListComponent());
         Add(new InventoryComponent());
         Add(new TabGUIComponent());

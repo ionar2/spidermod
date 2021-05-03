@@ -53,7 +53,7 @@ public final class GlobalLocationModule extends Module
                 if (packet.getEntityType() == 55 && packet.getY() <= 40 && !mc.world.getBiome(mc.player.getPosition()).getBiomeName().toLowerCase().contains("swamp"))
                 {
                     final BlockPos pos = new BlockPos(packet.getX(), packet.getY(), packet.getZ());
-                    SalHack.SendMessage("Slime Spawned in chunk X:" + mc.world.getChunk(pos).x + " Z:" + mc.world.getChunk(pos).z);
+                    SalHack.SendMessage("Slime Spawned in chunk X:" + Math.round(mc.world.getChunk(pos).x) + " Z:" + Math.round(mc.world.getChunk(pos).z));
                 }
             }
 

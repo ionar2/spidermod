@@ -631,6 +631,39 @@ public class AutoHighwayBuilder extends Module
                     case East: {
                         this.BlockArray.add(orignPos.down());
                         this.BlockArray.add(orignPos.down().east());
+                        this.BlockArray.add(orignPos.down().east().south());
+                        this.BlockArray.add(orignPos.down().east().south().up());
+                        break;
+                    }
+                    case North: {
+                        this.BlockArray.add(orignPos.down());
+                        this.BlockArray.add(orignPos.down().north());
+                        this.BlockArray.add(orignPos.down().north().west());
+                        this.BlockArray.add(orignPos.down().north().west().up());
+                        break;
+                    }
+                    case South: {
+                        this.BlockArray.add(orignPos.down());
+                        this.BlockArray.add(orignPos.down().south());
+                        this.BlockArray.add(orignPos.down().south().west());
+                        this.BlockArray.add(orignPos.down().south().west().up());
+                        break;
+                    }
+                    case West: {
+                        this.BlockArray.add(orignPos.down());
+                        this.BlockArray.add(orignPos.down().west());
+                        this.BlockArray.add(orignPos.down().west().south());
+                        this.BlockArray.add(orignPos.down().west().south().up());
+                        break;
+                    }
+                }
+                break;
+            }
+            case LeftRail: {
+                switch (PlayerUtil.GetFacing()) {
+                    case East: {
+                        this.BlockArray.add(orignPos.down());
+                        this.BlockArray.add(orignPos.down().east());
                         this.BlockArray.add(orignPos.down().east().north());
                         this.BlockArray.add(orignPos.down().east().north().up());
                         break;
@@ -657,39 +690,6 @@ public class AutoHighwayBuilder extends Module
                         break;
                     }
                     default: {
-                        break;
-                    }
-                }
-                break;
-            }
-            case LeftRail: {
-                switch (PlayerUtil.GetFacing()) {
-                    case East: {
-                        this.BlockArray.add(orignPos.down());
-                        this.BlockArray.add(orignPos.down().east());
-                        this.BlockArray.add(orignPos.down().east().south());
-                        this.BlockArray.add(orignPos.down().east().south().up());
-                        break;
-                    }
-                    case North: {
-                        this.BlockArray.add(orignPos.down());
-                        this.BlockArray.add(orignPos.down().north());
-                        this.BlockArray.add(orignPos.down().north().west());
-                        this.BlockArray.add(orignPos.down().north().west().up());
-                        break;
-                    }
-                    case South: {
-                        this.BlockArray.add(orignPos.down());
-                        this.BlockArray.add(orignPos.down().south());
-                        this.BlockArray.add(orignPos.down().south().west());
-                        this.BlockArray.add(orignPos.down().south().west().up());
-                        break;
-                    }
-                    case West: {
-                        this.BlockArray.add(orignPos.down());
-                        this.BlockArray.add(orignPos.down().west());
-                        this.BlockArray.add(orignPos.down().west().south());
-                        this.BlockArray.add(orignPos.down().west().south().up());
                         break;
                     }
                 }

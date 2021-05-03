@@ -58,6 +58,7 @@ public class ModuleManager
         Add(new CriticalsModule());
         Add(new HoleFillerModule());
         Add(new KillAuraModule());
+        Add(new MiddleClickPearlModule());
         Add(new OffhandModule());
         Add(new ReachModule());
         Add(new SelfTrapModule());
@@ -68,8 +69,10 @@ public class ModuleManager
         Add(new AntiHungerModule());
         Add(new CoordTPExploitModule());
         Add(new CrashExploitModule());
-        Add(new EntityDesyncModule());
+        Add(new EntityDesyncModule())
+        Add(new GhostModule());;
         Add(new LiquidInteractModule());
+        Add(new MobOwnerModule());
         Add(new MountBypassModule());
         Add(new NoMiningTrace());
         Add(new NewChunksModule());
@@ -87,6 +90,7 @@ public class ModuleManager
         Add(new AutoMendArmorModule());
         Add(new AutoMountModule());
         Add(new AutoReconnectModule());
+        Add(new AutoRespawnModule());
         Add(new AutoShearModule());
         Add(new AutoShovelPathModule());
         Add(new AutoSignModule());
@@ -117,9 +121,12 @@ public class ModuleManager
         Add(new EntityControlModule());
         Add(new FastFallModule());
         Add(new FlightModule());
+        Add(new GlideModule());
+        Add(new HorseJumpModule());
         Add(new NoFallModule());
         Add(new NoRotateModule());
         Add(new NoSlowModule());
+        Add(new ParkourModule());
         Add(new JesusModule());
         Add(new SafeWalkModule());
         Add(new SneakModule());
@@ -146,6 +153,7 @@ public class ModuleManager
         Add(new NoRenderModule());
         Add(new ShulkerPreviewModule());
         Add(new SkeletonModule());
+        Add(new SmallShieldModule());
         Add(new StorageESPModule());
         Add(new TracersModule());
         Add(new TrajectoriesModule());
