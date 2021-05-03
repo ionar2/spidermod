@@ -5,7 +5,7 @@ import me.ionar.salhack.module.Module;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
 
-public class ParkourmODULE extends Module {
+public class ParkourModule extends Module {
 
     public ParkourModule()
     {
