@@ -5,7 +5,6 @@ import me.ionar.salhack.gui.hud.HudComponentItem;
 import me.ionar.salhack.managers.ModuleManager;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.module.ui.HudModule;
-import me.ionar.salhack.module.world.CoordsSpooferModule;
 import me.ionar.salhack.util.colors.SalRainbowUtil;
 import me.ionar.salhack.util.render.RenderUtil;
 
