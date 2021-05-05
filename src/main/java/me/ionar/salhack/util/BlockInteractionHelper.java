@@ -272,6 +272,7 @@ public class BlockInteractionHelper
                     cubeBlocks.add(playerPos.east());
                     cubeBlocks.add(playerPos.east().up());
                     cubeBlocks.add(playerPos.east().up().up());
+
                     playerPos = new BlockPos(playerPos).east();
                 }
                 break;
@@ -357,13 +358,96 @@ public class BlockInteractionHelper
         }
         return cubeBlocks;
     }
+    public static List<BlockPos> getHighway2() {
+        List<BlockPos> cubeBlocks = new ArrayList<>();
+        BlockPos playerPos = PlayerUtil.GetLocalPlayerPosFloored();
+        switch (PlayerUtil.GetFacing()) {
+            case East:
+                for (int i = 0; i < 7; ++i) {
+                    cubeBlocks.add(playerPos.east());
+                    cubeBlocks.add(playerPos.east().up());
+                    cubeBlocks.add(playerPos.east().up().up());
+                    cubeBlocks.add(playerPos.east().up().up().up());
+                    cubeBlocks.add(playerPos.east().south().up());
+                    cubeBlocks.add(playerPos.east().south().up().up());
+                    cubeBlocks.add(playerPos.east().south().up().up().up());
+                    cubeBlocks.add(playerPos.east().north());
+                    cubeBlocks.add(playerPos.east().north().up());
+                    cubeBlocks.add(playerPos.east().north().up().up());
+                    cubeBlocks.add(playerPos.east().north().up().up().up());
+                    cubeBlocks.add(playerPos.east().north().north().up());
+                    cubeBlocks.add(playerPos.east().north().north().up().up());
+                    cubeBlocks.add(playerPos.east().north().north().up().up().up());
+                    playerPos = new BlockPos(playerPos).east();
+                }
+                break;
+            case North:
+                for (int i = 0; i < 7; ++i) {
+                    cubeBlocks.add(playerPos.north());
+                    cubeBlocks.add(playerPos.north().up());
+                    cubeBlocks.add(playerPos.north().up().up());
+                    cubeBlocks.add(playerPos.north().up().up().up());
+                    cubeBlocks.add(playerPos.north().west().up());
+                    cubeBlocks.add(playerPos.north().west().up().up());
+                    cubeBlocks.add(playerPos.north().west().up().up().up());
+                    cubeBlocks.add(playerPos.north().east());
+                    cubeBlocks.add(playerPos.north().east().up());
+                    cubeBlocks.add(playerPos.north().east().up().up());
+                    cubeBlocks.add(playerPos.north().east().up().up().up());
+                    cubeBlocks.add(playerPos.north().east().north().up());
+                    cubeBlocks.add(playerPos.north().east().north().up().up());
+                    cubeBlocks.add(playerPos.north().east().north().up().up().up());
+                    playerPos = new BlockPos(playerPos).north();
+                }
+                break;
+            case South:
+                for (int i = 0; i < 7; ++i) {
+                    cubeBlocks.add(playerPos.south());
+                    cubeBlocks.add(playerPos.south().up());
+                    cubeBlocks.add(playerPos.south().up().up());
+                    cubeBlocks.add(playerPos.south().up().up().up());
+                    cubeBlocks.add(playerPos.south().east().up());
+                    cubeBlocks.add(playerPos.south().east().up().up());
+                    cubeBlocks.add(playerPos.south().east().up().up().up());
+                    cubeBlocks.add(playerPos.south().west());
+                    cubeBlocks.add(playerPos.south().west().up());
+                    cubeBlocks.add(playerPos.south().west().up().up());
+                    cubeBlocks.add(playerPos.south().west().up().up().up());
+                    cubeBlocks.add(playerPos.south().west().west().up());
+                    cubeBlocks.add(playerPos.south().west().west().up().up());
+                    cubeBlocks.add(playerPos.south().west().west().up().up().up());
+                    playerPos = new BlockPos(playerPos).south();
+                }
+                break;
+            case West:
+                for (int i = 0; i < 7; ++i) {
+                    cubeBlocks.add(playerPos.west());
+                    cubeBlocks.add(playerPos.west().up());
+                    cubeBlocks.add(playerPos.west().up().up());
+                    cubeBlocks.add(playerPos.west().up().up().up());
+                    cubeBlocks.add(playerPos.west().north().up());
+                    cubeBlocks.add(playerPos.west().north().up().up());
+                    cubeBlocks.add(playerPos.west().north().up().up().up());
+                    cubeBlocks.add(playerPos.west().south());
+                    cubeBlocks.add(playerPos.west().south().up());
+                    cubeBlocks.add(playerPos.west().south().up().up());
+                    cubeBlocks.add(playerPos.west().south().up().up().up());
+                    cubeBlocks.add(playerPos.west().south().south().up());
+                    cubeBlocks.add(playerPos.west().south().south().up().up());
+                    cubeBlocks.add(playerPos.west().south().south().up().up().up());
+                    playerPos = new BlockPos(playerPos).west();
+                }
+                break;
+        }
+        return cubeBlocks;
+    }
 
     public static List<BlockPos> getHighway3() {
         List<BlockPos> cubeBlocks = new ArrayList<>();
         BlockPos playerPos = PlayerUtil.GetLocalPlayerPosFloored();
         switch (PlayerUtil.GetFacing()) {
             case East:
-                for (int i = 0; i < 7; ++i) {
+                for (int i = 0; i < 4; ++i) {
                     cubeBlocks.add(playerPos.east());
                     cubeBlocks.add(playerPos.east().up());
                     cubeBlocks.add(playerPos.east().up(2));
@@ -386,7 +470,7 @@ public class BlockInteractionHelper
                 }
                 break;
             case North:
-                for (int i = 0; i < 7; ++i) {
+                for (int i = 0; i < 4; ++i) {
                     cubeBlocks.add(playerPos.north());
                     cubeBlocks.add(playerPos.north().up());
                     cubeBlocks.add(playerPos.north().up(2));
@@ -409,7 +493,7 @@ public class BlockInteractionHelper
                 }
                 break;
             case South:
-                for (int i = 0; i < 7; ++i) {
+                for (int i = 0; i < 4; ++i) {
                     cubeBlocks.add(playerPos.south());
                     cubeBlocks.add(playerPos.south().up());
                     cubeBlocks.add(playerPos.south().up(2));
@@ -432,7 +516,7 @@ public class BlockInteractionHelper
                 }
                 break;
             case West:
-                for (int i = 0; i < 7; ++i) {
+                for (int i = 0; i < 4; ++i) {
                     cubeBlocks.add(playerPos.west());
                     cubeBlocks.add(playerPos.west().up());
                     cubeBlocks.add(playerPos.west().up(2));
@@ -462,7 +546,7 @@ public class BlockInteractionHelper
         BlockPos playerPos = PlayerUtil.GetLocalPlayerPosFloored();
         switch (PlayerUtil.GetFacing()) {
             case East:
-                for (int i = 0; i < 7; ++i) {
+                for (int i = 0; i < 4; ++i) {
                     cubeBlocks.add(playerPos.east());
                     cubeBlocks.add(playerPos.east().up());
                     cubeBlocks.add(playerPos.east().up(2));
@@ -489,7 +573,7 @@ public class BlockInteractionHelper
                 }
                 break;
             case North:
-                for (int i = 0; i < 7; ++i) {
+                for (int i = 0; i < 4; ++i) {
                     cubeBlocks.add(playerPos.north());
                     cubeBlocks.add(playerPos.north().up());
                     cubeBlocks.add(playerPos.north().up(2));
@@ -516,7 +600,7 @@ public class BlockInteractionHelper
                 }
                 break;
             case South:
-                for (int i = 0; i < 7; ++i) {
+                for (int i = 0; i < 4; ++i) {
                     cubeBlocks.add(playerPos.south());
                     cubeBlocks.add(playerPos.south().up());
                     cubeBlocks.add(playerPos.south().up(2));
@@ -532,7 +616,7 @@ public class BlockInteractionHelper
                     cubeBlocks.add(playerPos.south().east().up());
                     cubeBlocks.add(playerPos.south().east().up(2));
                     cubeBlocks.add(playerPos.south().east().up(3));
-                    cubeBlocks.add(playerPos.south().east(2).up());
+                    cubeBlocks.add(playerPos.south().east(2));
                     cubeBlocks.add(playerPos.south().east(2).up());
                     cubeBlocks.add(playerPos.south().east(2).up(2));
                     cubeBlocks.add(playerPos.south().east(2).up(3));
@@ -543,7 +627,7 @@ public class BlockInteractionHelper
                 }
                 break;
             case West:
-                for (int i = 0; i < 7; ++i) {
+                for (int i = 0; i < 4; ++i) {
                     cubeBlocks.add(playerPos.west());
                     cubeBlocks.add(playerPos.west().up());
                     cubeBlocks.add(playerPos.west().up(2));
