@@ -188,7 +188,6 @@ public class ModuleManager
         Add(new NoGlitchBlocksModule());
         Add(new NoWeatherModule());
         Add(new NukerModule());
-        Add(new NukerBypassModule());
         Add(new ScaffoldModule());
         Add(new SpeedyGonzales());
         Add(new StashFinderModule());
