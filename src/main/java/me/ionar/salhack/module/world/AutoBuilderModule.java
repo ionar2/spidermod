@@ -69,7 +69,7 @@ public class AutoBuilderModule extends Module
         Wall,
         Stair,
         Penis,
-        NomadHut
+        NomadHut,
     }
     
     public enum BuildingModes

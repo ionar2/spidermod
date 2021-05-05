@@ -87,6 +87,7 @@ public class ModuleManager
         Add(new AutoEatModule());
         Add(new AutoDyeModule());
         Add(new AutoFarmlandModule());
+        Add(new AutoGapModule());
         Add(new AutoMendArmorModule());
         Add(new AutoMountModule());
         Add(new AutoReconnectModule());
@@ -106,6 +107,7 @@ public class ModuleManager
         Add(new FriendsModule());
         Add(new GlobalLocationModule());
         Add(new HotbarCacheModule());
+        Add(new HotbarCacheRewriteModule());
         Add(new MiddleClickFriendsModule());
         Add(new RetardChatModule());
         Add(new StopWatchModule());
@@ -116,9 +118,11 @@ public class ModuleManager
         /// Movement
         Add(new AntiLevitationModule());
         Add(new AutoWalkModule());
+        Add(new BetterYawModule());
         Add(new BlinkModule());
         Add(new ElytraFlyModule());
         Add(new EntityControlModule());
+        Add(new FasterSpeedModule());
         Add(new FastFallModule());
         Add(new FlightModule());
         Add(new GlideModule());
@@ -184,6 +188,7 @@ public class ModuleManager
         Add(new NoGlitchBlocksModule());
         Add(new NoWeatherModule());
         Add(new NukerModule());
+        Add(new NukerBypassModule());
         Add(new ScaffoldModule());
         Add(new SpeedyGonzales());
         Add(new StashFinderModule());
