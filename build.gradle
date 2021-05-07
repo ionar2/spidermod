@@ -86,13 +86,18 @@ dependencies {
         exclude module: 'guava'
         exclude module: 'commons-io'
     }
+    //Event Handler
     compile "com.github.ionar2:Alpine:1.9f"
     compile group: 'net.jodah', name: 'typetools', version: '0.5.0'
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.19'
     compile(group: 'org.reflections', name: 'reflections', version: '0.9.11') {
         exclude group: 'com.google.guava', module: 'guava'
     }
+    //Minn RPC
     compile 'club.minnced:java-discord-rpc:2.0.2'
+    //Baritone
+    compile 'com.github.cabaletta:baritone:1.2.14'
+    compile 'cabaletta:baritone-api:1.2'
     
     //deobfCompile group: group, name: 'LunatriusCore', version: "${project.version_minecraft}-${project.version_lunatriuscore}", classifier: 'universal'
 }
@@ -130,6 +135,7 @@ processResources {
 shadowJar {
     dependencies {
         include(dependency('org.spongepowered:mixin'))
+        include(dependency('cabaletta:baritone-api'))
         include(dependency('com.github.ionar2:Alpine'))
         include(dependency('club.minnced:java-discord-rpc'))
         include(dependency('net.jodah:typetools'))
