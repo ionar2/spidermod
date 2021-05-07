@@ -1,6 +1,5 @@
 package me.ionar.salhack.util;
 
-import me.ionar.salhack.util.entity.PlayerUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -195,6 +194,7 @@ public class BlockInteractionHelper
         return circleblocks;
     }
 
+<<<<<<< HEAD
     public static List<BlockPos> getCube() {
         List<BlockPos> cubeBlocks = new ArrayList<>();
         BlockPos playerPos = PlayerUtil.GetLocalPlayerPosFloored();
@@ -656,6 +656,8 @@ public class BlockInteractionHelper
         }
         return cubeBlocks;
     }
+=======
+>>>>>>> parent of a94aea1 (mmmm commit)
     public enum ValidResult
     {
         NoEntityCollision,

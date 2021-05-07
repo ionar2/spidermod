@@ -205,7 +205,6 @@ public class PlayerUtil
             }
 
             mc.player.serverSprintState = l_IsSprinting;
-            try { Thread.sleep(1); } catch (Exception e) {}
         }
 
         boolean l_IsSneaking = mc.player.isSneaking();

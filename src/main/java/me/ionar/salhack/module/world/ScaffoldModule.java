@@ -39,8 +39,6 @@ public class ScaffoldModule extends Module
         Normal,
     }
 
-    boolean l_isEating = PlayerUtil.IsEating();
-
     public ScaffoldModule()
     {
         super("Scaffold", new String[]
@@ -54,9 +52,6 @@ public class ScaffoldModule extends Module
     @EventHandler
     private Listener<EventPlayerMotionUpdate> onMotionUpdate = new Listener<>(event ->
     {
-        if (l_isEating)
-            return;
-
         if (event.isCancelled())
             return;
         

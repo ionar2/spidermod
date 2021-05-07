@@ -61,7 +61,7 @@ public class Auto32kModule extends Module
     enum Modes
     {
         Hopper,
-        Dispenser,
+    //    Dispenser,
     }
     
     public Auto32kModule()

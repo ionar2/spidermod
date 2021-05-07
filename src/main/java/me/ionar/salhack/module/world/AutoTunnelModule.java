@@ -11,19 +11,17 @@ import static org.lwjgl.opengl.GL11.glLineWidth;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import ibxm.Player;
 import me.ionar.salhack.events.MinecraftEvent.Era;
-import me.ionar.salhack.util.entity.PlayerUtil;
 import me.ionar.salhack.events.player.EventPlayerMotionUpdate;
 import me.ionar.salhack.events.render.RenderEvent;
 import me.ionar.salhack.managers.BlockManager;
 import me.ionar.salhack.module.Module;
 import me.ionar.salhack.module.Value;
 import me.ionar.salhack.util.BlockInteractionHelper;
+import me.ionar.salhack.util.entity.PlayerUtil;
 import me.ionar.salhack.util.render.RenderUtil;
 import me.zero.alpine.fork.listener.EventHandler;
 import me.zero.alpine.fork.listener.Listener;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -37,7 +35,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.event.world.BlockEvent;
 
 public class AutoTunnelModule extends Module
 {
@@ -50,7 +47,6 @@ public class AutoTunnelModule extends Module
     {
         Tunnel1x2,
         Tunnel2x2,
-        Tunnel1x3,
         Tunnel2x3,
         Tunnel3x3,
     }
@@ -105,15 +101,6 @@ public class AutoTunnelModule extends Module
                             playerPos = new BlockPos(playerPos).east();
                         }
                         break;
-                    case Tunnel1x3:
-                        for (int i = 0; i < 2; ++i)
-                        {
-                            _blocksToDestroy.add(playerPos.east());
-                            _blocksToDestroy.add(playerPos.east().up());
-                            _blocksToDestroy.add(playerPos.east().up().up());
-
-                            playerPos = new BlockPos(playerPos).east();
-                        }
                     case Tunnel2x3:
                         for (int i = 0; i < 3; ++i)
                         {
@@ -170,15 +157,6 @@ public class AutoTunnelModule extends Module
                             playerPos = new BlockPos(playerPos).north();
                         }
                         break;
-                    case Tunnel1x3:
-                        for (int i = 0; i < 2; ++i)
-                        {
-                            _blocksToDestroy.add(playerPos.north());
-                            _blocksToDestroy.add(playerPos.north().up());
-                            _blocksToDestroy.add(playerPos.north().up().up());
-
-                            playerPos = new BlockPos(playerPos).north();
-                        }
                     case Tunnel2x3:
                         for (int i = 0; i < 3; ++i)
                         {
@@ -235,15 +213,6 @@ public class AutoTunnelModule extends Module
                             playerPos = new BlockPos(playerPos).south();
                         }
                         break;
-                    case Tunnel1x3:
-                        for (int i = 0; i < 2; ++i)
-                        {
-                            _blocksToDestroy.add(playerPos.south());
-                            _blocksToDestroy.add(playerPos.south().up());
-                            _blocksToDestroy.add(playerPos.south().up().up());
-
-                            playerPos = new BlockPos(playerPos).south();
-                        }
                     case Tunnel2x3:
                         for (int i = 0; i < 3; ++i)
                         {
@@ -299,15 +268,6 @@ public class AutoTunnelModule extends Module
                             
                             playerPos = new BlockPos(playerPos).west();
                         }
-                    case Tunnel1x3:
-                        for (int i = 0; i < 2; ++i)
-                        {
-                            _blocksToDestroy.add(playerPos.west());
-                            _blocksToDestroy.add(playerPos.west().up());
-                            _blocksToDestroy.add(playerPos.west().up().up());
-
-                            playerPos = new BlockPos(playerPos).west();
-                        }
                         break;
                     case Tunnel2x3:
                         for (int i = 0; i < 3; ++i)
@@ -352,7 +312,7 @@ public class AutoTunnelModule extends Module
         {
             IBlockState state = mc.world.getBlockState(pos);
             
-            if (state.getBlock() == Blocks.AIR || state.getBlock() instanceof BlockDynamicLiquid || state.getBlock() instanceof BlockStaticLiquid || state.getBlock() == Blocks.BEDROCK || state.getBlock() == Blocks.NETHERRACK)
+            if (state.getBlock() == Blocks.AIR || state.getBlock() instanceof BlockDynamicLiquid || state.getBlock() instanceof BlockStaticLiquid || state.getBlock() == Blocks.BEDROCK)
                 continue;
             
             toDestroy = pos;
@@ -376,14 +336,11 @@ public class AutoTunnelModule extends Module
                     BlockManager.Update(5.0f, true);
                     break;
                 case Packet:
-                    IBlockState l2_State = mc.world.getBlockState(PlayerUtil.GetLocalPlayerPosFloored().up().west().west().west());
-                    if (l2_State != Blocks.NETHERRACK) {
-                        mc.player.swingArm(EnumHand.MAIN_HAND);
-                        mc.player.connection.sendPacket(new CPacketPlayerDigging(
-                                CPacketPlayerDigging.Action.START_DESTROY_BLOCK, toDestroy, EnumFacing.UP));
-                        mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK,
-                                toDestroy, EnumFacing.UP));
-                    }
+                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                    mc.player.connection.sendPacket(new CPacketPlayerDigging(
+                            CPacketPlayerDigging.Action.START_DESTROY_BLOCK, toDestroy, EnumFacing.UP));
+                    mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK,
+                            toDestroy, EnumFacing.UP));
                     break;
                 default:
                     break;

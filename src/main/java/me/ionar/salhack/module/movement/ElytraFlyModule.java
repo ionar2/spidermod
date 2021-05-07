@@ -56,7 +56,6 @@ public final class ElytraFlyModule extends Module
     { "UpSpeed" }, "Up speed for elytra.", 2.0f, 0f, 10f, 1f);
     public final Value<Boolean> Accelerate = new Value<Boolean>("Accelerate", new String[]
     { "Accelerate", "Accelerate" }, "Auto accelerates when going up", true);
-    public final Value<Boolean> MustBeFalling = new Value<Boolean>("MustBeFalling", new String[]{ "MustBeFalling", "MustBeFalling" }, "Toggle need to be falling", true);
     public final Value<Integer> vAccelerationTimer = new Value<Integer>("Timer", new String[]
     { "AT" }, "Acceleration timer, default 1000", 1000, 0, 10000, 1000);
     public final Value<Float> RotationPitch = new Value<Float>("RotationPitch", new String[]
@@ -168,8 +167,7 @@ public final class ElytraFlyModule extends Module
 
         if (!mc.player.isElytraFlying())
         {
-            boolean canFly = !mc.player.onGround || !MustBeFalling.getValue();
-            if (canFly && InstantFly.getValue())
+            if (!mc.player.onGround && InstantFly.getValue())
             {
                 if (!InstantFlyTimer.passed(1000))
                     return;
