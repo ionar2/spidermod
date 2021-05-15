@@ -195,6 +195,9 @@ public class ModuleManager
         /// Schematica
         Add(new PrinterModule());
         Add(new PrinterBypassModule());
+
+        /// Dupe
+        Add(new AutoDuperWWEModule());
         
         LoadExternalModules();
         
