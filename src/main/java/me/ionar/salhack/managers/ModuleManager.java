@@ -114,6 +114,7 @@ public class ModuleManager
         Add(new XCarryModule());
         
         /// Movement
+        Add(new AnchorModule());
         Add(new AntiLevitationModule());
         Add(new AutoWalkModule());
         Add(new BlinkModule());
