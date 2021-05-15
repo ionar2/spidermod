@@ -22,7 +22,7 @@ public class AnchorModule extends Module {
      * Author LeonLeonPotato over many, many days (I suck at java lol)
      */
 
-    public Anchor() {
+    public AnchorModule() {
         super("Anchor", new String[]{"anchor"}, "stops all movement when over a hole", "NONE", 0xDB2468,
                 ModuleType.MOVEMENT);
     }
